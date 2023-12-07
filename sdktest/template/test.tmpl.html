@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="{{ .HTMLLang }}">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="frc-api-endpoint" content="{{ .FriendlyCaptchaAPIEndpoint }}"/>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+    <link rel="stylesheet" href="/static/public/simple.css">
+    <link rel="stylesheet" href="/static/public/sdktestlib.css">
+    <script defer src="/scripts/sdktestlib.js"></script>
+    
+{{ printf "%s" .Head }}
+
+  </head>
+  <body>
+    <nav class="sdktest">
+      <h1>{{.Name}}</h1>
+      <p class="sdktest-description"></p>
+      <button class="sdktest-start">Start</button>
+      <a class="button" href="../">Back to overview</a>
+      <ul class="sdktest-subresults">
+
+      </ul>
+    </nav>
+
+{{ printf "%s" .Body }}
+
+  </body>
+</html>

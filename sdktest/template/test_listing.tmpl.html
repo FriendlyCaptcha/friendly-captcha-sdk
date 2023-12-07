@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>sdktest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+    <link rel="stylesheet" href="/static/public/simple.css">
+  </head>
+  <body>
+    <main>
+    <h1>sdktest</h1>
+    <h3>Tests</h3>
+    <ul>
+      {{ range $name := .TestCases }}
+        <li>
+          <a href="/test/{{$name}}/">{{$name}}</a>
+        </li>
+      {{ end}}
+    </ul>
+  </main>
+  </body>
+</html>

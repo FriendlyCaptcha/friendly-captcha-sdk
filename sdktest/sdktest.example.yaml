@@ -1,0 +1,19 @@
+# Example sitekey, replace with a valid sitekey
+sitekey: "FCABCABCABCABC" 
+
+# Usually there is no reason to change this, unless you are a Friendly Captcha employee who runs
+# a local API server for testing.
+api_endpoint: "https://global.frcapi.com/api/v2/captcha"
+# Default language
+language: "en"
+
+test_folder: "./test"
+port: 8912
+
+
+autotest:
+  browser_exec_path: ""
+  headless: false
+  serve: false # Keep HTTP server alive (allows for links to failed tests).
+  timeout: "10000ms"
+  concurrency: 2

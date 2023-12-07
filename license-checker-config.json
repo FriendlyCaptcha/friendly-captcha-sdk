@@ -1,0 +1,41 @@
+{
+  "license": "etc/LICENSE_HEADER",
+  "licenseFormats": {
+    "js|ts|mjs": {
+        "prepend": "/*!",
+        "append": " */",
+      "eachLine": {
+        "prepend": " * "
+      }
+    },
+    "go": {
+        "eachLine": {
+            "prepend": "// "
+        }
+    },
+    "sh": {
+        "eachLine": {
+            "prepend": "# "
+        }
+    }
+  },
+  "ignore": [
+    "dist/",
+    "build/",
+    "node_modules/",
+    "temp/",
+
+    "**/*.html",
+    "**/*.md",
+    "**/go.mod",
+    "**/go.sum",
+    "**/*.yaml",
+    "**/.DS_Store",
+    "**/.gitignore",
+    "**/*.json",
+    
+    "src/polyfill/polyfills.min.js",
+    ".prettierrc"
+  ],
+  "ignoreFile": ".gitignore"
+}

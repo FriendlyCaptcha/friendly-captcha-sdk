@@ -1,0 +1,17 @@
+{
+  "compress": {
+    "passes": 4,
+    "keep_fargs": false,
+    "toplevel": true,
+    "hoist_funs": true
+  },
+  "mangle": {
+    "safari10": true
+  },
+  "format": {
+    "indent_level": 0,
+    "beautify": false,
+    "safari10": true
+  },
+  "sourceMap": true
+}

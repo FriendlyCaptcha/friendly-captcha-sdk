@@ -1,0 +1,10 @@
+<main>
+    <form>
+        <input type="textarea"/>
+        <div class="programmatic-mount"></div>
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}"></div>
+        <input type="submit"/>
+    </form>
+</main>
+<script defer src="{{ .ReCAPTCHACompatSiteJSPath }}"></script>
+<script defer src="main.tmpl.ts"></script>

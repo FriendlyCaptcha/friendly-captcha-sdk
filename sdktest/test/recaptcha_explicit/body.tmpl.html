@@ -1,0 +1,12 @@
+<main>
+    <form>
+        <input type="textarea"/>
+        <div id="my-widget-0" data-sitekey="{{ .Config.Sitekey }}"></div>
+        <div id="my-widget-1"></div>
+        <div id="my-widget-2"></div>
+        <input type="submit"/>
+    </form>
+</main>
+
+<script defer src="main.tmpl.ts"></script>
+<script defer src="{{ .ReCAPTCHACompatSiteJSPath }}?render=explicit&onload=myOnloadFunction&hl=nl"></script>

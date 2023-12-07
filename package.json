@@ -1,0 +1,58 @@
+{
+  "name": "@friendlycaptcha/sdk",
+  "version": "0.0.1",
+  "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
+  "main": "dist/sdk.js",
+  "type": "module",
+  "scripts": {
+    "build": "./build.sh",
+    "build:tsc": "tsc",
+    "build:dist": "npm run build && npm run build:tsc && npm run build:dts && cp -r build/tsc/src/ dist/src && npm run build:apiextractor && npm run build:docs",
+    "build:dts": "tsc --emitDeclarationOnly --outDir build/dts",
+    "build:apiextractor": "api-extractor run --local --verbose",
+    "build:docs": "rm -rf build/docs && rm -rf temp/ && mkdir -p temp && api-documenter markdown --output-folder dist/docs/markdown --input-folder temp && node docudocs.mjs",
+    "watch": "nodemon --exec \"bash ./build.sh\" --watch src -e ts,css",
+    "test": "ava test/**/*.ts --timeout=1m",
+    "api-extractor": "api-extractor",
+    "license-check-and-add": "license-check-and-add",
+    "fmt": "prettier src/**/*.ts test/**/*.ts package.json babel.config.cjs --write"
+  },
+  "author": "Friendly Captcha GmbH",
+  "license": "MPL-2.0",
+  "private": true,
+  "devDependencies": {
+    "@ava/typescript": "^4.1.0",
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.3",
+    "@babel/preset-env": "^7.19.3",
+    "idb-keyval": "^6.2.0",
+    "@microsoft/api-documenter": "^7.23.13",
+    "@microsoft/api-extractor": "^7.38.4",
+    "ava": "^6.0.0",
+    "esbuild": "^0.19.8",
+    "indexeddbshim": "^10.1.0",
+    "license-check-and-add": "^4.0.5",
+    "prettier": "^3.0.0",
+    "terser": "^5.15.0",
+    "typescript": "^5.3.2"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "ava": {
+    "files": [
+      "test/**/*",
+      "!test/setup.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/tsc/src/",
+        "test/": "build/tsc/test/"
+      },
+      "compile": "tsc"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+/*
+Copyright (c) Friendly Captcha GmbH 2023.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
+.sdktest {
+    background-color: #fcfcfc;
+    border-radius: 12px;
+    border: 2px solid black;
+    padding: 10px;
+    margin: 16px 8px;
+    color: #222;;
+}
+
+.sdktest.state-unstarted {
+    background-color: #fcfcfc;
+}
+
+.sdktest.state-running {
+    background-color: #d6f5ff
+}
+
+.sdktest.state-fail {
+    background-color: #fcb7b7
+}
+
+.sdktest.state-pass {
+    background-color: #c6fcb7
+}
+
+.sdktest.state-skip {
+    background-color: #fcfbb7
+}
+
+.sdktest h1 {
+    margin: 6px 0px;
+    font-size: 18px;
+}
+
+.sdktest ul {
+    list-style: none;
+    padding: 0;
+}
+
+
+.sdktest-subresult-container {
+    border-top: 1px solid black;
+}
+.sdktest-subresult-container h3 {
+    font-size: 14px;
+    margin: 0;
+}
+
+.sdktest-subresult-container p {
+    font-size: 12px;
+    margin: 0;
+    font-family: monospace;
+}
