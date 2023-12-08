@@ -19,6 +19,10 @@
   },
   "author": "Friendly Captcha GmbH",
   "license": "MPL-2.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@babel/cli": "^7.19.3",
