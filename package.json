@@ -1,6 +1,6 @@
 {
   "name": "@friendlycaptcha/sdk",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
   "main": "dist/sdk.js",
   "type": "module",
@@ -19,7 +19,6 @@
   },
   "author": "Friendly Captcha GmbH",
   "license": "MPL-2.0",
-  "private": true,
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@babel/cli": "^7.19.3",
