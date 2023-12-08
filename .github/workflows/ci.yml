@@ -21,5 +21,5 @@ jobs:
         run: npm ci
       - name: "Build"
         run: npm run build:dist
-      -name: "Test"
+      - name: "Test"
         run: npm t
