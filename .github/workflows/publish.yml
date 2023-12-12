@@ -14,6 +14,6 @@ jobs:
       - run: npm ci
       - run: npm run build:dist
       - run: npm test
-      - run: npm publish --access public
+      - run: npm run dist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
