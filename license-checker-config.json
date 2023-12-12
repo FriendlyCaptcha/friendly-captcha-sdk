@@ -24,6 +24,7 @@
     "build/",
     "node_modules/",
     "temp/",
+    ".github/",
 
     "**/*.html",
     "**/*.md",

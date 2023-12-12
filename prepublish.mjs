@@ -1,3 +1,9 @@
+/*!
+ * Copyright (c) Friendly Captcha GmbH 2023.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 import fs from "fs";
 import filepath from "path";
 
@@ -12,6 +18,7 @@ import filepath from "path";
   delete pkg.devDependencies;
   delete pkg.files;
   delete pkg.ava;
+  delete pkg.private;
   if (pkg.main.startsWith("dist/")) {
     pkg.main = pkg.main.slice(5);
   }
@@ -23,5 +30,5 @@ import filepath from "path";
   }
 
   fs.writeFileSync(filepath.join(outFolder, "/package.json"), Buffer.from(JSON.stringify(pkg, null, 2), "utf-8"));
-  fs.writeFileSync(filepath.join(outFolder, "/version.txt"), Buffer.from(sourceObj.version, "utf-8")); // Useful for CI/CD tagging of version.
+  fs.writeFileSync(filepath.join(outFolder, "/version.txt"), Buffer.from(pkg.version, "utf-8")); // Useful for CI/CD tagging of version.
 })();

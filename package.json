@@ -4,6 +4,7 @@
   "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
   "main": "dist/sdk.js",
   "type": "module",
+  "private": true,
   "scripts": {
     "clean": "rm -rf dist build temp",
     "build": "./build.sh",
@@ -17,8 +18,8 @@
     "api-extractor": "api-extractor",
     "license-check-and-add": "license-check-and-add",
     "fmt": "prettier src/**/*.ts test/**/*.ts package.json babel.config.cjs --write",
-    "prebuildpackage": "npm run clean && npm run build:dist && node prebuildpackage.mjs",
-    "buildpackage": "cd dist && npm pack"
+    "dist": "npm run clean && npm run build:dist && node prepublish.mjs && cd dist && npm publish --dry-run",
+    "prepublishOnly": "echo \"Run npm run dist to build the package and publish it\" && exit 1"
   },
   "author": "Friendly Captcha GmbH",
   "license": "MPL-2.0",
