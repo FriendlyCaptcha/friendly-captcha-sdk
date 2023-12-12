@@ -1,10 +1,11 @@
 {
   "name": "@friendlycaptcha/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
   "main": "dist/sdk.js",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf dist build temp",
     "build": "./build.sh",
     "build:tsc": "tsc",
     "build:dist": "npm run build && npm run build:tsc && npm run build:dts && cp -r build/tsc/src/ dist/src && npm run build:apiextractor && npm run build:docs",
@@ -15,7 +16,9 @@
     "test": "ava test/**/*.ts --timeout=1m",
     "api-extractor": "api-extractor",
     "license-check-and-add": "license-check-and-add",
-    "fmt": "prettier src/**/*.ts test/**/*.ts package.json babel.config.cjs --write"
+    "fmt": "prettier src/**/*.ts test/**/*.ts package.json babel.config.cjs --write",
+    "prebuildpackage": "npm run clean && npm run build:dist && node prebuildpackage.mjs",
+    "buildpackage": "cd dist && npm pack"
   },
   "author": "Friendly Captcha GmbH",
   "license": "MPL-2.0",
