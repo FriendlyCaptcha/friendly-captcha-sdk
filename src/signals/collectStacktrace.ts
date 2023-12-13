@@ -4,29 +4,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-/**
- * @internal
- */
-export type RootTraceRecord = {
-  dateNow: number;
-  perfNow: number;
-  name: string;
-  stack: string;
-};
+
+import { windowPerformanceNow } from "../util/performance";
 
 /**
  * @internal
  */
-export type ProcessedTraceRecord = [
-  /** performance now, at first occurance */
-  number,
-  /** patch source */
-  number,
-  /** stack depth */
-  number,
-  /** bottom frame */
-  string,
-];
+export type RootTraceRecord = {
+  /** Date.now() */
+  d: number;
+  /** Performance.now() */
+  pnow: number;
+  /** Name */
+  n: string;
+  /** Stack trace */
+  st: string;
+};
 
 const isFunc = function (value: unknown): value is Function {
   return typeof value === "function";
@@ -84,23 +77,27 @@ export const takeRecords = (function () {
      */
   };
 
+  // We save some bundle size by using these constants.
+  const p = "prototype";
+  const w = window;
+
   /**
    * The names of patches must not change,  as they are used to
    * identify the source of the stack trace by the Agent and Backend
    */
   const patches: [string, object, string][] = [
     // Getters as non-function
-    ["Document.prototype.documentElement", window.Document.prototype, "documentElement"],
-    ["Element.prototype.shadowRoot", window.Element.prototype, "shadowRoot"],
-    ["Node.prototype.nodeType", window.Node.prototype, "nodeType"],
+    ["Document." + p + ".documentElement", w.Document[p], "documentElement"],
+    ["Element." + p + ".shadowRoot", w.Element[p], "shadowRoot"],
+    ["Node." + p + ".nodeType", w.Node[p], "nodeType"],
     // Values holding functions
-    ["eval", window, "eval"],
-    ["Object.is", window.Object, "is"],
-    ["Array.prototype.slice", window.Array.prototype, "slice"],
-    ["Document.prototype.querySelectorAll", window.Document.prototype, "querySelectorAll"],
-    ["Document.prototype.createElement", window.Document.prototype, "createElement"],
-    ["EventTarget.prototype.dispatchEvent", window.EventTarget.prototype, "dispatchEvent"],
-    ["Promise.prototype.constructor", window.Promise.prototype, "constructor"],
+    ["eval", w, "eval"],
+    ["Object.is", w.Object, "is"],
+    ["Array." + p + "e.slice", w.Array[p], "slice"],
+    ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
+    ["Document." + p + ".createElement", w.Document[p], "createElement"],
+    ["EventTarget." + p + ".dispatchEvent", w.EventTarget[p], "dispatchEvent"],
+    ["Promise." + p + "e.constructor", w.Promise[p], "constructor"],
   ];
 
   patches.forEach(function ([name, target, prop]) {
@@ -120,12 +117,11 @@ export const takeRecords = (function () {
     }
 
     const newAccessor = function fcPatch(this: unknown, ...args: unknown[]) {
-      const perf = window.performance;
       const record: RootTraceRecord = {
-        dateNow: Date.now(),
-        perfNow: (perf && perf.now()) || 0,
-        name,
-        stack: getStackSafely(),
+        d: Date.now(),
+        pnow: windowPerformanceNow(),
+        n: name,
+        st: getStackSafely(),
       };
       queue.push(record);
 

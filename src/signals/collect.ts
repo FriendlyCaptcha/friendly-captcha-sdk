@@ -14,6 +14,7 @@ import {
   RootSignalsV1Raw,
   TouchMoveSignal,
 } from "../types/signals";
+import { windowPerformanceNow } from "../util/performance";
 import { takeRecords as takeTraceRecords } from "./collectStacktrace";
 import { buildOnlineMetric } from "./online";
 
@@ -461,7 +462,7 @@ export class Signals {
       wid: widgetId,
       conv: 0,
       t: {
-        pnow: (p && p.now && p.now()) || 0,
+        pnow: windowPerformanceNow(),
         pto: (p && p.timeOrigin) || 0,
         ts: Date.now(),
       },
@@ -485,8 +486,7 @@ export class Signals {
       tm: this.gtm(),
       bh: this.bh,
       stack: new Error().stack || "",
-      trace: takeTraceRecords(),
-      ptrace: [],
+      trc: takeTraceRecords(),
     };
 
     return sig;
