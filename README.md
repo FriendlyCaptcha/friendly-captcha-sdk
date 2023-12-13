@@ -1,5 +1,7 @@
 # Friendly Captcha SDK
 
+![NPM Version badge](https://img.shields.io/npm/v/%40friendlycaptcha/sdk)
+
 The SDK that is used to integrate Friendly Captcha into your website.
 
 This is the code that runs on your website, inserting the captcha widget.
