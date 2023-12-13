@@ -1,6 +1,6 @@
 # Friendly Captcha SDK
 
-![NPM Version badge](https://img.shields.io/npm/v/%40friendlycaptcha/sdk)
+[![NPM Version badge](https://img.shields.io/npm/v/%40friendlycaptcha/sdk)](https://www.npmjs.com/package/@friendlycaptcha/sdk)
 
 The SDK that is used to integrate Friendly Captcha into your website.
 
