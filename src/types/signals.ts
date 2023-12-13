@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { ProcessedTraceRecord, RootTraceRecord } from "../signals/collectStacktrace";
+import { RootTraceRecord } from "../signals/collectStacktrace";
 
 /**
  * 0   1   2   3   4    5    6
@@ -52,8 +52,7 @@ export type RootSignalsV1Raw<MetricVectorType = OnlineMetricStateVector> = {
   bh: BehaviorSignal<MetricVectorType>;
 
   stack: string;
-  trace: RootTraceRecord[];
-  ptrace: ProcessedTraceRecord[];
+  trc: RootTraceRecord[];
 };
 
 /**

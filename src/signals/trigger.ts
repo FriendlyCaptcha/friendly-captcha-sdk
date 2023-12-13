@@ -6,6 +6,7 @@
  */
 import { _FocusTrigger, _RootTrigger, _TriggerBase } from "../types/trigger";
 import { StartMode } from "../types/widget";
+import { windowPerformanceNow } from "../util/performance";
 
 /**
  * @internal
@@ -16,8 +17,7 @@ export function getTrigger(
   el: HTMLElement,
   ev?: FocusEvent | UIEvent,
 ): _RootTrigger {
-  const p = window.performance;
-  const t = p ? p.now() : 0;
+  const t = windowPerformanceNow();
   const bcr = el.getBoundingClientRect();
 
   const trigger: _TriggerBase = {
