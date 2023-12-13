@@ -1,7 +1,7 @@
 # changelog
 
 ## 0.1.2
-**Date**: UNRELEASED
+**Date**: 2023-12-13
 
 * Removed some unused typings, renamed some things to save on bundle size a bit.
 
