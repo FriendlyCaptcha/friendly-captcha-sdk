@@ -1,6 +1,6 @@
 {
   "name": "@friendlycaptcha/sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
   "main": "dist/sdk.js",
   "type": "module",
@@ -11,8 +11,8 @@
     "build:tsc": "tsc",
     "build:dist": "npm run build && npm run build:tsc && npm run build:dts && cp -r build/tsc/src/ dist/src && npm run build:apiextractor && npm run build:docs",
     "build:dts": "tsc --emitDeclarationOnly --outDir build/dts",
-    "build:apiextractor": "api-extractor run --local --verbose",
-    "build:docs": "rm -rf build/docs && rm -rf temp/ && mkdir -p temp && api-documenter markdown --output-folder dist/docs/markdown --input-folder temp && node docudocs.mjs",
+    "build:apiextractor": "rm -rf temp/ && mkdir -p temp && api-extractor run --local --verbose",
+    "build:docs": "rm -rf build/docs && api-documenter markdown --output-folder dist/docs/markdown --input-folder temp && node docudocs.mjs",
     "watch": "nodemon --exec \"bash ./build.sh\" --watch src -e ts,css",
     "test": "ava test/**/*.ts --timeout=1m",
     "api-extractor": "api-extractor",

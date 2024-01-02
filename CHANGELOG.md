@@ -1,5 +1,10 @@
 # changelog
 
+## 0.1.3
+**Date**: 2024-01-02
+
+* Fixed documentation generation.
+
 ## 0.1.2
 **Date**: 2023-12-13
 
