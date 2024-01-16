@@ -93,19 +93,24 @@ export class Store {
         return resolve(this._hasSA);
       }
 
+      try { // Safari prior to ~2020 doesn't support indexedDB in iframes.
+        indexedDB.open("")
+      } catch(e) {
+        return resolve((this._hasSA = false));
+      }
+
       // Browser is old and doesn't support storage access API
       if (!document.hasStorageAccess) {
-        this._hasSA = false;
-        return resolve(false);
+        // If `hasStorageAccess` is not available, we can assume we have storage access.
+        return resolve(this._hasSA = true);
       }
 
       document
         .hasStorageAccess()
         .then((hasSA) => {
           this._hasSA = hasSA;
-
           if (!this._hasSA) {
-            // We may want to remove this in a public release version?
+            // Is this useful?
             console.debug("FRC has no storage access");
           } else {
             // Setup custom store, so we never clash with existing stuff.

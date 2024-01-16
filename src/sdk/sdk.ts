@@ -413,11 +413,7 @@ export class FriendlyCaptchaSDK {
           registerWithRetry();
         } else if (status === "registered") {
           // After successful registration, we remove the placeholder and show the widget.
-          widgetPlaceholder.remove();
-          wel.style.display = "";
-        } else if (status === "registered") {
-          // After successful registration, we remove the placeholder and show the widget.
-          widgetPlaceholder.remove();
+          opts.element.removeChild(widgetPlaceholder);
           wel.style.display = "";
         }
       });

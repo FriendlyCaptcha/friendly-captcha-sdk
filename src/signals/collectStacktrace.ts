@@ -39,6 +39,8 @@ export const takeRecords = (function () {
     return records;
   };
 
+  const w = window;
+
   const $window = (function getRealmSafely() {
     try {
       const iframe = document.createElement("iframe");
@@ -47,9 +49,9 @@ export const takeRecords = (function () {
       // Iframe must be added to DOM before accessing contentWindow
       const $window = iframe ? iframe.contentWindow : 0;
       iframe.remove();
-      return $window || window;
+      return $window || w;
     } catch (e) {
-      return window;
+      return w;
     }
   })();
 
@@ -70,8 +72,8 @@ export const takeRecords = (function () {
      * Do not worry if you see an error occur here. This is not
      * a real error, it just captures the current stack trace
      */
-    const Error = ($window as any).Error;
-    return Error("FriendlyCaptcha_DummyTrace").stack;
+    const Error = ($window as any).Error || w.Error; // The fallback `w.Error` is required for Safari 10.1 (and possibly later versions).
+    return Error("FriendlyCaptcha_DummyTrace").stack || ""; // The fallback here is required for IE11, where stack may be undefined.
     /**!
      * ----------------------
      */
@@ -79,7 +81,9 @@ export const takeRecords = (function () {
 
   // We save some bundle size by using these constants.
   const p = "prototype";
-  const w = window;
+
+  // Safari 10.1 (and 10.3 on iOS) and earlier does not have `EventTarget` defined.
+  const dispatchEvent = w.EventTarget ? w.EventTarget[p].dispatchEvent : {};
 
   /**
    * The names of patches must not change,  as they are used to
@@ -96,7 +100,7 @@ export const takeRecords = (function () {
     ["Array." + p + "e.slice", w.Array[p], "slice"],
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
-    ["EventTarget." + p + ".dispatchEvent", w.EventTarget[p], "dispatchEvent"],
+    ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
     ["Promise." + p + "e.constructor", w.Promise[p], "constructor"],
   ];
 
