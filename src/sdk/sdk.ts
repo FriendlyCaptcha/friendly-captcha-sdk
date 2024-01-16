@@ -186,7 +186,7 @@ export class FriendlyCaptchaSDK {
     }
 
     if (msg.type === "root_store_get") {
-      const v = s.store.get(msg.key).then((v) => {
+      s.store.get(msg.key, { sess: msg.sess }).then((v) => {
         this.bus.send({
           type: "root_store_get_reply",
           from_id: "",
@@ -198,7 +198,7 @@ export class FriendlyCaptchaSDK {
         });
       });
     } else if (msg.type === "root_store_set") {
-      s.store.set(msg.key, msg.value).then(() => {
+      s.store.set(msg.key, msg.value, { sess: msg.sess }).then(() => {
         this.bus.send({
           type: "root_store_set_reply",
           from_id: "",

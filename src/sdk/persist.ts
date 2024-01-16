@@ -7,10 +7,14 @@
 import { get, set, createStore, UseStore } from "idb-keyval";
 import { randomId } from "../util/random";
 
-const prefix = "frcv2_";
+export const SESSION_COUNT_KEY = "frc_sc";
+export const SESSION_ID_KEY = "frc_sid";
+
+const SEPARATOR = "__";
 
 let didIncrease = false;
 let sc = "0";
+let sid = "__" + randomId(10);
 
 /**
  * @internal
@@ -19,7 +23,7 @@ export function sessionCount() {
   if (!didIncrease) {
     let scnumber = 0;
     try {
-      scnumber = parseInt(sessionStorage.getItem(prefix + "sc") || "", 10);
+      scnumber = parseInt(sessionStorage.getItem(SESSION_COUNT_KEY) || "", 10);
     } catch (e) {
       /* Ignore error */
     }
@@ -29,7 +33,7 @@ export function sessionCount() {
     sc = scnumber.toString();
 
     try {
-      sessionStorage.setItem(prefix + "sc", sc);
+      sessionStorage.setItem(SESSION_COUNT_KEY, sc);
     } catch (e) {
       /* Ignore error */
     }
@@ -43,14 +47,14 @@ export function sessionCount() {
 export function sessionId() {
   let id: string | null;
   try {
-    id = sessionStorage.getItem(prefix + "sid");
+    id = sessionStorage.getItem(SESSION_ID_KEY);
   } catch (e) {
-    return "__" + randomId(10);
+    return sid;
   }
 
   if (!id) {
     id = randomId(12);
-    sessionStorage.setItem(prefix + "sid", id!);
+    sessionStorage.setItem(SESSION_ID_KEY, id!);
   }
   return id;
 }
@@ -62,6 +66,9 @@ export function sessionId() {
  * In order:
  *   - IndexedDB
  *   - In Memory store (i.e. a Map<string, string>)
+ * 
+ * If {`sess`} is true, then we only use session storage (with a fallback to in-memory store).
+ * 
  * @internal
  */
 export class Store {
@@ -122,20 +129,50 @@ export class Store {
     });
   }
 
-  get(key: string): Promise<string | undefined> {
+  get(key: string, opts: { sess: boolean }): Promise<string | undefined> {
     return this.setup().then((hasSA: boolean) => {
-      if (hasSA) return get(prefix + this.storePrefix + key, this.idb);
+      const storeKey = this.storePrefix + SEPARATOR + key;
+
+      if (opts.sess) {
+        // Only get from session storage (w/ memory fallback).
+        try {
+          const sessValue = sessionStorage.getItem(storeKey);
+          return sessValue === null ? undefined : sessValue;
+        } catch (e) {
+          /* Ignore error, fallback to memory */
+        }
+        return this.mem.get(key);
+      }
+
+      if (hasSA) return get(storeKey, this.idb);
       return this.mem.get(key);
     });
   }
 
-  set(key: string, value: string | undefined): Promise<void> {
+  set(key: string, value: string | undefined, opts: { sess: boolean }): Promise<void> {
     return this.setup().then((hasSA: boolean) => {
-      if (hasSA) return set(prefix + this.storePrefix + key, value, this.idb);
-      if (value === undefined) {
-        this.mem.delete(key);
+      const storeKey = this.storePrefix + SEPARATOR + key;
+      if (opts.sess) {
+        // Only store in session storage (w/ memory fallback).
+        try {
+          if (value === undefined) {
+            this.mem.delete(key);
+            sessionStorage.removeItem(storeKey);
+          } else {
+            this.mem.set(key, value);
+            sessionStorage.setItem(storeKey, value);
+          }
+        } catch (e) {
+          /* Ignore error */
+        }
       } else {
-        this.mem.set(key, value);
+        if (hasSA) return set(storeKey, value, this.idb);
+
+        if (value === undefined) {
+          this.mem.delete(key);
+        } else {
+          this.mem.set(key, value);
+        }
       }
     });
   }
