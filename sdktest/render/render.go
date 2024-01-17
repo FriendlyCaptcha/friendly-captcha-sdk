@@ -76,8 +76,8 @@ func (r *TestCaseHandler) renderTestCase(params TestCaseParameters) (TestCaseRen
 		Name:                      params.Name,
 		Config:                    params.Config,
 		SiteJSPath:                getSiteJSPath("site", params.Compat, params.Min),
-		ReCAPTCHACompatSiteJSPath: getSiteJSPath("recaptcha-site", params.Compat, params.Min),
-		HCaptchaCompatSiteJSPath:  getSiteJSPath("hcaptcha-site", params.Compat, params.Min),
+		ReCAPTCHACompatSiteJSPath: getSiteJSPath("contrib/recaptcha-site", params.Compat, params.Min),
+		HCaptchaCompatSiteJSPath:  getSiteJSPath("contrib/hcaptcha-site", params.Compat, params.Min),
 		TestCaseDirFilepath:       filepath.Join(r.testFolder, params.Name),
 	}
 
