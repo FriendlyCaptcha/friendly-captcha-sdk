@@ -135,7 +135,7 @@ export interface CreateWidgetOptions {
   /**
    * A custom endpoint from which the agent and widgets are loaded.
    */
-  apiEndpoint?: string;
+  apiEndpoint?: string | "eu" | "global";
 
   /**
    * Language code such as "en" for English or "de" for German.

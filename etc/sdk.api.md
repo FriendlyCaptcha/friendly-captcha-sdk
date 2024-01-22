@@ -11,7 +11,7 @@ export interface _AutoTrigger extends _TriggerBase {
 
 // @public
 export interface CreateWidgetOptions {
-    apiEndpoint?: string;
+    apiEndpoint?: string | "eu" | "global";
     element: HTMLElement;
     formFieldName?: string | null;
     language?: string;

@@ -339,7 +339,8 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const agentId = this.ensureAgentIFrame(opts.apiEndpoint);
+    const apiURL = resolveAPIEndpoint(opts.apiEndpoint);
+    const agentId = this.ensureAgentIFrame(apiURL);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -372,7 +373,7 @@ export class FriendlyCaptchaSDK {
 
     this.widgets.set(widgetId, widgetHandle);
 
-    const widgetUrl = this.getAPIUrls(opts.apiEndpoint).widget;
+    const widgetUrl = this.getAPIUrls(apiURL).widget;
     const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
     const widgetPlaceholder = createWidgetPlaceholder(opts);
     setWidgetRootStyles(opts.element);
