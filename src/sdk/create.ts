@@ -27,7 +27,7 @@ export function createAgentIFrame(frcSDK: FriendlyCaptchaSDK, agentId: string, s
   const frameParams: FrameParams = {
     origin: document.location.origin,
     sess_id: sessionId(),
-    sess_c: sessionCount(),
+    sess_c: sessionCount(true),
     comm_id: agentId,
     sdk_v: SDK_VERSION,
     v: "1",
@@ -65,7 +65,7 @@ export function createWidgetIFrame(
   const frameData: FrameParams = {
     origin: document.location.origin,
     sess_id: sessionId(),
-    sess_c: sessionCount(),
+    sess_c: sessionCount(true),
     comm_id: widgetId,
     sdk_v: SDK_VERSION,
     v: "1",

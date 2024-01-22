@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import { sessionCount, sessionId } from "../sdk/persist";
 import {
   BehaviorSignal,
   DeviceMotion,
@@ -460,6 +461,8 @@ export class Signals {
       hl: history.length,
       fe: !!window.frameElement,
       wid: widgetId,
+      sc: parseInt(sessionCount(false)),
+      sid: sessionId(),
       conv: 0,
       t: {
         pnow: windowPerformanceNow(),
