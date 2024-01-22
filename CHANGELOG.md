@@ -1,4 +1,8 @@
 # changelog
+## 0.1.4
+**Date**: 2024-01-16
+
+* Compatibility improvements for Internet Explorer 11 and Safari 10.1 (and older).
 
 ## 0.1.3
 **Date**: 2024-01-02
