@@ -123,7 +123,7 @@ export interface RootStoreSetMessage {
   rid: string;
   key: string;
   value: string | undefined;
-  sess: boolean;
+  p: boolean;
 }
 
 export interface RootStoreSetReplyMessage {
@@ -136,7 +136,7 @@ export interface RootStoreGetMessage {
   type: "root_store_get";
   rid: string;
   key: string;
-  sess: boolean;
+  p: boolean;
 }
 
 export interface RootStoreGetReplyMessage {

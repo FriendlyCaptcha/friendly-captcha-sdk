@@ -19,7 +19,7 @@ let sid = "__" + randomId(10);
 /**
  * @internal
  */
-export function sessionCount() {
+export function sessionCount(increase: boolean) {
   if (!didIncrease) {
     let scnumber = 0;
     try {
@@ -29,7 +29,7 @@ export function sessionCount() {
     }
 
     if (isNaN(scnumber)) scnumber = 0;
-    scnumber++;
+    increase && scnumber++;
     sc = scnumber.toString();
 
     try {
@@ -66,9 +66,9 @@ export function sessionId() {
  * In order:
  *   - IndexedDB
  *   - In Memory store (i.e. a Map<string, string>)
- * 
+ *
  * If {`sess`} is true, then we only use session storage (with a fallback to in-memory store).
- * 
+ *
  * @internal
  */
 export class Store {
@@ -100,16 +100,17 @@ export class Store {
         return resolve(this._hasSA);
       }
 
-      try { // Safari prior to ~2020 doesn't support indexedDB in iframes.
-        indexedDB.open("")
-      } catch(e) {
+      try {
+        // Safari prior to ~2020 doesn't support indexedDB in iframes.
+        indexedDB.open("");
+      } catch (e) {
         return resolve((this._hasSA = false));
       }
 
       // Browser is old and doesn't support storage access API
       if (!document.hasStorageAccess) {
         // If `hasStorageAccess` is not available, we can assume we have storage access.
-        return resolve(this._hasSA = true);
+        return resolve((this._hasSA = true));
       }
 
       document
@@ -129,30 +130,39 @@ export class Store {
     });
   }
 
-  get(key: string, opts: { sess: boolean }): Promise<string | undefined> {
+  get(key: string, opts: { p: boolean }): Promise<string | undefined> {
     return this.setup().then((hasSA: boolean) => {
       const storeKey = this.storePrefix + SEPARATOR + key;
 
-      if (opts.sess) {
-        // Only get from session storage (w/ memory fallback).
-        try {
-          const sessValue = sessionStorage.getItem(storeKey);
-          return sessValue === null ? undefined : sessValue;
-        } catch (e) {
-          /* Ignore error, fallback to memory */
-        }
+      if (opts.p) { // Use persistent storage (i.e. indexedDB).
+        if (hasSA) return get(storeKey, this.idb);
         return this.mem.get(key);
       }
 
-      if (hasSA) return get(storeKey, this.idb);
+      // Only get from session storage (w/ memory fallback).
+      try {
+        const sessValue = sessionStorage.getItem(storeKey);
+        return sessValue === null ? undefined : sessValue;
+      } catch (e) {
+        /* Ignore error, fallback to memory */
+      }
       return this.mem.get(key);
     });
   }
 
-  set(key: string, value: string | undefined, opts: { sess: boolean }): Promise<void> {
+  set(key: string, value: string | undefined, opts: { p: boolean }): Promise<void> {
     return this.setup().then((hasSA: boolean) => {
       const storeKey = this.storePrefix + SEPARATOR + key;
-      if (opts.sess) {
+  
+      if (opts.p) { // Use persistent storage (i.e. indexedDB).
+        if (hasSA) return set(storeKey, value, this.idb);
+
+        if (value === undefined) {
+          this.mem.delete(key);
+        } else {
+          this.mem.set(key, value);
+        }
+      } else {
         // Only store in session storage (w/ memory fallback).
         try {
           if (value === undefined) {
@@ -164,14 +174,6 @@ export class Store {
           }
         } catch (e) {
           /* Ignore error */
-        }
-      } else {
-        if (hasSA) return set(storeKey, value, this.idb);
-
-        if (value === undefined) {
-          this.mem.delete(key);
-        } else {
-          this.mem.set(key, value);
         }
       }
     });

@@ -43,6 +43,9 @@ export type RootSignalsV1Raw<MetricVectorType = OnlineMetricStateVector> = {
    */
   fe: boolean;
 
+  sid: string;
+  sc: number;
+
   t: TimestampSignal;
 
   mm?: MouseMoveSignal;
