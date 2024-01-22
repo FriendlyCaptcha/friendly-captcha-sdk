@@ -1,4 +1,11 @@
 # changelog
+
+## 0.1.5
+**Date**: 2024-01-22
+
+* Fix for shorthands (`"eu"`, `"global"`) `api-endpoint` not working on widget HTML elements.
+* Internal changes around storage (prefering `SessionStorage` over anything persistent between sessions).
+
 ## 0.1.4
 **Date**: 2024-01-16
 

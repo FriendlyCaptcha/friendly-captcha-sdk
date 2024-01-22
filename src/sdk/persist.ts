@@ -63,11 +63,12 @@ export function sessionId() {
  * Key value storage with different layers.
  * IndexedDB can be problematic because of the [Storage Access API](https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API/Using)
  *
- * In order:
+ * It has support for:
+ *   - SessionStorage
  *   - IndexedDB
- *   - In Memory store (i.e. a Map<string, string>)
+ *   - In Memory store (i.e. a `Map<string, string>`)
  *
- * If {`sess`} is true, then we only use session storage (with a fallback to in-memory store).
+ * If {`p`} is true, then we use persistent storage (with a fallback to in-memory store).
  *
  * @internal
  */
