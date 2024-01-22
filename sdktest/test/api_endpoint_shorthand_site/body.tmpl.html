@@ -1,0 +1,11 @@
+<main>
+    <form>
+        <input type="textarea" />
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-api-endpoint="{{ .Config.APIEndpoint }}">
+        </div>
+        <input type="submit" />
+    </form>
+</main>
+
+<script defer src="{{ .SiteJSPath }}"></script>
+<script defer src="main.tmpl.ts"></script>
