@@ -339,7 +339,7 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const apiURL = resolveAPIEndpoint(opts.apiEndpoint);
+    const apiURL = opts.apiEndpoint && resolveAPIEndpoint(opts.apiEndpoint);
     const agentId = this.ensureAgentIFrame(apiURL);
     const widgetId = "w_" + randomId(12);
 
