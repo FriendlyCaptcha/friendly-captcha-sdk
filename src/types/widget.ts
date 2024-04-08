@@ -93,6 +93,10 @@ export interface WidgetErrorData {
    */
   code: WidgetErrorCode;
   /**
+   * Localization key, such as `t_verification_failed`.
+   */
+  title?: string;
+  /**
    * More details about the error to help debugging.
    * This value is not localized and will change between versions.
    *
