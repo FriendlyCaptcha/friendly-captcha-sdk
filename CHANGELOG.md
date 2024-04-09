@@ -1,5 +1,10 @@
 # changelog
 
+## 0.1.6
+**Date**: 2024-04-09
+
+* Added `title` attribute to widget error data
+
 ## 0.1.5
 **Date**: 2024-01-22
 
