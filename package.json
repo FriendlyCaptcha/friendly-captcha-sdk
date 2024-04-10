@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rm -rf dist build temp",
     "build": "./build.sh",
-    "build:tsc": "tsc",
+    "build:tsc": "rm -rf build/tsc && tsc",
     "build:dist": "npm run build && npm run build:tsc && npm run build:dts && cp -r build/tsc/src/ dist/src && npm run build:apiextractor && npm run build:docs",
     "build:dts": "tsc --emitDeclarationOnly --outDir build/dts",
     "build:apiextractor": "rm -rf temp/ && mkdir -p temp && api-extractor run --local --verbose",

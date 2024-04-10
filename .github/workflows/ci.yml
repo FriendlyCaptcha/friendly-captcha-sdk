@@ -20,6 +20,8 @@ jobs:
       - name: "Install deps"
         run: npm ci
       - name: "Build"
-        run: npm run build:dist
+        run: |
+          npm run build:tsc
+          npm run build:dist
       - name: "Test"
         run: npm t
