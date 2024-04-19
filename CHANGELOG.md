@@ -1,5 +1,10 @@
 # changelog
 
+## 0.1.7
+**Date**: 2024-04-19
+
+* Use `frcWidget` property instead of `data-attached` attribute to check if the widget has been attached
+
 ## 0.1.6
 **Date**: 2024-04-09
 
