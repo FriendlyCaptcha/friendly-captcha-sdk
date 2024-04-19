@@ -311,7 +311,7 @@ export class FriendlyCaptchaSDK {
     const newWidgets: WidgetHandle[] = [];
     for (let index = 0; index < elements.length; index++) {
       const hElement = elements[index] as HTMLElement;
-      if (hElement && !hElement.dataset.attached) {
+      if (hElement && !(hElement as any ).frcWidget) {
         const ds = hElement.dataset;
         const opts: CreateWidgetOptions = {
           element: hElement,
@@ -323,7 +323,6 @@ export class FriendlyCaptchaSDK {
           startMode: ds.start as StartMode, // Perhaps we should we check for valid values?
         };
         newWidgets.push(this.createWidget(opts));
-        hElement.dataset.attached = "1";
       }
     }
 
