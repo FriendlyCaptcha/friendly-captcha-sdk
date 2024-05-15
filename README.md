@@ -81,7 +81,7 @@ npm run license-check-and-add -- add
 ```
 
 ## License
-This is free software; you can redistribute it and/or modify it under the terms of the [Mozilla Public License Version 2.0](./LICENSE.md).
+This is free software; you can redistribute it and/or modify it under the terms of the [Mozilla Public License Version 2.0](./LICENSE).
 
 ## Contributing
 Contributions are welcome.
