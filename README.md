@@ -86,4 +86,4 @@ This is free software; you can redistribute it and/or modify it under the terms 
 ## Contributing
 Contributions are welcome.
 
-Prior to us being able to accept your contribution you will need to sign our CLA (Contributor License Agreement).
+Prior to us being able to accept your contribution you will need to sign our [CLA (Contributor License Agreement)](https://cla-assistant.io/FriendlyCaptcha/friendly-captcha-sdk).
