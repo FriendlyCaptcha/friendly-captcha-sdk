@@ -25,7 +25,7 @@ import filepath from "path";
 
   const outFolder = "dist";
 
-  for (const file of ["LICENSE.md", "README.md", "CHANGELOG.md"]) {
+  for (const file of ["LICENSE", "README.md", "CHANGELOG.md"]) {
     fs.copyFileSync(file, filepath.join(outFolder, file));
   }
 
