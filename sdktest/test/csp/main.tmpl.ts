@@ -12,6 +12,9 @@ sdktest.test({ name: "widget completes after starting" }, async (t) => {
   const completePromise = t.assert.widgetCompletes(w)
   w.start();
   
-  await completePromise
+  await completePromise;
+
+  // We destroy the widget to check the cleanup may trigger a CSP violation.
+  w.destroy();
 });
 
