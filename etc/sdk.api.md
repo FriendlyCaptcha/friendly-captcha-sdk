@@ -191,6 +191,7 @@ export type WidgetErrorCode = "network_error" | "sitekey_invalid" | "sitekey_mis
 export interface WidgetErrorData {
     code: WidgetErrorCode;
     detail: string;
+    title?: string;
 }
 
 // @public

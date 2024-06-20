@@ -1,5 +1,10 @@
 # changelog
 
+## 0.1.8
+**Date**: 2024-06-20
+
+* The root element the widget is mounted to is no longer deleted when `Destroy()` is called.
+
 ## 0.1.7
 **Date**: 2024-04-19
 
