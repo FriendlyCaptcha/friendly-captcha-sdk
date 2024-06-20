@@ -16,7 +16,7 @@ import {
   createWidgetPlaceholder,
 } from "./create.js";
 import { EnvelopedMessage, Message, RootSignalsGetMessage, ToAgentMessage, ToRootMessage } from "../types/messages.js";
-import { findCaptchaElements, setWidgetRootStyles } from "./dom.js";
+import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -311,7 +311,7 @@ export class FriendlyCaptchaSDK {
     const newWidgets: WidgetHandle[] = [];
     for (let index = 0; index < elements.length; index++) {
       const hElement = elements[index] as HTMLElement;
-      if (hElement && !(hElement as any ).frcWidget) {
+      if (hElement && !(hElement as any).frcWidget) {
         const ds = hElement.dataset;
         const opts: CreateWidgetOptions = {
           element: hElement,
@@ -352,7 +352,9 @@ export class FriendlyCaptchaSDK {
         send({ type: "root_destroy_widget" });
         this.bus.removeTarget(widgetId);
         this.widgets.delete(widgetId);
-        opts.element.remove();
+
+        opts.element.innerHTML = "";
+        removeWidgetRootStyles(opts.element);
       },
       onReset: () => {
         send({ type: "root_reset_widget" });

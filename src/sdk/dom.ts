@@ -60,6 +60,13 @@ export function setWidgetRootStyles(el: HTMLElement) {
   sinas(el, "borderRadius", "4px");
 }
 
+/**
+ * @internal
+ */
+export function removeWidgetRootStyles(el: HTMLElement) {
+  el.removeAttribute("style");
+}
+
 export function runOnDocumentLoaded(func: () => any) {
   if (document.readyState !== "loading") {
     func();
