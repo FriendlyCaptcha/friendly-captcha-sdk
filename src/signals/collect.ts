@@ -29,6 +29,14 @@ const M = Math;
 let ssig: Signals | undefined;
 
 /**
+ * Returns true if the browser is an Android device based on the user agent string (very naively).
+ * @internal 
+ */
+function isAndroidUA() {
+  return /Android/i.test(navigator.userAgent);
+}
+
+/**
  * Computes rolling stats of a variable.
  * Retrigger continuously resets the timer when subsequent "on" events happen.
  * @internal
@@ -350,6 +358,13 @@ export class Signals {
       g: false,
     };
 
+    if (!isAndroidUA()) {
+      // We limit this signal to Android phones, which is generally the only place where we would expect to get
+      // this data anyhow.
+      return sig;
+    }
+
+
     window[x]("devicemotion", (e) => {
       sig.ts = e.timeStamp;
       sig.i = e.interval;
@@ -381,6 +396,12 @@ export class Signals {
       gd: gd.s,
       bd: bd.s,
     };
+
+    if (!isAndroidUA()) {
+      // We limit this signal to Android phones, which is generally the only place where we would expect to get
+      // this data anyhow.
+      return sig;
+    }
 
     let hasPrevious: true | undefined;
     window[x]("deviceorientation", (e) => {
