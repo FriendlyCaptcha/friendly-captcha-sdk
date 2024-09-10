@@ -1,5 +1,9 @@
 # changelog
 
+## Unreleased
+
+* Fix `deviceorientation` and `devicemotion` deprecation warnings in Firefox browsers on desktop.
+
 ## 0.1.8
 **Date**: 2024-06-20
 
