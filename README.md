@@ -6,7 +6,7 @@ The SDK that is used to integrate Friendly Captcha v2 into your website.
 
 This is the code that runs on your website, inserting the captcha widget.
 
-> ⚠️☝️ This is the SDK for **Friendly Captcha V2 only**. If you are looking for the v1 SDK, you can find that [here](https://github.com/friendlycaptcha/friendly-challenge).
+> ☝️ This is the SDK for **Friendly Captcha v2 only**. If you are looking for the v1 SDK, you can find that [here](https://github.com/friendlycaptcha/friendly-challenge).
 
 ## Installation
 
@@ -40,7 +40,7 @@ const widget = sdk.createWidget({
 
 ## Documentation
 
-The documentation can be found in our (Developer Hub](https://developer.friendlycaptcha.com/docs/v2/sdk/), and the [*Getting Started* guide](https://developer.friendlycaptcha.com/docs/v2/getting-started/).
+The documentation can be found in our [Developer Hub](https://developer.friendlycaptcha.com/docs/v2/sdk/), and the [*Getting Started* guide](https://developer.friendlycaptcha.com/docs/v2/getting-started/).
 
 ## Development
 
