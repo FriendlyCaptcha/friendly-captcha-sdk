@@ -2,11 +2,11 @@
 
 [![NPM Version badge](https://img.shields.io/npm/v/%40friendlycaptcha/sdk)](https://www.npmjs.com/package/@friendlycaptcha/sdk)
 
-The SDK that is used to integrate Friendly Captcha into your website.
+The SDK that is used to integrate Friendly Captcha v2 into your website.
 
 This is the code that runs on your website, inserting the captcha widget.
 
-> ⚠️☝️ This is the SDK for **Friendly Captcha V2 only**, which is currently in preview only. You likely want to use the [SDK for Friendly Captcha v1](https://github.com/friendlycaptcha/friendly-challenge) instead.
+> ⚠️☝️ This is the SDK for **Friendly Captcha V2 only**. If you are looking for the v1 SDK, you can find that [here](https://github.com/friendlycaptcha/friendly-challenge).
 
 ## Installation
 
@@ -40,7 +40,7 @@ const widget = sdk.createWidget({
 
 ## Documentation
 
-The documentation can be found in our [developer hub](https://developer.friendlycaptcha.com/docs/sdk/).
+The documentation can be found in our (Developer Hub](https://developer.friendlycaptcha.com/docs/v2/sdk/), and the [*Getting Started* guide](https://developer.friendlycaptcha.com/docs/v2/getting-started/).
 
 ## Development
 
