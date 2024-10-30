@@ -57,9 +57,6 @@ export const takeRecords = (function () {
 
   const originalFuncToString = Function.prototype.toString;
   const newFuncToString = function toString(this: unknown, ...args: unknown[]) {
-    if (isFunc(this)) {
-      return;
-    }
     const patchedRef = isFunc(this) ? origPatchMap.get(this) : false;
     const ref = this === newFuncToString ? originalFuncToString : patchedRef ? patchedRef : this;
     return originalFuncToString.apply(ref, args as []);
