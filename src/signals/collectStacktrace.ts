@@ -94,7 +94,7 @@ export const takeRecords = (function () {
     // Values holding functions
     ["eval", w, "eval"],
     ["Object.is", w.Object, "is"],
-    ["Array." + p + "e.slice", w.Array[p], "slice"],
+    ["Array." + p + ".slice", w.Array[p], "slice"],
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
