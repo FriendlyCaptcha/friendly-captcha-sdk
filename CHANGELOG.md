@@ -1,8 +1,9 @@
 # changelog
 
-## Unreleased
+## 0.1.9
 
 * Fix `deviceorientation` and `devicemotion` deprecation warnings in Firefox browsers on desktop.
+* Fix a bug that was breaking the `toString()` method of some browser built-ins.
 
 ## 0.1.8
 **Date**: 2024-06-20
