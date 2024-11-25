@@ -1,0 +1,3 @@
+headers:
+  cross-origin-embedder-policy: "require-corp"
+
