@@ -1,15 +1,17 @@
 module github.com/friendlycaptcha/friendly-captcha/web/captchav2/friendly-captcha-sdk/sdktest
 
-go 1.20
+go 1.23
+
+toolchain go1.23.3
 
 require github.com/knadh/koanf/providers/file v0.1.0
 
 require (
-	github.com/chromedp/cdproto v0.0.0-20230220211738-2b1ec77315c9 // indirect
-	github.com/chromedp/sysutil v1.0.0 // indirect
+	github.com/chromedp/cdproto v0.0.0-20241110205750-a72e6703cd9b // indirect
+	github.com/chromedp/sysutil v1.1.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
-	github.com/gobwas/ws v1.1.0 // indirect
+	github.com/gobwas/ws v1.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -21,7 +23,7 @@ require (
 
 require (
 	github.com/alecthomas/kong v0.7.1
-	github.com/chromedp/chromedp v0.9.1
+	github.com/chromedp/chromedp v0.11.2
 	github.com/evanw/esbuild v0.17.15 // indirect
 	github.com/fatih/color v1.15.0
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -34,5 +36,5 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/xxjwxc/gowp v0.0.0-20220528192505-f87b7668d4ff
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
 )
