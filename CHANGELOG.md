@@ -3,6 +3,7 @@
 ## 0.1.10
 
 * Fix use of ES features in non-compat build, which caused Safari 11.1 and 12.1 to fail to load the SDK.
+* The minified bundle size has been reduced (4%).
 
 ## 0.1.9
 
