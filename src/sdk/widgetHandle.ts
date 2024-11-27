@@ -148,7 +148,7 @@ export class WidgetHandle {
    */
   public destroy() {
     this.isDestroyed = true;
-    this.hiddenFormEl?.remove();
+    this.hiddenFormEl && this.hiddenFormEl.remove();
     this.hiddenFormEl = undefined;
     this.setState({ response: ".DESTROYED", state: "destroyed" });
     this._destroy();

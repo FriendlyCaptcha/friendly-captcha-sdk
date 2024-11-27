@@ -132,7 +132,6 @@ export class CommonCompatSDK {
       ...el.dataset,
       ...params,
       element: el,
-      sitekey: params?.sitekey,
       language: this.params.hl || undefined,
     });
 
