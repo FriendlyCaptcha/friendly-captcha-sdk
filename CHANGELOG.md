@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.11
+
+* Fix wrapping of Promise constructor, which lead to issues in Chrome <= 45 (released September 2015) and Firefox <= 40.
+
 ## 0.1.10
 
 * Fix use of ES features in non-compat build, which caused Safari 11.1 and 12.1 to fail to load the SDK.

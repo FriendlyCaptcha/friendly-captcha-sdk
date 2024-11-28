@@ -11,7 +11,11 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 )
 
-func (r *TestCaseHandler) loadAndBuildScript(templates *template.Template, path string, renderData TestCaseRenderData) ([]byte, error) {
+func (r *TestCaseHandler) loadAndBuildScript(
+	templates *template.Template,
+	path string,
+	renderData TestCaseRenderData,
+) ([]byte, error) {
 	scriptEntry, err := executeTemplateIfExists(templates, path, renderData)
 	if err != nil {
 		return nil, err
