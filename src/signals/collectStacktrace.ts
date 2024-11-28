@@ -108,7 +108,7 @@ export const takeRecords = (function () {
     const hasGetterOrSetter = descriptor && (descriptor.get || descriptor.set);
 
     // We skip the patching of the constructor property if `Symbol.species` is not supported.
-    if (prop === c && !(window.Symbol && window.Symbol.species)) {
+    if (prop === c && !(w.Symbol && w.Symbol.species)) {
       return;
     }
 
