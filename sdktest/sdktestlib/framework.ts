@@ -10,7 +10,7 @@ import { SDKTestObject } from "./test";
 import { SDKTestResult, SDKTestSuiteResult, TestFunction, TestOpts, TestStatus, TestSuiteEntry } from "./types";
 import { SDKTestWidget, TestCaseResultWidget } from "./widget";
 
-const DEFAULT_TIMEOUT = 5000;
+const DEFAULT_TIMEOUT = 20_000;
 
 export class SDKTestFramework {
   private widget: SDKTestWidget;

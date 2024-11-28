@@ -15,6 +15,18 @@ import (
 func (r *TestRunner) PrintTestResult(tr *TestResult) {
 	timing := color.HiBlackString(fmt.Sprintf("(%s)", tr.Timing))
 
+	if errors.Is(tr.InternalError, context.DeadlineExceeded) {
+		fmt.Fprintf(
+			color.Output,
+			"%s %s %s %s\n",
+			color.HiRedString("ERROR Timeout exceeded"),
+			tr.Name,
+			timing,
+			color.YellowString(tr.Message),
+		)
+		return
+	}
+
 	switch tr.Status {
 	case "fail":
 		// In serve mode we display a link to click for quick debugging
@@ -52,6 +64,12 @@ func (r *TestRunner) PrintTestResult(tr *TestResult) {
 	case "skip":
 		fmt.Fprintf(color.Output, "%s %s %s\n", color.YellowString("SKIP"), color.HiBlackString(tr.Name), timing)
 	default: // Should never happen
-		fmt.Fprintf(color.Output, "%s %s %s\n", color.HiRedString("ERROR Invalid Test Result status: "), tr.Name, timing)
+		fmt.Fprintf(
+			color.Output,
+			"%s %s %s\n",
+			color.HiRedString("ERROR Invalid Test Result status: "),
+			tr.Name,
+			timing,
+		)
 	}
 }
