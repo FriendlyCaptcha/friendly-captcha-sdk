@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { mergeObject } from "../util/object";
 import { windowPerformanceNow } from "../util/performance";
 
 /**
@@ -148,10 +149,13 @@ export const takeRecords = (function () {
     } catch (e) {}
 
     try {
-      Object.defineProperty(target, prop, {
-        ...descriptor,
-        [hasGetterOrSetter ? "get" : "value"]: newAccessor,
-      });
+      const newDescriptor = mergeObject({}, descriptor);
+      if (hasGetterOrSetter) {
+        newDescriptor.get = newAccessor;
+      } else {
+        newDescriptor.value = newAccessor;
+      }
+      Object.defineProperty(target, prop, newDescriptor);
       origPatchMap.set(newAccessor, hasGetterOrSetter ? descriptor.get : descriptor.value);
     } catch (e) {}
   });

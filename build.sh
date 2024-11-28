@@ -17,11 +17,11 @@ version=$(node -p "require('./package.json').version")
 # echo "Building version $version"
 
 # Build site and library entry
-esbuild src/entry/sdk.ts --bundle --outfile=build/bundle/sdk.js --format=esm --define:SDK_VERSION=\"$version\" --legal-comments=eof
+esbuild src/entry/sdk.ts --bundle --outfile=build/bundle/sdk.js --format=esm --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
 
-esbuild src/entry/site.ts --bundle --outfile=build/bundle/site.js --define:SDK_VERSION=\"$version\" --legal-comments=eof
-esbuild src/entry/recaptcha-site.ts --bundle --outfile=build/bundle/contrib/recaptcha-site.js --define:SDK_VERSION=\"$version\" --legal-comments=eof
-esbuild src/entry/hcaptcha-site.ts --bundle --outfile=build/bundle/contrib/hcaptcha-site.js --define:SDK_VERSION=\"$version\" --legal-comments=eof
+esbuild src/entry/site.ts --bundle --outfile=build/bundle/site.js --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
+esbuild src/entry/recaptcha-site.ts --bundle --outfile=build/bundle/contrib/recaptcha-site.js --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
+esbuild src/entry/hcaptcha-site.ts --bundle --outfile=build/bundle/contrib/hcaptcha-site.js --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
 
 # Babelize the site bundle
 

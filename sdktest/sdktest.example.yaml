@@ -15,5 +15,5 @@ autotest:
   browser_exec_path: ""
   headless: false
   serve: false # Keep HTTP server alive (allows for links to failed tests).
-  timeout: "10000ms"
+  timeout: "30000ms"
   concurrency: 2
