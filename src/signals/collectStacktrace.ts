@@ -79,6 +79,7 @@ export const takeRecords = (function () {
 
   // We save some bundle size by using these constants.
   const p = "prototype";
+  const c = "constructor";
 
   // Safari 10.1 (and 10.3 on iOS) and earlier does not have `EventTarget` defined.
   const dispatchEvent = w.EventTarget ? w.EventTarget[p].dispatchEvent : {};
@@ -99,12 +100,17 @@ export const takeRecords = (function () {
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
-    ["Promise." + p + "e.constructor", w.Promise[p], "constructor"],
+    ["Promise." + p + "." + c, w.Promise[p], c],
   ];
 
   patches.forEach(function ([name, target, prop]) {
     const descriptor = Object.getOwnPropertyDescriptor(target, prop);
     const hasGetterOrSetter = descriptor && (descriptor.get || descriptor.set);
+
+    // We skip the patching of the constructor property if `Symbol.species` is not supported.
+    if (prop === c && !(w.Symbol && w.Symbol.species)) {
+      return;
+    }
 
     if (!descriptor) {
       return;
