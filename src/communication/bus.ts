@@ -120,7 +120,7 @@ export class CommunicationBus {
     }
 
     const msg = ev.data as EnvelopedMessage<ToRootMessage>;
-    if (!msg._frc) return; // Message unrelated to Friendly Captcha.
+    if (!msg || !msg._frc) return; // Message unrelated to Friendly Captcha.
     this.send(msg);
   }
 
