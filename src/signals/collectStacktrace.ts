@@ -133,10 +133,12 @@ export const takeRecords = (function () {
       };
       queue.push(record);
 
-      // Promises are special as we are patching a constructor.
-      // (Note: if we ever patch non-Promise constructors, we should add a check here).
+      const v = (hasGetterOrSetter ? descriptor.get : descriptor.value);
+
+      // Promises are special as we are patching a constructor. This was added to support zone.js better (used inside
+      // of Angular).
       if (c === prop) {
-        return Promise.constructor;
+        return v
       }
 
       /**!
@@ -145,7 +147,7 @@ export const takeRecords = (function () {
        * that the error is from other source code deeper in the
        * stack trace as FriendlyCaptcha wraps native functions.
        */
-      return (hasGetterOrSetter ? descriptor.get : descriptor.value).apply(this, args);
+      return v.apply(this, args);
       /**!
        * ----------------------
        */
