@@ -1,0 +1,13 @@
+<main>
+    <form>
+        <p>A Friendly Captcha widget on the same page as Zone.js (used in Angular).</p>
+    
+        <input type="textarea"/>
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}"></div>
+        <input type="submit"/>
+    </form>
+</main>
+
+<script defer src="main.tmpl.ts"></script>
+<script defer src="{{ .SiteJSPath }}"></script>
+

@@ -133,6 +133,12 @@ export const takeRecords = (function () {
       };
       queue.push(record);
 
+      // Promises are special as we are patching a constructor.
+      // (Note: if we ever patch non-Promise constructors, we should add a check here).
+      if (c === prop) {
+        return Promise.constructor;
+      }
+
       /**!
        * ----------------------
        * If you see an error here in a stack trace, you should assume
