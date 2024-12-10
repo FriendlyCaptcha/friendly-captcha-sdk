@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.12
+
+* Change how we patch Promise to avoid issues with libraries that extend/overwrite it (Angular with zones in particular).
+
 ## 0.1.11
 
 * Fix wrapping of Promise constructor, which lead to issues in Chrome <= 45 (released September 2015) and Firefox <= 40.

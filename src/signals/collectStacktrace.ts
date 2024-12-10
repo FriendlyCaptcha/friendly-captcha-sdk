@@ -136,7 +136,7 @@ export const takeRecords = (function () {
       const v = (hasGetterOrSetter ? descriptor.get : descriptor.value);
 
       // Promises are special as we are patching a constructor. This was added to support zone.js better (used inside
-      // of Angular).
+      // of Angular). Note: if we add more constructor patches, we should perhaps change this if statement.
       if (c === prop) {
         return v
       }
