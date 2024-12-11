@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.13
+
+* Remove patching of `Promise.prototype.constructor` to avoid issues with Angular and other libraries that extend or overwrite `Promise`.
+
 ## 0.1.12
 
 * Change how we patch Promise to avoid issues with libraries that extend/overwrite it (Angular with zones in particular).

@@ -79,7 +79,6 @@ export const takeRecords = (function () {
 
   // We save some bundle size by using these constants.
   const p = "prototype";
-  const c = "constructor";
 
   // Safari 10.1 (and 10.3 on iOS) and earlier does not have `EventTarget` defined.
   const dispatchEvent = w.EventTarget ? w.EventTarget[p].dispatchEvent : {};
@@ -100,17 +99,11 @@ export const takeRecords = (function () {
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
-    ["Promise." + p + "." + c, w.Promise[p], c],
   ];
 
   patches.forEach(function ([name, target, prop]) {
     const descriptor = Object.getOwnPropertyDescriptor(target, prop);
     const hasGetterOrSetter = descriptor && (descriptor.get || descriptor.set);
-
-    // We skip the patching of the constructor property if `Symbol.species` is not supported.
-    if (prop === c && !(w.Symbol && w.Symbol.species)) {
-      return;
-    }
 
     if (!descriptor) {
       return;
@@ -133,21 +126,13 @@ export const takeRecords = (function () {
       };
       queue.push(record);
 
-      const v = (hasGetterOrSetter ? descriptor.get : descriptor.value);
-
-      // Promises are special as we are patching a constructor. This was added to support zone.js better (used inside
-      // of Angular). Note: if we add more constructor patches, we should perhaps change this if statement.
-      if (c === prop) {
-        return v
-      }
-
       /**!
        * ----------------------
        * If you see an error here in a stack trace, you should assume
        * that the error is from other source code deeper in the
        * stack trace as FriendlyCaptcha wraps native functions.
        */
-      return v.apply(this, args);
+      return (hasGetterOrSetter ? descriptor.get : descriptor.value).apply(this, args);
       /**!
        * ----------------------
        */
