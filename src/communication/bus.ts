@@ -114,8 +114,8 @@ export class CommunicationBus {
   private onReceive(ev: MessageEvent) {
     if (!isAllowedOrigin(ev.origin, this.origins)) {
       // This may be an attempt at abuse or it's simply another iframe sending messages.
-      // We silently ignore the message. For dev purposes we currently print a debug message.
-      console.debug("Friendly Captcha communication bus ignored message from origin " + ev.origin, this.origins);
+      // We silently ignore the message. For dev purposes we can print a debug message.
+      // console.debug("Friendly Captcha communication bus ignored message from origin " + ev.origin, this.origins);
       return;
     }
 

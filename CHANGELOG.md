@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.14
+
+* Removed debug message printed to console when a message was ignored from a non-Friendly Captcha iframe source.
+
 ## 0.1.13
 
 * Remove patching of `Promise.prototype.constructor` to avoid issues with Angular and other libraries that extend or overwrite `Promise`.
