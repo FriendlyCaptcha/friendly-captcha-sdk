@@ -165,7 +165,7 @@ export class Signals {
 
   private takeTraceRecords: () => RootTraceRecord[];
 
-  constructor(opts: SignalsOptions = {}) {
+  constructor(opts: SignalsOptions) {
     const $: "mouse" = "mouse";
 
     // Set up mouse enter leave signals
