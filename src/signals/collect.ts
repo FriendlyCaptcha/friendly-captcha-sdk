@@ -16,7 +16,7 @@ import {
   TouchMoveSignal,
 } from "../types/signals";
 import { windowPerformanceNow } from "../util/performance";
-import { takeRecords as takeTraceRecords } from "./collectStacktrace";
+import { RootTraceRecord, patchNativeFunctions } from "./collectStacktrace";
 import { buildOnlineMetric } from "./online";
 
 // Shorthand to save some characters. Saving `document.addEventListener` into a variable does not work for all events without `.apply()` or `.bind()`.
@@ -30,7 +30,7 @@ let ssig: Signals | undefined;
 
 /**
  * Returns true if the browser is an Android device based on the user agent string (very naively).
- * @internal 
+ * @internal
  */
 function isAndroidUA() {
   return /Android/i.test(navigator.userAgent);
@@ -131,6 +131,10 @@ function deltaAngle(a: number, b: number) {
   return angle;
 }
 
+export interface SignalsOptions {
+  disableEvalPatching?: boolean;
+}
+
 /**
  * Signals collects browser and user behavior data from the page where the widget is embedded.
  * The code is deliberately rather minimal to save on payload size.
@@ -159,7 +163,9 @@ export class Signals {
     d: 0,
   };
 
-  constructor() {
+  private takeTraceRecords: () => RootTraceRecord[];
+
+  constructor(opts: SignalsOptions = {}) {
     const $: "mouse" = "mouse";
 
     // Set up mouse enter leave signals
@@ -233,6 +239,8 @@ export class Signals {
       dm: this.setupMotionMetrics(),
       do: this.setupOrientationMetrics(),
     };
+
+    this.takeTraceRecords = patchNativeFunctions(opts.disableEvalPatching);
   }
 
   private setupMovementMetrics(): {
@@ -363,7 +371,6 @@ export class Signals {
       // this data anyhow.
       return sig;
     }
-
 
     window[x]("devicemotion", (e) => {
       sig.ts = e.timeStamp;
@@ -510,7 +517,7 @@ export class Signals {
       tm: this.gtm(),
       bh: this.bh,
       stack: new Error().stack || "",
-      trc: takeTraceRecords(),
+      trc: this.takeTraceRecords(),
     };
 
     return sig;
@@ -521,6 +528,6 @@ export class Signals {
  * Returns the global signals object.
  * @internal
  */
-export function getSignals() {
-  return ssig || (ssig = new Signals());
+export function getSignals(opts: SignalsOptions = {}) {
+  return ssig || (ssig = new Signals(opts));
 }

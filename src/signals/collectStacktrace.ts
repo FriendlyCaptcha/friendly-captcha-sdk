@@ -29,7 +29,7 @@ const isFunc = function (value: unknown): value is Function {
 /**
  * Defensively patch native functions to capture stack traces.
  */
-export const takeRecords = (function () {
+export const patchNativeFunctions = function (disableEvalPatching: boolean = false) {
   const queue: RootTraceRecord[] = [];
 
   /** Used for deeply patching toString. The Map implementation is necessary */
@@ -160,4 +160,4 @@ export const takeRecords = (function () {
   });
 
   return takeRecords;
-})();
+};
