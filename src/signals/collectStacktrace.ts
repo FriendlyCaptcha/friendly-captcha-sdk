@@ -29,7 +29,7 @@ const isFunc = function (value: unknown): value is Function {
 /**
  * Defensively patch native functions to capture stack traces.
  */
-export const patchNativeFunctions = function (disableEvalPatching: boolean = false) {
+export const patchNativeFunctions = function (opts: { disableEvalPatching?: boolean }) {
   const queue: RootTraceRecord[] = [];
 
   /** Used for deeply patching toString. The Map implementation is necessary */
@@ -100,7 +100,7 @@ export const patchNativeFunctions = function (disableEvalPatching: boolean = fal
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
   ];
 
-  if (!disableEvalPatching) {
+  if (!opts.disableEvalPatching) {
     patches.push(["eval", w, "eval"]);
   }
 

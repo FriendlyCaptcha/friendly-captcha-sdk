@@ -240,7 +240,7 @@ export class Signals {
       do: this.setupOrientationMetrics(),
     };
 
-    this.takeTraceRecords = patchNativeFunctions(opts.disableEvalPatching);
+    this.takeTraceRecords = patchNativeFunctions(opts);
   }
 
   private setupMovementMetrics(): {
@@ -528,6 +528,6 @@ export class Signals {
  * Returns the global signals object.
  * @internal
  */
-export function getSignals(opts: SignalsOptions = {}) {
+export function getSignals(opts: SignalsOptions) {
   return ssig || (ssig = new Signals(opts));
 }
