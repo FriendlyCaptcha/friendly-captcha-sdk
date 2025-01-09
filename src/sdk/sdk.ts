@@ -58,7 +58,8 @@ export interface FriendlyCaptchaSDKOptions {
   apiEndpoint?: string | "eu" | "global";
 
   /**
-   * Whether to disable the eval patching. Useful when the patching breaks your site.
+   * Whether to disable the patching of `window.eval`. Useful when the patching breaks your site, which in particular
+   * may affect some hot reloading functionality for Webpack (in `dev` mode).
    */
   disableEvalPatching?: boolean;
 }
