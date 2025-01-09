@@ -93,13 +93,16 @@ export const patchNativeFunctions = function (disableEvalPatching: boolean = fal
     ["Element." + p + ".shadowRoot", w.Element[p], "shadowRoot"],
     ["Node." + p + ".nodeType", w.Node[p], "nodeType"],
     // Values holding functions
-    ["eval", w, "eval"],
     ["Object.is", w.Object, "is"],
     ["Array." + p + ".slice", w.Array[p], "slice"],
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
   ];
+
+  if (!disableEvalPatching) {
+    patches.push(["eval", w, "eval"]);
+  }
 
   patches.forEach(function ([name, target, prop]) {
     const descriptor = Object.getOwnPropertyDescriptor(target, prop);

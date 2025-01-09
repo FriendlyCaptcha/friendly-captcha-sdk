@@ -1,7 +1,9 @@
 export function getSDKDisableEvalPatching(): boolean {
   // We check if the meta tag `frc-disable-eval-patching` is present.
   const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-disable-eval-patching"]`);
-  return m !== null;
+  if (!m) return false;
+
+  return m.content === "true";
 }
 
 export function getSDKAPIEndpoint(): string | undefined {
