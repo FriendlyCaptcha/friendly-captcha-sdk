@@ -154,6 +154,9 @@ export class Signals {
   private rn: number = 0;
   private bh: BehaviorSignal;
 
+  // Whether patching of window.eval is disabled.
+  private dep: boolean;
+
   /** Counter */
   private i = 0;
 
@@ -240,6 +243,7 @@ export class Signals {
       do: this.setupOrientationMetrics(),
     };
 
+    this.dep = opts.disableEvalPatching || false;
     this.takeTraceRecords = patchNativeFunctions(opts);
   }
 
@@ -488,6 +492,7 @@ export class Signals {
       i: ++this.i,
       hl: history.length,
       fe: !!window.frameElement,
+      dep: this.dep,
       wid: widgetId,
       sc: parseInt(sessionCount(false)),
       sid: sessionId(),
