@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.15
+
+* Allowed disabling of the `window.eval` patching using `disableEvalPatching` when creating the SDK.
+
 ## 0.1.14
 
 * Removed debug message printed to console when a message was ignored from a non-Friendly Captcha iframe source.

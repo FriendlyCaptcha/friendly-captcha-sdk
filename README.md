@@ -67,7 +67,7 @@ We include more proper end-to-end tests in the [**sdktest**](./sdktest/) tool fo
 We automatically generate markdown docs and translate these into files that are in a format that works for Docusaurus. You will then need to update the docs manually by deleting the old files and adding the new ones. Something like this:
 
 ```shell
- rm -rf ../friendly-docs/docs/sdk/reference && mkdir ../friendly-docs/docs/sdk/reference && cp -r ./build/docs/docusaurus/ ../friendly-docs/docs/sdk/reference/
+ rm -rf ../friendly-docs/docs/sdk/reference && mkdir ../friendly-docs/docs/sdk/reference && cp -r ./dist/docs/docusaurus/ ../friendly-docs/docs/sdk/reference/
 ```
 
 ### Adding license headers
