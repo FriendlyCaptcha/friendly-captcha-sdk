@@ -3,7 +3,7 @@ export function getSDKDisableEvalPatching(): boolean {
   const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-disable-eval-patching"]`);
   if (!m) return false;
 
-  return m.content === "true";
+  return !!m.content;
 }
 
 export function getSDKAPIEndpoint(): string | undefined {
