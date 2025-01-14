@@ -138,6 +138,7 @@ export class FriendlyCaptchaSDK {
 // @public
 export interface FriendlyCaptchaSDKOptions {
     apiEndpoint?: string | "eu" | "global";
+    disableEvalPatching?: boolean;
     startAgent?: boolean;
 }
 

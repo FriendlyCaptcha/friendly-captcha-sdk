@@ -16,7 +16,7 @@ import {
   TouchMoveSignal,
 } from "../types/signals";
 import { windowPerformanceNow } from "../util/performance";
-import { takeRecords as takeTraceRecords } from "./collectStacktrace";
+import { RootTraceRecord, patchNativeFunctions } from "./collectStacktrace";
 import { buildOnlineMetric } from "./online";
 
 // Shorthand to save some characters. Saving `document.addEventListener` into a variable does not work for all events without `.apply()` or `.bind()`.
@@ -30,7 +30,7 @@ let ssig: Signals | undefined;
 
 /**
  * Returns true if the browser is an Android device based on the user agent string (very naively).
- * @internal 
+ * @internal
  */
 function isAndroidUA() {
   return /Android/i.test(navigator.userAgent);
@@ -131,6 +131,10 @@ function deltaAngle(a: number, b: number) {
   return angle;
 }
 
+export interface SignalsOptions {
+  disableEvalPatching?: boolean;
+}
+
 /**
  * Signals collects browser and user behavior data from the page where the widget is embedded.
  * The code is deliberately rather minimal to save on payload size.
@@ -150,6 +154,9 @@ export class Signals {
   private rn: number = 0;
   private bh: BehaviorSignal;
 
+  // Whether patching of window.eval is disabled.
+  private dep: boolean;
+
   /** Counter */
   private i = 0;
 
@@ -159,7 +166,9 @@ export class Signals {
     d: 0,
   };
 
-  constructor() {
+  private takeTraceRecords: () => RootTraceRecord[];
+
+  constructor(opts: SignalsOptions) {
     const $: "mouse" = "mouse";
 
     // Set up mouse enter leave signals
@@ -233,6 +242,9 @@ export class Signals {
       dm: this.setupMotionMetrics(),
       do: this.setupOrientationMetrics(),
     };
+
+    this.dep = opts.disableEvalPatching || false;
+    this.takeTraceRecords = patchNativeFunctions(opts);
   }
 
   private setupMovementMetrics(): {
@@ -364,7 +376,6 @@ export class Signals {
       return sig;
     }
 
-
     window[x]("devicemotion", (e) => {
       sig.ts = e.timeStamp;
       sig.i = e.interval;
@@ -481,6 +492,7 @@ export class Signals {
       i: ++this.i,
       hl: history.length,
       fe: !!window.frameElement,
+      dep: this.dep,
       wid: widgetId,
       sc: parseInt(sessionCount(false)),
       sid: sessionId(),
@@ -510,7 +522,7 @@ export class Signals {
       tm: this.gtm(),
       bh: this.bh,
       stack: new Error().stack || "",
-      trc: takeTraceRecords(),
+      trc: this.takeTraceRecords(),
     };
 
     return sig;
@@ -521,6 +533,6 @@ export class Signals {
  * Returns the global signals object.
  * @internal
  */
-export function getSignals() {
-  return ssig || (ssig = new Signals());
+export function getSignals(opts: SignalsOptions) {
+  return ssig || (ssig = new Signals(opts));
 }

@@ -43,6 +43,11 @@ export type RootSignalsV1Raw<MetricVectorType = OnlineMetricStateVector> = {
    */
   fe: boolean;
 
+  /**
+   * Whether patching of window.eval is disabled.
+   */
+  dep: boolean;
+
   sid: string;
   sc: number;
 

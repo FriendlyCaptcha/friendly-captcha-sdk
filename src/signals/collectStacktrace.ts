@@ -29,7 +29,7 @@ const isFunc = function (value: unknown): value is Function {
 /**
  * Defensively patch native functions to capture stack traces.
  */
-export const takeRecords = (function () {
+export const patchNativeFunctions = function (opts: { disableEvalPatching?: boolean }) {
   const queue: RootTraceRecord[] = [];
 
   /** Used for deeply patching toString. The Map implementation is necessary */
@@ -93,13 +93,16 @@ export const takeRecords = (function () {
     ["Element." + p + ".shadowRoot", w.Element[p], "shadowRoot"],
     ["Node." + p + ".nodeType", w.Node[p], "nodeType"],
     // Values holding functions
-    ["eval", w, "eval"],
     ["Object.is", w.Object, "is"],
     ["Array." + p + ".slice", w.Array[p], "slice"],
     ["Document." + p + ".querySelectorAll", w.Document[p], "querySelectorAll"],
     ["Document." + p + ".createElement", w.Document[p], "createElement"],
     ["EventTarget." + p + ".dispatchEvent", dispatchEvent, "dispatchEvent"],
   ];
+
+  if (!opts.disableEvalPatching) {
+    patches.push(["eval", w, "eval"]);
+  }
 
   patches.forEach(function ([name, target, prop]) {
     const descriptor = Object.getOwnPropertyDescriptor(target, prop);
@@ -160,4 +163,4 @@ export const takeRecords = (function () {
   });
 
   return takeRecords;
-})();
+};

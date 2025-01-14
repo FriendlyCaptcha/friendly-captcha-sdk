@@ -21,10 +21,11 @@ import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
 import { Signals, getSignals } from "../signals/collect.js";
-import { getSDKAPIEndpoint, resolveAPIEndpoint } from "./endpoint.js";
+import { resolveAPIEndpoint } from "./endpoint.js";
 import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
+import { getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
 
 const agentEndpoint = "/agent";
 const widgetEndpoint = "/widget";
@@ -55,6 +56,12 @@ export interface FriendlyCaptchaSDKOptions {
    * - `global` - `https://global.frcapi.com/api/v2/captcha`
    */
   apiEndpoint?: string | "eu" | "global";
+
+  /**
+   * Whether to disable the patching of `window.eval`. Useful when the patching breaks your site, which in particular
+   * may affect some hot reloading functionality for Webpack (in `dev` mode).
+   */
+  disableEvalPatching?: boolean;
 }
 
 /**
@@ -112,7 +119,7 @@ export class FriendlyCaptchaSDK {
   /**
    * @internal
    */
-  private signals: Signals = getSignals();
+  private signals: Signals;
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
     this.baseURL = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
@@ -128,6 +135,10 @@ export class FriendlyCaptchaSDK {
         "Multiple Friendly Captcha SDKs created, this is not recommended. Please use a single SDK instance.",
       );
     }
+
+    this.signals = getSignals({
+      disableEvalPatching: opts.disableEvalPatching || getSDKDisableEvalPatching(),
+    });
 
     if (opts.startAgent !== false) {
       this.ensureAgentIFrame();
