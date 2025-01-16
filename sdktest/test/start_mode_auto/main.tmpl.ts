@@ -6,7 +6,6 @@
  */
 import { sdktest } from "../../sdktestlib/sdk.js";
 
-
 sdktest.test({ name: "one widget present" }, async (t) => {
   t.require.numberOfWidgets(1);
 });
@@ -17,8 +16,6 @@ sdktest.test({ name: "auto widget completes automatically" }, async (t) => {
   if (w.getState() === "completed") {
     // Already completed
   } else {
-    const completePromise = t.assert.widgetCompletes(w)
-  await completePromise
-  } 
+    await t.assert.widgetCompletes(w);
+  }
 });
-

@@ -16,13 +16,9 @@ sdktest.test({ name: "none widget is not triggered by focus" }, async (t) => {
   const ta: HTMLTextAreaElement = document.querySelector('input[type="textarea"]')!;
   ta.focus();
 
-  // Wait for the widget to be initialized
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
   if (w.getState() === "unactivated") {
     // Already unactivated (init done)
   } else {
-    const unactivatedPromise = t.assert.widgetInits(w);
-    await unactivatedPromise;
+    await t.assert.widgetInits(w);
   }
 });
