@@ -1,3 +1,6 @@
+<!-- Do not execute async to force loading before the site content -->
+<script src="{{ .SiteJSPath }}"></script>
+
 <main>
     <form>
         <input type="textarea" />
@@ -7,5 +10,4 @@
     </form>
 </main>
 
-<script defer src="{{ .SiteJSPath }}"></script>
 <script defer src="main.tmpl.ts"></script>

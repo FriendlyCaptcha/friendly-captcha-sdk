@@ -87,6 +87,16 @@ export class AssertLib {
     });
   }
 
+  async widgetInits(widget: WidgetHandle) {
+    return new Promise<FRCWidgetStateChangeEventData>((resolve) => {
+      widget.addEventListener("frc:widget.statechange", (ev) => {
+        if (ev.detail.state === "unactivated") {
+          resolve(ev.detail);
+        }
+      });
+    });
+  }
+
   async widgetCompletes(widget: WidgetHandle) {
     return new Promise<FRCWidgetCompleteEventData>((resolve) => {
       widget.addEventListener("frc:widget.complete", (ev) => {

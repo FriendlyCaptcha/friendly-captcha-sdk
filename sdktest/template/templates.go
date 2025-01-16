@@ -19,8 +19,7 @@ type TestCaseTemplateData struct {
 	Title string
 	Name  string
 
-	HTMLLang                   string
-	FriendlyCaptchaAPIEndpoint string
+	HTMLLang string
 
 	Head []byte
 	Body []byte

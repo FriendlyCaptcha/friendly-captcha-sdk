@@ -72,8 +72,7 @@ func (r *TestCaseHandler) HandleTestCasePage(res http.ResponseWriter, req *http.
 		Name:  params.Name,
 		Title: fmt.Sprintf("%s | sdktest", params.Name),
 
-		HTMLLang:                   params.Config.Language,
-		FriendlyCaptchaAPIEndpoint: params.Config.APIEndpoint,
+		HTMLLang: params.Config.Language,
 
 		Head: rd.Head,
 		Body: rd.Body,
