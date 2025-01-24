@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.16
+
+* Fixed a bug that sometimes caused widget timeout errors when using the `eu` API endpoint.
+
 ## 0.1.15
 
 * Allowed disabling of the `window.eval` patching using `disableEvalPatching` when creating the SDK.
