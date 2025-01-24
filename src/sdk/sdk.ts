@@ -21,14 +21,13 @@ import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
 import { Signals, getSignals } from "../signals/collect.js";
-import { resolveAPIEndpoint } from "./endpoint.js";
 import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
-import { getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
+import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
 
-const agentEndpoint = "/agent";
-const widgetEndpoint = "/widget";
+const agentEndpoint = "/api/v2/captcha/agent";
+const widgetEndpoint = "/api/v2/captcha/widget";
 
 const FRAME_ID_DATASET_FIELD = "FrcFrameId";
 
@@ -137,8 +136,8 @@ export class FriendlyCaptchaSDK {
     });
 
     if (opts.startAgent) {
-      const e = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
-      this.ensureAgentIFrame(e);
+      const o = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+      this.ensureAgentIFrame(o);
     }
 
     this.setupPeriodicRefresh();
@@ -220,13 +219,12 @@ export class FriendlyCaptchaSDK {
   }
 
   /**
-   * Creates an agent IFrame with the given API url (optional). Returns the Agent ID.
-   * @param apiURL - The API URL to use, defaults to the one passed in the constructor.
-   * @returns
+   * Creates an agent IFrame with the given API endpoint. Returns the Agent ID.
+   * @param origin - Origin of the API endpoint to use.
+   * @returns String - The agent ID.
    */
-  private ensureAgentIFrame(apiURL: string): string {
-    const src = apiURL + agentEndpoint
-    const origin = originOf(src);
+  private ensureAgentIFrame(origin: string): string {
+    const src = origin + agentEndpoint
 
     // We try to be idempotent - see if an iframe already exists for the given origin.
     let agentIFrames = document.getElementsByClassName(AGENT_FRAME_CLASSNAME) as HTMLCollectionOf<HTMLIFrameElement>;
@@ -332,9 +330,9 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const apiURL = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
-    this.bus.addOrigin(originOf(apiURL));
-    const agentId = this.ensureAgentIFrame(apiURL);
+    const origin = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigin(origin);
+    const agentId = this.ensureAgentIFrame(origin);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -369,7 +367,7 @@ export class FriendlyCaptchaSDK {
 
     this.widgets.set(widgetId, widgetHandle);
 
-    const widgetUrl = apiURL + widgetEndpoint;
+    const widgetUrl = origin + widgetEndpoint;
     const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
     const widgetPlaceholder = createWidgetPlaceholder(opts);
     setWidgetRootStyles(opts.element);
