@@ -4,6 +4,24 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import { originOf } from "../util/url.js";
+
+const SHORTHANDS: Record<string, string> = {
+  eu: "https://eu.frcapi.com",
+  global: "https://global.frcapi.com",
+};
+
+export function resolveAPIOrigin(optionValue: string | undefined) {
+  let v = optionValue;
+  if (!v) {
+    // We default to the global endpoint
+    v = SHORTHANDS.global;
+  } else if (SHORTHANDS[v]) {
+    v = SHORTHANDS[v];
+  }
+  return originOf(v);
+}
+
 export function getSDKDisableEvalPatching(): boolean {
   // We check if the meta tag `frc-disable-eval-patching` is present.
   const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-disable-eval-patching"]`);
