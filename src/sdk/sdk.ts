@@ -86,7 +86,6 @@ let sdkC = 0;
  * @public
  */
 export class FriendlyCaptchaSDK {
-  private baseURL: string;
 
   /**
    * Multiple agents may be running at the same time, this is the case if someone uses widgets with different endpoints on a single page.
@@ -122,14 +121,11 @@ export class FriendlyCaptchaSDK {
   private signals: Signals;
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
-    this.baseURL = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
     cbus = cbus || new CommunicationBus();
-
-    cbus.addOrigin(originOf(this.baseURL));
     cbus.listen((msg: EnvelopedMessage<Message>) => this.onReceiveMessage(msg as EnvelopedMessage<ToRootMessage>));
     this.bus = cbus;
-    sdkC++;
 
+    sdkC++;
     if (sdkC > 1) {
       console.warn(
         "Multiple Friendly Captcha SDKs created, this is not recommended. Please use a single SDK instance.",
@@ -140,8 +136,9 @@ export class FriendlyCaptchaSDK {
       disableEvalPatching: opts.disableEvalPatching || getSDKDisableEvalPatching(),
     });
 
-    if (opts.startAgent !== false) {
-      this.ensureAgentIFrame();
+    if (opts.startAgent) {
+      const e = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
+      this.ensureAgentIFrame(e);
     }
 
     this.setupPeriodicRefresh();
@@ -222,27 +219,13 @@ export class FriendlyCaptchaSDK {
     }
   }
 
-  private getAPIUrls(apiURL?: string | { agent: string; widget: string }) {
-    if (apiURL && typeof apiURL != "string") {
-      return {
-        agent: apiURL.agent,
-        widget: apiURL.widget,
-      };
-    }
-    let u = apiURL || this.baseURL;
-    return {
-      agent: u + agentEndpoint,
-      widget: u + widgetEndpoint,
-    };
-  }
-
   /**
    * Creates an agent IFrame with the given API url (optional). Returns the Agent ID.
    * @param apiURL - The API URL to use, defaults to the one passed in the constructor.
    * @returns
    */
-  private ensureAgentIFrame(apiURL?: string | { agent: string; widget: string }): string {
-    const src = this.getAPIUrls(apiURL).agent;
+  private ensureAgentIFrame(apiURL: string): string {
+    const src = apiURL + agentEndpoint
     const origin = originOf(src);
 
     // We try to be idempotent - see if an iframe already exists for the given origin.
@@ -349,7 +332,8 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const apiURL = opts.apiEndpoint && resolveAPIEndpoint(opts.apiEndpoint);
+    const apiURL = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigin(originOf(apiURL));
     const agentId = this.ensureAgentIFrame(apiURL);
     const widgetId = "w_" + randomId(12);
 
@@ -385,7 +369,7 @@ export class FriendlyCaptchaSDK {
 
     this.widgets.set(widgetId, widgetHandle);
 
-    const widgetUrl = this.getAPIUrls(apiURL).widget;
+    const widgetUrl = apiURL + widgetEndpoint;
     const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
     const widgetPlaceholder = createWidgetPlaceholder(opts);
     setWidgetRootStyles(opts.element);
