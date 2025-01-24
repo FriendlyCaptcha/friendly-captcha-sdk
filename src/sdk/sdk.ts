@@ -21,14 +21,13 @@ import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
 import { Signals, getSignals } from "../signals/collect.js";
-import { resolveAPIEndpoint } from "./endpoint.js";
 import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
-import { getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
+import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
 
-const agentEndpoint = "/agent";
-const widgetEndpoint = "/widget";
+const agentEndpoint = "/api/v2/captcha/agent";
+const widgetEndpoint = "/api/v2/captcha/widget";
 
 const FRAME_ID_DATASET_FIELD = "FrcFrameId";
 
@@ -86,7 +85,6 @@ let sdkC = 0;
  * @public
  */
 export class FriendlyCaptchaSDK {
-  private baseURL: string;
 
   /**
    * Multiple agents may be running at the same time, this is the case if someone uses widgets with different endpoints on a single page.
@@ -122,14 +120,11 @@ export class FriendlyCaptchaSDK {
   private signals: Signals;
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
-    this.baseURL = resolveAPIEndpoint(opts.apiEndpoint || getSDKAPIEndpoint());
     cbus = cbus || new CommunicationBus();
-
-    cbus.addOrigin(originOf(this.baseURL));
     cbus.listen((msg: EnvelopedMessage<Message>) => this.onReceiveMessage(msg as EnvelopedMessage<ToRootMessage>));
     this.bus = cbus;
-    sdkC++;
 
+    sdkC++;
     if (sdkC > 1) {
       console.warn(
         "Multiple Friendly Captcha SDKs created, this is not recommended. Please use a single SDK instance.",
@@ -140,8 +135,9 @@ export class FriendlyCaptchaSDK {
       disableEvalPatching: opts.disableEvalPatching || getSDKDisableEvalPatching(),
     });
 
-    if (opts.startAgent !== false) {
-      this.ensureAgentIFrame();
+    if (opts.startAgent) {
+      const o = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+      this.ensureAgentIFrame(o);
     }
 
     this.setupPeriodicRefresh();
@@ -222,28 +218,13 @@ export class FriendlyCaptchaSDK {
     }
   }
 
-  private getAPIUrls(apiURL?: string | { agent: string; widget: string }) {
-    if (apiURL && typeof apiURL != "string") {
-      return {
-        agent: apiURL.agent,
-        widget: apiURL.widget,
-      };
-    }
-    let u = apiURL || this.baseURL;
-    return {
-      agent: u + agentEndpoint,
-      widget: u + widgetEndpoint,
-    };
-  }
-
   /**
-   * Creates an agent IFrame with the given API url (optional). Returns the Agent ID.
-   * @param apiURL - The API URL to use, defaults to the one passed in the constructor.
-   * @returns
+   * Creates an agent IFrame with the given API endpoint. Returns the Agent ID.
+   * @param origin - Origin of the API endpoint to use.
+   * @returns String - The agent ID.
    */
-  private ensureAgentIFrame(apiURL?: string | { agent: string; widget: string }): string {
-    const src = this.getAPIUrls(apiURL).agent;
-    const origin = originOf(src);
+  private ensureAgentIFrame(origin: string): string {
+    const src = origin + agentEndpoint
 
     // We try to be idempotent - see if an iframe already exists for the given origin.
     let agentIFrames = document.getElementsByClassName(AGENT_FRAME_CLASSNAME) as HTMLCollectionOf<HTMLIFrameElement>;
@@ -349,8 +330,9 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const apiURL = opts.apiEndpoint && resolveAPIEndpoint(opts.apiEndpoint);
-    const agentId = this.ensureAgentIFrame(apiURL);
+    const origin = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigin(origin);
+    const agentId = this.ensureAgentIFrame(origin);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -385,7 +367,7 @@ export class FriendlyCaptchaSDK {
 
     this.widgets.set(widgetId, widgetHandle);
 
-    const widgetUrl = this.getAPIUrls(apiURL).widget;
+    const widgetUrl = origin + widgetEndpoint;
     const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
     const widgetPlaceholder = createWidgetPlaceholder(opts);
     setWidgetRootStyles(opts.element);
