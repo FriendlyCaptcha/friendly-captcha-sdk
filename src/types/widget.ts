@@ -56,6 +56,14 @@ export type WidgetMode = "interactive" | "noninteractive";
 export type WidgetResetTrigger = "widget" | "root" | "agent";
 
 /**
+ * Which API endpoint to use for the SDK. Typically "eu" or "global", but a URL can be used to specify a custom endpoint.
+ * Defaults to "global".
+ *
+ * @public
+ */
+export type APIEndpoint = string | "eu" | "global";
+
+/**
  * @internal
  */
 export interface WidgetProgress {
@@ -139,7 +147,7 @@ export interface CreateWidgetOptions {
   /**
    * A custom endpoint from which the agent and widgets are loaded.
    */
-  apiEndpoint?: string | "eu" | "global";
+  apiEndpoint?: APIEndpoint;
 
   /**
    * Language code such as "en" for English or "de" for German.

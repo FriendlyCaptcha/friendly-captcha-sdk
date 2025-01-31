@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.17
+
+* Fixed a regression that broken configuring widget API endpoints in the SDK constructor.
+
 ## 0.1.16
 
 * Fixed a bug that sometimes caused widget timeout errors when using the `eu` API endpoint.
