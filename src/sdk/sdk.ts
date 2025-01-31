@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { StartMode, CreateWidgetOptions } from "../types/widget.js";
+import { StartMode, APIEndpoint, CreateWidgetOptions } from "../types/widget.js";
 import { CommunicationBus } from "../communication/bus.js";
 import { randomId } from "../util/random.js";
 import { originOf } from "../util/url.js";
@@ -54,7 +54,7 @@ export interface FriendlyCaptchaSDKOptions {
    * - `eu` - `https://eu.frcapi.com/api/v2/captcha`
    * - `global` - `https://global.frcapi.com/api/v2/captcha`
    */
-  apiEndpoint?: string | "eu" | "global";
+  apiEndpoint?: APIEndpoint;
 
   /**
    * Whether to disable the patching of `window.eval`. Useful when the patching breaks your site, which in particular
@@ -85,6 +85,7 @@ let sdkC = 0;
  * @public
  */
 export class FriendlyCaptchaSDK {
+  private apiEndpoint?: APIEndpoint;
 
   /**
    * Multiple agents may be running at the same time, this is the case if someone uses widgets with different endpoints on a single page.
@@ -120,6 +121,8 @@ export class FriendlyCaptchaSDK {
   private signals: Signals;
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
+    this.apiEndpoint = opts.apiEndpoint;
+
     cbus = cbus || new CommunicationBus();
     cbus.listen((msg: EnvelopedMessage<Message>) => this.onReceiveMessage(msg as EnvelopedMessage<ToRootMessage>));
     this.bus = cbus;
@@ -136,7 +139,7 @@ export class FriendlyCaptchaSDK {
     });
 
     if (opts.startAgent) {
-      const o = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+      const o = resolveAPIOrigin(this.apiEndpoint || getSDKAPIEndpoint());
       this.ensureAgentIFrame(o);
     }
 
@@ -330,7 +333,7 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const origin = resolveAPIOrigin(opts.apiEndpoint || getSDKAPIEndpoint());
+    const origin = resolveAPIOrigin(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
     this.bus.addOrigin(origin);
     const agentId = this.ensureAgentIFrame(origin);
     const widgetId = "w_" + randomId(12);
