@@ -1,7 +1,7 @@
 {
   "name": "@friendlycaptcha/sdk",
   "version": "0.1.16",
-  "description": "In-browser SDK for Friendly Captcha v2 (currently in preview only)",
+  "description": "In-browser SDK for Friendly Captcha v2",
   "main": "dist/sdk.js",
   "type": "module",
   "private": true,
