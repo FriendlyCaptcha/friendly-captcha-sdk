@@ -4,6 +4,9 @@
 
 ```ts
 
+// @public
+export type APIEndpoint = string | "eu" | "global";
+
 // @internal
 export interface _AutoTrigger extends _TriggerBase {
     tt: "auto";
@@ -11,7 +14,7 @@ export interface _AutoTrigger extends _TriggerBase {
 
 // @public
 export interface CreateWidgetOptions {
-    apiEndpoint?: string | "eu" | "global";
+    apiEndpoint?: APIEndpoint;
     element: HTMLElement;
     formFieldName?: string | null;
     language?: string;
@@ -137,7 +140,7 @@ export class FriendlyCaptchaSDK {
 
 // @public
 export interface FriendlyCaptchaSDKOptions {
-    apiEndpoint?: string | "eu" | "global";
+    apiEndpoint?: APIEndpoint;
     disableEvalPatching?: boolean;
     startAgent?: boolean;
 }
