@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import { runOnDocumentLoaded as ol } from "../sdk/dom";
 import { sessionCount, sessionId } from "../sdk/persist";
 import {
   BehaviorSignal,
@@ -51,17 +52,19 @@ function onOffEventMetric(
   let on = false; // Current state
   let ts: number;
 
-  target[x](onEventName, (ev) => {
-    if (!on || retrigger) {
-      ts = ev.timeStamp;
-      on = true;
-    }
-  });
-  target[x](offEventName, (ev) => {
-    if (on) {
-      m.add(ev.timeStamp - ts);
-      on = false;
-    }
+  ol(() => {
+    target[x](onEventName, (ev) => {
+      if (!on || retrigger) {
+        ts = ev.timeStamp;
+        on = true;
+      }
+    });
+    target[x](offEventName, (ev) => {
+      if (on) {
+        m.add(ev.timeStamp - ts);
+        on = false;
+      }
+    });
   });
 
   return m.s;
@@ -188,9 +191,11 @@ export class Signals {
     };
 
     const d = document;
-    const b = d.body;
-    b[x](($ + "enter") as "mouseenter", updateMouseEnterMouseLeave);
-    b[x](($ + "leave") as "mouseleave", updateMouseEnterMouseLeave);
+    ol(() => {
+      const b = d.body;
+      b[x](($ + "enter") as "mouseenter", updateMouseEnterMouseLeave);
+      b[x](($ + "leave") as "mouseleave", updateMouseEnterMouseLeave);
+    });
 
     this.bh = {
       onoff: {
@@ -326,16 +331,16 @@ export class Signals {
       }
     };
 
-    b[x]("mousemove", (e) => {
+    ol(() => b[x]("mousemove", (e) => {
       this.mm = e;
       if (intervalHandle === undefined) {
         updateFunc();
         intervalHandle = setInterval(updateFunc, interval);
       }
-    });
+    }));
 
     let lastRadius = -1;
-    b[x]("touchmove", (e) => {
+    ol(() => b[x]("touchmove", (e) => {
       this.tm = e;
       const t = e.touches[0];
       if (t) {
@@ -349,7 +354,7 @@ export class Signals {
         updateFunc();
         intervalHandle = setInterval(updateFunc, interval);
       }
-    });
+    }));
 
     return out;
   }
