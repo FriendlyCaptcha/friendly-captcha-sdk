@@ -46,13 +46,14 @@ function onOffEventMetric(
   onEventName: string,
   offEventName: string,
   retrigger: boolean = false,
-  target: HTMLElement | Document = document.body,
+  target?: HTMLElement | Document,
 ): OnlineMetricStateVector {
   const m = buildOnlineMetric();
   let on = false; // Current state
   let ts: number;
 
   ol(() => {
+    target = target || document.body;
     target[x](onEventName, (ev) => {
       if (!on || retrigger) {
         ts = ev.timeStamp;
