@@ -274,7 +274,6 @@ export class Signals {
       ns: 0,
     };
 
-    const b = document.body;
     const updateFunc = () => {
       const lastSample = sample[sample.length - 1];
 
@@ -331,30 +330,33 @@ export class Signals {
       }
     };
 
-    ol(() => b[x]("mousemove", (e) => {
-      this.mm = e;
-      if (intervalHandle === undefined) {
-        updateFunc();
-        intervalHandle = setInterval(updateFunc, interval);
-      }
-    }));
-
     let lastRadius = -1;
-    ol(() => b[x]("touchmove", (e) => {
-      this.tm = e;
-      const t = e.touches[0];
-      if (t) {
-        const newRadius = t.radiusX + t.radiusY * 1.234; // Poor man's hash
-        if (newRadius !== lastRadius) {
-          lastRadius = newRadius;
-          this.rn++;
+    ol(() => {
+      const b = document.body;
+      b[x]("mousemove", (e) => {
+        this.mm = e;
+        if (intervalHandle === undefined) {
+          updateFunc();
+          intervalHandle = setInterval(updateFunc, interval);
         }
-      }
-      if (intervalHandle === undefined) {
-        updateFunc();
-        intervalHandle = setInterval(updateFunc, interval);
-      }
-    }));
+      });
+
+      b[x]("touchmove", (e) => {
+        this.tm = e;
+        const t = e.touches[0];
+        if (t) {
+          const newRadius = t.radiusX + t.radiusY * 1.234; // Poor man's hash
+          if (newRadius !== lastRadius) {
+            lastRadius = newRadius;
+            this.rn++;
+          }
+        }
+        if (intervalHandle === undefined) {
+          updateFunc();
+          intervalHandle = setInterval(updateFunc, interval);
+        }
+      });
+    });
 
     return out;
   }
