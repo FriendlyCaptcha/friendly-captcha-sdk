@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.18
+
+* Defer initialization of `document.body` event listeners until DOM is ready.
+
 ## 0.1.17
 
 * Fixed a regression that broken configuring widget API endpoints in the SDK constructor.
