@@ -383,8 +383,8 @@ export class FriendlyCaptchaSDK {
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, retryLoadCounter * 2500 + 2000).then((status) => {
         if (status === "timeout") {
-          if (retryLoadCounter > 4) {
-            console.error("[Friendly Captcha] Failed to load widget iframe after 4 retries.");
+          if (retryLoadCounter > 15) {
+            console.error("[Friendly Captcha] Failed to load widget iframe after 15 retries.");
             widgetHandle.setState({
               state: "error",
               response: ".ERROR",
