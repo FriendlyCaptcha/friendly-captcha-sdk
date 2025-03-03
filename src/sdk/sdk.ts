@@ -248,10 +248,10 @@ export class FriendlyCaptchaSDK {
     let retryLoadCounter = 1;
     const registerWithRetry = () => {
       // We multiply the timeout with the retry timeout, so that we don't retry too often.
-      this.bus.registerTargetIFrame("agent", agentId, el, retryLoadCounter * 3000).then((status) => {
+      this.bus.registerTargetIFrame("agent", agentId, el, this.getRetryTimeout(retryLoadCounter)).then((status) => {
         if (status === "timeout") {
-          if (retryLoadCounter > 15) {
-            console.error("[Friendly Captcha] Failed to load agent iframe after 15 retries.");
+          if (retryLoadCounter > 4) {
+            console.error("[Friendly Captcha] Failed to load agent iframe after 5 retries.");
             el.remove();
             this.agents.delete(origin);
             // We can consider reloading all widgets that use this agent ID.
@@ -285,7 +285,14 @@ export class FriendlyCaptchaSDK {
       });
     }, IFRAME_EXP_TIME);
   }
-
+  
+  /**
+   * @internal
+   */
+  private getRetryTimeout(retryLoadCounter: number) {
+    return Math.pow(retryLoadCounter, 1.8) * 1000 + 2000;
+  }
+  
   /**
    * Attaches a widget to given element or elements if they are not attached to yet.
    *
@@ -381,10 +388,10 @@ export class FriendlyCaptchaSDK {
 
     let retryLoadCounter = 1;
     const registerWithRetry = () => {
-      this.bus.registerTargetIFrame("widget", widgetId, wel, retryLoadCounter * 2500 + 2000).then((status) => {
+      this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(retryLoadCounter)).then((status) => {
         if (status === "timeout") {
-          if (retryLoadCounter > 15) {
-            console.error("[Friendly Captcha] Failed to load widget iframe after 15 retries.");
+          if (retryLoadCounter > 4) {
+            console.error("[Friendly Captcha] Failed to load widget iframe after 5 retries.");
             widgetHandle.setState({
               state: "error",
               response: ".ERROR",
