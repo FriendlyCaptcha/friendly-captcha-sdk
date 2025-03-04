@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.19
+
+* Make agent and widget iframe retry timeouts exponential
+
 ## 0.1.18
 
 * Defer initialization of `document.body` event listeners until DOM is ready.
