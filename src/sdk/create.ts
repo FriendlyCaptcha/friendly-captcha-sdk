@@ -86,6 +86,7 @@ export function createWidgetIFrame(
 
   el.src = widgetUrl + "?" + encodeQuery(frameData);
   el.className = WIDGET_FRAME_CLASSNAME;
+  el.title = getLocalizedWidgetTitle(language);
   el.dataset[FRAME_ID_DATASET_FIELD] = widgetId;
   const s = el.style;
   s.border = s.visibility = "0";
@@ -97,6 +98,29 @@ export function createWidgetIFrame(
   // Note: we must use `appendChild` instead of `append` for IE11.
   opts.element.appendChild(el);
   return el;
+}
+
+const WIDGET_TITLE_LOCALIZATIONS: Record<string, string> = {
+  cs: "Ověření proti botům",
+  da: "Anti-robot verificering",
+  nl: "Anti-robotverificatie",
+  en: "Anti-Robot verification",
+  fr: "Vérification Anti-Robot",
+  de: "Anti-Roboter-Verifizierung",
+  hu: "Anti-Robot ellenőrzés",
+  it: "Verifica anti-robot",
+  pl: "Weryfikacja antybotowa",
+  pt: "Verificação Anti-Robô",
+  ru: "Проверка на Анти-Робота",
+  es: "Verificación anti-robot",
+  sv: "Anti-Robot Verifiering",
+  tr: "Anti-Robot doğrulaması",
+}
+
+function getLocalizedWidgetTitle(lang: string): string {
+  lang = lang.toLowerCase().split("-")[0].split("_")[0];
+  const name = WIDGET_TITLE_LOCALIZATIONS[lang] || WIDGET_TITLE_LOCALIZATIONS["en"];
+  return name + " - Widget";
 }
 
 /**
