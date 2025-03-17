@@ -1,5 +1,9 @@
 # changelog
 
+## Unreleased 
+
+* Limits the size of an internal queue to prevent a memory leak which became an issue when calling certain functions on every frame or browser event.
+
 ## 0.1.19
 
 * Make agent and widget iframe retry timeouts exponential
