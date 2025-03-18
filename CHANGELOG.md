@@ -1,8 +1,10 @@
 # changelog
 
+
 ## 0.1.20
 
 * Add a `title` attribute to the widget iframe for accessibility.
+* Limits the size of an internal queue to prevent a memory leak which became an issue when calling certain functions on every frame or browser event.
 
 ## 0.1.19
 

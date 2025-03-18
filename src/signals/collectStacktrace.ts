@@ -127,6 +127,11 @@ export const patchNativeFunctions = function (opts: { disableEvalPatching?: bool
         n: name,
         st: getStackSafely(),
       };
+
+      if (queue.length > 20_000) { 
+        queue.splice(0, 1_000);
+      }
+
       queue.push(record);
 
       /**!
