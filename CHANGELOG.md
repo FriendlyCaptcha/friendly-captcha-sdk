@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.20
+
+* Add a `title` attribute to the widget iframe for accessibility.
+
 ## 0.1.19
 
 * Make agent and widget iframe retry timeouts exponential
