@@ -67,6 +67,13 @@ async function main() {
         if (line.startsWith("|")) {
           line = line.replace(/\\\|/g, "&#124;");
         }
+
+        // api-documenter escapes markdown links, so we need to unescape them
+        // to display them correctly in docusaurus.
+        if (line.match(/\\\[(.*?)\\\]\((.*?)\)/)) {
+          line = line.replace(/\\\[(.*?)\\\]\((.*?)\)/, "[$1]($2)");
+        }
+
         if (!skip) {
           output.push(line);
         }
