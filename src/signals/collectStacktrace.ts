@@ -120,19 +120,29 @@ export const patchNativeFunctions = function (opts: { disableEvalPatching?: bool
       }
     }
 
+    let l = 0, c = 0;
     const newAccessor = function fcPatch(this: unknown, ...args: unknown[]) {
-      const record: RootTraceRecord = {
-        d: Date.now(),
-        pnow: windowPerformanceNow(),
-        n: name,
-        st: getStackSafely(),
-      };
-
-      if (queue.length > 20_000) { 
-        queue.splice(0, 1_000);
+      const now = Date.now();
+      if (now - l >= 1_000) {
+        c = 0;
+        l = now;
       }
 
-      queue.push(record);
+      if (c < 50) {
+        const record: RootTraceRecord = {
+          d: now,
+          pnow: windowPerformanceNow(),
+          n: name,
+          st: getStackSafely(),
+        };
+
+        if (queue.length > 20_000) { 
+          queue.splice(0, 1_000);
+        }
+
+        queue.push(record);
+        c++;
+      }
 
       /**!
        * ----------------------
