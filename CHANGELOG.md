@@ -1,5 +1,8 @@
 # changelog
 
+## 0.1.21
+
+* Improve performance by throttling stack trace generation.
 
 ## 0.1.20
 
