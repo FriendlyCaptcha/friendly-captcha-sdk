@@ -289,7 +289,8 @@ export class FriendlyCaptchaSDK {
    * @internal
    */
   private getRetryTimeout(retryLoadCounter: number) {
-    return Math.pow(retryLoadCounter, 1.8) * 1000 + 2000;
+    // 1st timeout = 5 secs, 5th timeout = 29 secs, sum of all timeouts = 75 secs
+    return Math.pow(retryLoadCounter, 2) * 1000 + 4000;
   }
 
   /**

@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.22
+
+* Increase agent and widget timeouts
+
 ## 0.1.21
 
 * Improve performance by throttling stack trace generation.
