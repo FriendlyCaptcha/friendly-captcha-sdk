@@ -115,7 +115,7 @@ const WIDGET_TITLE_LOCALIZATIONS: Record<string, string> = {
   es: "Verificación anti-robot",
   sv: "Anti-Robot Verifiering",
   tr: "Anti-Robot doğrulaması",
-}
+};
 
 function getLocalizedWidgetTitle(lang: string): string {
   lang = lang.toLowerCase().split("-")[0].split("_")[0];
@@ -181,7 +181,17 @@ export function createBanner(opts: CreateWidgetOptions) {
   const s = a.style;
   setCommonTextStyles(s);
   s.fontSize = "10px";
-  s.color = "#777";
+
+  const isDark =
+    opts.theme === "dark" ||
+    (opts.theme === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  if (isDark) {
+    s.color = "#a2a2a2";
+  } else {
+    s.color = "#565656";
+  }
+
   s.letterSpacing = "-0.0125rem";
   a.target = "_blank";
   a.textContent = "Friendly Captcha";
