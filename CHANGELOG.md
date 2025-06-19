@@ -1,8 +1,12 @@
 # changelog
 
+## 0.1.23
+
+* Increase banner text contrast ratio.
+
 ## 0.1.22
 
-* Increase agent and widget timeouts
+* Increase agent and widget timeouts.
 
 ## 0.1.21
 
