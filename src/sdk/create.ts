@@ -117,7 +117,7 @@ const WIDGET_TITLE_LOCALIZATIONS: Record<string, string> = {
   tr: "Anti-Robot doğrulaması",
 };
 
-function getLocalizedWidgetTitle(lang: string): string {
+export function getLocalizedWidgetTitle(lang: string): string {
   lang = lang.toLowerCase().split("-")[0].split("_")[0];
   const name = WIDGET_TITLE_LOCALIZATIONS[lang] || WIDGET_TITLE_LOCALIZATIONS["en"];
   return name + " - Widget";
