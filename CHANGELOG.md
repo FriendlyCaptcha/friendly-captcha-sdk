@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.24
+
+* Localize iframe title when the widget language changes.
+
 ## 0.1.23
 
 * Increase banner text contrast ratio.
