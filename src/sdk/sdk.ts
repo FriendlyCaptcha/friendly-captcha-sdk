@@ -14,8 +14,16 @@ import {
   createWidgetIFrame,
   AGENT_FRAME_CLASSNAME,
   createWidgetPlaceholder,
+  getLocalizedWidgetTitle,
 } from "./create.js";
-import { EnvelopedMessage, Message, RootSignalsGetMessage, ToAgentMessage, ToRootMessage } from "../types/messages.js";
+import {
+  EnvelopedMessage,
+  Message,
+  RootSignalsGetMessage,
+  ToAgentMessage,
+  ToRootMessage,
+  WidgetLanguageChangeMessage,
+} from "../types/messages.js";
 import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
@@ -160,6 +168,8 @@ export class FriendlyCaptchaSDK {
       this.handleStoreMessage(msg);
     } else if (msg.type === "root_signals_get") {
       this.handleSignalsGetMessage(msg);
+    } else if (msg.type === "widget_language_change") {
+      this.handleWidgetLanguageChange(msg);
     } else if (msg.type === "widget_reset") {
       // The user clicked the reset button within the widget.
 
@@ -171,6 +181,23 @@ export class FriendlyCaptchaSDK {
         return;
       }
       w.reset({ trigger: "widget" });
+    }
+  }
+
+  private handleWidgetLanguageChange(msg: EnvelopedMessage<WidgetLanguageChangeMessage>) {
+    const w = this.widgets.get(msg.from_id);
+    if (!w) {
+      if (sdkC === 1) {
+        console.warn(`Received language change message for widget ${msg.from_id} that doesn't exist`);
+      }
+      return;
+    }
+
+    const element = w.getElement();
+    const iframe = element.querySelector("iframe") as HTMLIFrameElement;
+
+    if (iframe) {
+      iframe.title = getLocalizedWidgetTitle(msg.language);
     }
   }
 
@@ -227,7 +254,7 @@ export class FriendlyCaptchaSDK {
    * @returns String - The agent ID.
    */
   private ensureAgentIFrame(origin: string): string {
-    const src = origin + agentEndpoint
+    const src = origin + agentEndpoint;
 
     // We try to be idempotent - see if an iframe already exists for the given origin.
     let agentIFrames = document.getElementsByClassName(AGENT_FRAME_CLASSNAME) as HTMLCollectionOf<HTMLIFrameElement>;
@@ -284,7 +311,7 @@ export class FriendlyCaptchaSDK {
       });
     }, IFRAME_EXP_TIME);
   }
-  
+
   /**
    * @internal
    */

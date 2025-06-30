@@ -26,6 +26,7 @@ export type ToWidgetMessage = WidgetSetStateMessage | AgentInfoMessage;
 export type ToRootMessage =
   | AgentAnnounceMessage
   | WidgetResetMessage
+  | WidgetLanguageChangeMessage
   | RootSetResponseMessage
   | RootStoreSetMessage
   | RootStoreGetMessage
@@ -52,6 +53,14 @@ export type EnvelopedMessage<M extends Message> = {
 export interface WidgetResetMessage {
   type: "widget_reset";
   state: WidgetState;
+}
+
+/**
+ * This message is sent when user changes the widget language.
+ */
+export interface WidgetLanguageChangeMessage {
+  type: "widget_language_change";
+  language: string;
 }
 
 // Messages from widget to the agent
