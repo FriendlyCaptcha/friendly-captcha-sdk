@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.25
+
+* Correctly position the banner for right-to-left languages.
+
 ## 0.1.24
 
 * Localize iframe title when the widget language changes.
