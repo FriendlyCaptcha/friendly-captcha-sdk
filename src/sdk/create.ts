@@ -57,10 +57,7 @@ export function createWidgetIFrame(
 ): HTMLIFrameElement {
   const el = document.createElement("iframe");
 
-  let language = opts.language;
-  if (!language || language === "html") {
-    language = findFirstParentLangAttribute(opts.element) || "";
-  }
+  const language = getLanguageFromOptionsOrParent(opts);
 
   const frameData: FrameParams = {
     origin: document.location.origin,
@@ -117,10 +114,22 @@ const WIDGET_TITLE_LOCALIZATIONS: Record<string, string> = {
   tr: "Anti-Robot doğrulaması",
 };
 
+// Languages that require a right-to-left layout.
+const RTL_LANGUAGES = ["ar", "he", "fa", "ur", "ps", "sd", "yi"];
+
+function getLanguageCode(lang: string): string {
+  return lang.toLowerCase().split("-")[0].split("_")[0];
+}
+
 export function getLocalizedWidgetTitle(lang: string): string {
-  lang = lang.toLowerCase().split("-")[0].split("_")[0];
+  lang = getLanguageCode(lang);
   const name = WIDGET_TITLE_LOCALIZATIONS[lang] || WIDGET_TITLE_LOCALIZATIONS["en"];
   return name + " - Widget";
+}
+
+export function isRTLLanguage(lang: string): boolean {
+  lang = getLanguageCode(lang);
+  return RTL_LANGUAGES.includes(lang);
 }
 
 /**
@@ -168,10 +177,16 @@ export function createBanner(opts: CreateWidgetOptions) {
   const el = document.createElement("div");
   el.classList.add("frc-banner");
 
+  const language = getLanguageFromOptionsOrParent(opts);
+
   const els = el.style;
   els.position = "absolute";
   els.bottom = "2px";
-  els.right = "6px";
+  if (isRTLLanguage(language)) {
+    els.left = "6px";
+  } else {
+    els.right = "6px";
+  }
   els.lineHeight = "1";
 
   const a = document.createElement("a");
@@ -204,4 +219,12 @@ export function createBanner(opts: CreateWidgetOptions) {
   el.appendChild(a);
 
   opts.element.appendChild(el);
+}
+
+function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
+  let language = opts.language;
+  if (!language || language === "html") {
+    language = findFirstParentLangAttribute(opts.element) || "";
+  }
+  return language;
 }
