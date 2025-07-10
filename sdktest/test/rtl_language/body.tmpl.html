@@ -1,0 +1,20 @@
+<main>
+    <form>
+        <input type="textarea" />
+        <div class="programmatic-mount"></div>
+
+        Widget in right-to-left HTML language (Arabic)
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-lang="ar"></div>
+
+        Widget with explicitly specified right-to-left language ("ar")
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-lang="ar"></div>
+
+        Widget with explicitly specified left-to-right language ("en")
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-lang="en"></div>
+
+    </form>
+</main>
+
+<script defer src=" {{ .SiteJSPath }}">
+</script>
+<script defer src="main.tmpl.ts"></script>

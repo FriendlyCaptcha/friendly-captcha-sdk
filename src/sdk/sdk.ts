@@ -15,6 +15,7 @@ import {
   AGENT_FRAME_CLASSNAME,
   createWidgetPlaceholder,
   getLocalizedWidgetTitle,
+  isRTLLanguage,
 } from "./create.js";
 import {
   EnvelopedMessage,
@@ -198,6 +199,18 @@ export class FriendlyCaptchaSDK {
 
     if (iframe) {
       iframe.title = getLocalizedWidgetTitle(msg.language);
+    }
+
+    const banner = element.querySelector(".frc-banner") as HTMLElement;
+    if (banner) {
+      const bs = banner.style;
+      if (isRTLLanguage(msg.language)) {
+        bs.left = "6px";
+        bs.right = "auto";
+      } else {
+        bs.left = "auto";
+        bs.right = "6px";
+      }
     }
   }
 
