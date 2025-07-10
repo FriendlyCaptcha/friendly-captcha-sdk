@@ -129,7 +129,7 @@ export function getLocalizedWidgetTitle(lang: string): string {
 
 export function isRTLLanguage(lang: string): boolean {
   lang = getLanguageCode(lang);
-  return RTL_LANGUAGES.includes(lang);
+  return RTL_LANGUAGES.indexOf(lang) !== -1;
 }
 
 /**

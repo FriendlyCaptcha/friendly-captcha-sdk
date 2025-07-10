@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.26
+
+* Fix a bug that caused the SDK to fail to load on some older browsers.
+
 ## 0.1.25
 
 * Correctly position the banner for right-to-left languages.
