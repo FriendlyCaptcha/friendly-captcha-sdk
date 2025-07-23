@@ -443,7 +443,7 @@ export class FriendlyCaptchaSDK {
             widgetPlaceholderStyle.fontSize = "12px";
             widgetPlaceholder.innerHTML = [
               'Anti-Robot check failed to connect.<br>',
-              `Step 1: Try the <a href="${originOf(wel.src)}/test" target="_blank" rel="noopener">Test Page</a>.<br>`,
+              `Step 1: Try the <a href="${originOf(wel.src)}/test" target="_blank" rel="noopener">Connection Test</a> page.<br>`,
               `Step 2: Please fill <a href="${tallyUrl}" target="_blank" rel="noopener">this form</a>.`
             ].join('');
             return;
