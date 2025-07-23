@@ -426,6 +426,8 @@ export class FriendlyCaptchaSDK {
     const widgetPlaceholderStyle = widgetPlaceholder.style;
     widgetPlaceholder.textContent = "Anti-Robot check connecting...";
 
+    const tallyUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(window.location.hostname)}`;
+
     let retryLoadCounter = 1;
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(retryLoadCounter)).then((status) => {
@@ -439,9 +441,11 @@ export class FriendlyCaptchaSDK {
             });
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
-            widgetPlaceholder.textContent = `Anti-Robot check failed to connect to page or ${originOf(
-              wel.src,
-            )}\nCheck your connection and try again.`;
+            widgetPlaceholder.innerHTML = [
+              'Anti-Robot check failed to connect.<br>',
+              `Step 1: Try the <a href="${originOf(wel.src)}/test" target="_blank" rel="noopener">Test Page</a>.<br>`,
+              `Step 2: Please fill <a href="${tallyUrl}" target="_blank" rel="noopener">this form</a>.`
+            ].join('');
             return;
           }
           widgetPlaceholderStyle.backgroundColor = "#fee";
