@@ -229,7 +229,9 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
   return language;
 }
 
-export function createFallback(widgetPlaceholder: HTMLElement, origin: string, tallyUrl: string) {
+export function createFallback(widgetPlaceholder: HTMLElement, origin: string, hostname: string) {
+  const tallyUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(hostname)}`;
+
   widgetPlaceholder.textContent = '';
 
   const checkFailed = document.createElement('span');

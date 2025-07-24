@@ -427,8 +427,6 @@ export class FriendlyCaptchaSDK {
     const widgetPlaceholderStyle = widgetPlaceholder.style;
     widgetPlaceholder.textContent = "Anti-Robot check connecting...";
 
-    const tallyUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(window.location.hostname)}`;
-
     let retryLoadCounter = 1;
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(retryLoadCounter)).then((status) => {
@@ -442,7 +440,7 @@ export class FriendlyCaptchaSDK {
             });
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
-            createFallback(widgetPlaceholder, originOf(wel.src), tallyUrl);
+            createFallback(widgetPlaceholder, originOf(wel.src), window.location.hostname);
             return;
           }
           widgetPlaceholderStyle.backgroundColor = "#fee";
