@@ -11,6 +11,7 @@ import { originOf } from "../util/url.js";
 import {
   createBanner,
   createAgentIFrame,
+  createFallback,
   createWidgetIFrame,
   AGENT_FRAME_CLASSNAME,
   createWidgetPlaceholder,
@@ -441,11 +442,7 @@ export class FriendlyCaptchaSDK {
             });
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
-            widgetPlaceholder.innerHTML = [
-              'Anti-Robot check failed to connect.<br>',
-              `Step 1: Try the <a href="${originOf(wel.src)}/connectionTest" target="_blank" rel="noopener">Connection Test</a> page.<br>`,
-              `Step 2: Please fill <a href="${tallyUrl}" target="_blank" rel="noopener">this form</a>.`
-            ].join('');
+            createFallback(widgetPlaceholder, originOf(wel.src), tallyUrl);
             return;
           }
           widgetPlaceholderStyle.backgroundColor = "#fee";
