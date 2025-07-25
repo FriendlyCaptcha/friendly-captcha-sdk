@@ -232,8 +232,8 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 /**
  * Replaces the given element with a fallback message after all retries failed.
  */
-export function createFallback(element: HTMLElement, origin: string, hostname: string) {
-  const formUrl = `https://formUrl.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(hostname)}`;
+export function createFallback(element: HTMLElement, apiOrigin: string, siteHostname: string) {
+  const formUrl = `https://formUrl.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
 
   const createText = (tag: string, text: string) => {
     const el = document.createElement(tag);
@@ -261,7 +261,7 @@ export function createFallback(element: HTMLElement, origin: string, hostname: s
     createText('span', 'Anti-Robot check failed to connect.'),
     document.createElement('br'),
     createText('span', 'Step 1: Try the '),
-    createLink(`${origin}/connectionTest`, 'Connection Test'),
+    createLink(`${apiOrigin}/connectionTest`, 'Connection Test'),
     createText('span', '.'),
     document.createElement('br'),
     createText('span', 'Step 2: Please fill '),
