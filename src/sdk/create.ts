@@ -232,8 +232,8 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 /**
  * Replaces the given element with a fallback message after all retries failed.
  */
-export function createFallback(element: HTMLElement, apiOrigin: string, siteHostname: string) {
-  const formUrl = `https://formUrl.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
+export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: string) {
+  const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
 
   const createText = (tag: string, text: string) => {
     const el = document.createElement(tag);
@@ -243,21 +243,21 @@ export function createFallback(element: HTMLElement, apiOrigin: string, siteHost
   };
 
   const createLink = (href: string, text: string) => {
-    const link = document.createElement('a');
-    link.href = href;
-    link.target = '_blank';
-    link.rel = 'noopener';
-    link.textContent = text;
-    const style = link.style;
+    const l = document.createElement('a');
+    l.href = href;
+    l.target = '_blank';
+    l.rel = 'noopener';
+    l.textContent = text;
+    const style = l.style;
     setCommonTextStyles(style);
     style.textDecoration = 'underline';
     style.color = '#565656';
-    link.onmouseenter = () => (style.textDecoration = 'none');
-    link.onmouseleave = () => (style.textDecoration = 'underline');
-    return link;
+    l.onmouseenter = () => (style.textDecoration = 'none');
+    l.onmouseleave = () => (style.textDecoration = 'underline');
+    return l;
   };
 
-  const elements = [
+  const els = [
     createText('span', 'Anti-Robot check failed to connect.'),
     document.createElement('br'),
     createText('span', 'Step 1: Try the '),
@@ -269,6 +269,6 @@ export function createFallback(element: HTMLElement, apiOrigin: string, siteHost
     createText('span', '.')
   ];
 
-  element.textContent = '';
-  elements.forEach(el => element.appendChild(el));
+  e.textContent = '';
+  els.forEach(el => e.appendChild(el));
 }
