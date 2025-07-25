@@ -235,8 +235,8 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: string) {
   const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
 
-  const createText = (tag: string, text: string) => {
-    const el = document.createElement(tag);
+  const createText = (text: string) => {
+    const el = document.createElement(span);
     el.textContent = text;
     setCommonTextStyles(el.style);
     return el;
@@ -258,15 +258,15 @@ export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: 
   };
 
   const els = [
-    createText('span', 'Anti-Robot check failed to connect.'),
+    createText('Anti-Robot check failed to connect.'),
     document.createElement('br'),
-    createText('span', 'Step 1: Try the '),
+    createText('Step 1: Try the '),
     createLink(`${apiOrigin}/connectionTest`, 'Connection Test'),
-    createText('span', '.'),
+    createText('.'),
     document.createElement('br'),
-    createText('span', 'Step 2: Please fill '),
+    createText('Step 2: Please fill '),
     createLink(formUrl, 'this form'),
-    createText('span', '.')
+    createText('.')
   ];
 
   e.textContent = '';
