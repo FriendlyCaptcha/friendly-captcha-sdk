@@ -229,69 +229,43 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
   return language;
 }
 
-export function createFallback(widgetPlaceholder: HTMLElement, origin: string, hostname: string) {
-  const tallyUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(hostname)}`;
+export function createFallback(element: HTMLElement, origin: string, hostname: string) {
+  const formUrl = `https://formUrl.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(hostname)}`;
 
-  widgetPlaceholder.textContent = '';
+  const createText = (tag: string, text: string) => {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    setCommonTextStyles(el.style);
+    return el;
+  };
 
-  const checkFailed = document.createElement('span');
-  checkFailed.textContent = 'Anti-Robot check failed to connect.';
-  setCommonTextStyles(checkFailed.style);
-  widgetPlaceholder.appendChild(checkFailed);
-  widgetPlaceholder.appendChild(document.createElement('br'));
+  const createLink = (href: string, text: string) => {
+    const link = document.createElement('a');
+    link.href = href;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = text;
+    const style = link.style;
+    setCommonTextStyles(style);
+    style.textDecoration = 'underline';
+    style.color = '#565656';
+    link.onmouseenter = () => (style.textDecoration = 'none');
+    link.onmouseleave = () => (style.textDecoration = 'underline');
+    return link;
+  };
 
-  // Step 1
-  const step1Prefix = document.createElement('span');
-  step1Prefix.textContent = 'Step 1: Try the ';
-  setCommonTextStyles(step1Prefix.style);
-  widgetPlaceholder.appendChild(step1Prefix);
+  const elements = [
+    createText('span', 'Anti-Robot check failed to connect.'),
+    document.createElement('br'),
+    createText('span', 'Step 1: Try the '),
+    createLink(`${origin}/connectionTest`, 'Connection Test'),
+    createText('span', '.'),
+    document.createElement('br'),
+    createText('span', 'Step 2: Please fill '),
+    createLink(formUrl, 'this form'),
+    createText('span', '.')
+  ];
 
-  const connTestLink = document.createElement('a');
-  connTestLink.href = `${origin}/connectionTest`;
-  connTestLink.target = '_blank';
-  connTestLink.rel = 'noopener';
-  connTestLink.textContent = 'Connection Test';
-
-  const connTestLinkStyle = connTestLink.style;
-  setCommonTextStyles(connTestLinkStyle);
-  connTestLinkStyle.textDecoration = 'underline';
-  connTestLinkStyle.color = '#565656';
-
-  widgetPlaceholder.appendChild(connTestLink);
-
-  const step1Suffix = document.createElement('span');
-  step1Suffix.textContent = ' page.';
-  setCommonTextStyles(step1Suffix.style);
-  widgetPlaceholder.appendChild(step1Suffix);
-  widgetPlaceholder.appendChild(document.createElement('br'));
-
-  // Step 2
-  const step2Prefix = document.createElement('span');
-  step2Prefix.textContent = 'Step 2: Please fill ';
-  setCommonTextStyles(step2Prefix.style);
-  widgetPlaceholder.appendChild(step2Prefix);
-
-  const tallyLink = document.createElement('a');
-  tallyLink.href = tallyUrl;
-  tallyLink.target = '_blank';
-  tallyLink.rel = 'noopener';
-  tallyLink.textContent = 'this form';
-
-  const tallyLinkStyle = tallyLink.style;
-  setCommonTextStyles(tallyLinkStyle);
-  tallyLinkStyle.textDecoration = 'underline';
-  tallyLinkStyle.color = '#565656';
-
-  widgetPlaceholder.appendChild(tallyLink);
-
-  const step2Suffix = document.createElement('span');
-  step2Suffix.textContent = '.';
-  setCommonTextStyles(step2Suffix.style);
-  widgetPlaceholder.appendChild(step2Suffix);
-
-  // A poor man's hover, we can't use the :hover pseudoclass with inline css.
-  [connTestLink, tallyLink].forEach(link => {
-    link.onmouseenter = () => (link.style.textDecoration = 'none');
-    link.onmouseleave = () => (link.style.textDecoration = 'underline');
-  });
+  element.textContent = '';
+  elements.forEach(el => element.appendChild(el));
 }
