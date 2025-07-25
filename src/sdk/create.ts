@@ -236,7 +236,7 @@ export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: 
   const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
 
   const createText = (text: string) => {
-    const el = document.createElement(span);
+    const el = document.createElement('span');
     el.textContent = text;
     setCommonTextStyles(el.style);
     return el;
