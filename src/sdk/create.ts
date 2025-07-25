@@ -228,3 +228,47 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
   }
   return language;
 }
+
+/**
+ * Replaces element with a fallback message (ie, after all retries failed).
+ */
+export function createFallback(el: HTMLElement, apiOrigin: string, siteHostname: string) {
+  const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
+
+  const text = (text: string) => {
+    const s = document.createElement('span');
+    s.textContent = text;
+    setCommonTextStyles(s.style);
+    return s;
+  };
+
+  const link = (href: string, text: string) => {
+    const l = document.createElement('a');
+    l.href = href;
+    l.target = '_blank';
+    l.rel = 'noopener';
+    l.textContent = text;
+    const style = l.style;
+    setCommonTextStyles(style);
+    style.textDecoration = 'underline';
+    style.color = '#565656';
+    l.onmouseenter = () => (style.textDecoration = 'none');
+    l.onmouseleave = () => (style.textDecoration = 'underline');
+    return l;
+  };
+
+  const els = [
+    text('Anti-Robot check failed to connect.'),
+    document.createElement('br'),
+    text('Step 1: Try the '),
+    link(`${apiOrigin}/connectionTest`, 'Connection Test'),
+    text('.'),
+    document.createElement('br'),
+    text('Step 2: Please fill '),
+    link(formUrl, 'this form'),
+    text('.')
+  ];
+
+  el.textContent = '';
+  els.forEach(e => el.appendChild(e));
+}

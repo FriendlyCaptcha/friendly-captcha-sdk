@@ -1,5 +1,10 @@
 # changelog
 
+## 0.1.27
+
+* Add fallback message after all retries failed.
+* Decrease agent and widget timeouts.
+
 ## 0.1.26
 
 * Fix a bug that caused the SDK to fail to load on some older browsers.

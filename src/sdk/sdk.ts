@@ -11,6 +11,7 @@ import { originOf } from "../util/url.js";
 import {
   createBanner,
   createAgentIFrame,
+  createFallback,
   createWidgetIFrame,
   AGENT_FRAME_CLASSNAME,
   createWidgetPlaceholder,
@@ -329,8 +330,8 @@ export class FriendlyCaptchaSDK {
    * @internal
    */
   private getRetryTimeout(retryLoadCounter: number) {
-    // 1st timeout = 5 secs, 5th timeout = 29 secs, sum of all timeouts = 75 secs
-    return Math.pow(retryLoadCounter, 2) * 1000 + 4000;
+    // 1st timeout = 3 secs, 5th timeout = 19.4 secs, sum of all timeouts = 52 secs
+    return Math.pow(retryLoadCounter, 1.8) * 1000 + 2000;
   }
 
   /**
@@ -439,9 +440,7 @@ export class FriendlyCaptchaSDK {
             });
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
-            widgetPlaceholder.textContent = `Anti-Robot check failed to connect to page or ${originOf(
-              wel.src,
-            )}\nCheck your connection and try again.`;
+            createFallback(widgetPlaceholder, originOf(wel.src), window.location.hostname);
             return;
           }
           widgetPlaceholderStyle.backgroundColor = "#fee";
