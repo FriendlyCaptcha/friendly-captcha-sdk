@@ -232,14 +232,14 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 /**
  * Replaces the given element with a fallback message after all retries failed.
  */
-export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: string) {
+export function createFallback(el: HTMLElement, apiOrigin: string, siteHostname: string) {
   const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
 
   const text = (text: string) => {
-    const el = document.createElement('span');
-    el.textContent = text;
-    setCommonTextStyles(el.style);
-    return el;
+    const s = document.createElement('span');
+    s.textContent = text;
+    setCommonTextStyles(s.style);
+    return s;
   };
 
   const link = (href: string, text: string) => {
@@ -269,6 +269,6 @@ export function createFallback(e: HTMLElement, apiOrigin: string, siteHostname: 
     text('.')
   ];
 
-  e.textContent = '';
-  els.forEach(el => e.appendChild(el));
+  el.textContent = '';
+  els.forEach(e => el.appendChild(e));
 }
