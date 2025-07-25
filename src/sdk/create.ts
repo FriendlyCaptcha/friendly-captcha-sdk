@@ -230,7 +230,7 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 }
 
 /**
- * Replaces the given element with a fallback message after all retries failed.
+ * Replaces element with a fallback message (ie, after all retries failed).
  */
 export function createFallback(el: HTMLElement, apiOrigin: string, siteHostname: string) {
   const formUrl = `https://tally.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(siteHostname)}`;
