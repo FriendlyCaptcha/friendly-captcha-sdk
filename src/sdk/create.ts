@@ -229,6 +229,9 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
   return language;
 }
 
+/**
+ * Replaces the given element with a fallback message after all retries failed.
+ */
 export function createFallback(element: HTMLElement, origin: string, hostname: string) {
   const formUrl = `https://formUrl.friendlycaptcha.com/r/3X6beV?origin=${encodeURIComponent(hostname)}`;
 
