@@ -15,9 +15,9 @@ import {
   createWidgetIFrame,
   AGENT_FRAME_CLASSNAME,
   createWidgetPlaceholder,
-  getLocalizedWidgetTitle,
-  isRTLLanguage,
+  getLanguageFromOptionsOrParent,
 } from "./create.js";
+import { getLocalizedWidgetTitle, getLocalizedPlaceholderText, isRTLLanguage } from "./localization.js";
 import {
   EnvelopedMessage,
   Message,
@@ -26,7 +26,12 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
+import {
+  findCaptchaElements,
+  removeWidgetRootStyles,
+  setWidgetRootStyles,
+  findFirstParentLangAttribute,
+} from "./dom.js";
 import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -424,8 +429,13 @@ export class FriendlyCaptchaSDK {
     setWidgetRootStyles(opts.element);
     createBanner(opts);
 
+    let language = getLanguageFromOptionsOrParent(opts);
+    if (isRTLLanguage(language)) {
+      opts.element.dir = "rtl";
+    }
+
     const widgetPlaceholderStyle = widgetPlaceholder.style;
-    widgetPlaceholder.textContent = "Anti-Robot check connecting...";
+    widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "connecting");
 
     let retryLoadCounter = 1;
     const registerWithRetry = () => {
@@ -440,12 +450,12 @@ export class FriendlyCaptchaSDK {
             });
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
-            createFallback(widgetPlaceholder, originOf(wel.src), window.location.hostname);
+            createFallback(widgetPlaceholder, originOf(wel.src), language);
             return;
           }
           widgetPlaceholderStyle.backgroundColor = "#fee";
           widgetPlaceholderStyle.color = "#222";
-          widgetPlaceholder.textContent = `Anti-Robot check took too long to connect.\n\nRetrying... (${retryLoadCounter})`;
+          widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "retrying") + ` (${retryLoadCounter})`;
 
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
           widgetHandle.setState({
