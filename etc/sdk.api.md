@@ -154,7 +154,7 @@ export interface _ProgrammaticTrigger extends _TriggerBase {
 export type _RootTrigger = _FocusTrigger | _ProgrammaticTrigger | _AutoTrigger;
 
 // @public
-export type SentinelResponse = ".UNINITIALIZED" | ".UNCONNECTED" | ".UNSTARTED" | ".REQUESTING" | ".SOLVING" | ".VERIFYING" | ".EXPIRED" | ".DESTROYED" | ".ERROR" | ".RESET";
+export type SentinelResponse = ".UNINITIALIZED" | ".UNCONNECTED" | ".UNSTARTED" | ".REQUESTING" | ".SOLVING" | ".VERIFYING" | ".EXPIRED" | ".DESTROYED" | ".ERROR" | ".NETWORK_ERROR" | ".RESET";
 
 // @public
 export type StartMode = "focus" | "auto" | "none";
