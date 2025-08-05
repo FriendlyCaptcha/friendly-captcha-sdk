@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.28
+
+* Improve fallback message after all retries failed.
+
 ## 0.1.27
 
 * Add fallback message after all retries failed.
