@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.29
+
+* Localize placeholder texts and error messages.
+
 ## 0.1.28
 
 * Improve fallback message after all retries failed.
