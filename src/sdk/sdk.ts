@@ -435,7 +435,7 @@ export class FriendlyCaptchaSDK {
             console.error("[Friendly Captcha] Failed to load widget iframe after 4 retries.");
             widgetHandle.setState({
               state: "error",
-              response: ".ERROR",
+              response: ".NETWORK_ERROR",
               error: { code: "network_error", detail: "Widget load timeout, stopped retrying" },
             });
             widgetPlaceholderStyle.borderColor = "#f00";
@@ -450,7 +450,7 @@ export class FriendlyCaptchaSDK {
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
           widgetHandle.setState({
             state: "error",
-            response: ".ERROR",
+            response: ".NETWORK_ERROR",
             error: { code: "network_error", detail: "Widget load timeout, will retry." },
           });
           wel.src += "&retry=" + retryLoadCounter++;
