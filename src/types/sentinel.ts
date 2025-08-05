@@ -20,5 +20,5 @@ export type SentinelResponse =
   | ".EXPIRED"
   | ".DESTROYED"
   | ".ERROR"
-  | ".NETWORK_ERROR"
+  | ".ERROR.UNREACHABLE"
   | ".RESET";
