@@ -11,6 +11,7 @@ import { supportAllowClipboardWrite } from "./supports";
 import { encodeQuery } from "../util/url";
 import { FriendlyCaptchaSDK } from "./sdk";
 import { findFirstParentLangAttribute } from "./dom";
+import { getLocalizedPlaceholderText, getLocalizedWidgetTitle, isRTLLanguage } from "./localization";
 
 // Injected by esbuild
 declare const SDK_VERSION: string;
@@ -95,41 +96,6 @@ export function createWidgetIFrame(
   // Note: we must use `appendChild` instead of `append` for IE11.
   opts.element.appendChild(el);
   return el;
-}
-
-const WIDGET_TITLE_LOCALIZATIONS: Record<string, string> = {
-  cs: "Ověření proti botům",
-  da: "Anti-robot verificering",
-  nl: "Anti-robotverificatie",
-  en: "Anti-Robot verification",
-  fr: "Vérification Anti-Robot",
-  de: "Anti-Roboter-Verifizierung",
-  hu: "Anti-Robot ellenőrzés",
-  it: "Verifica anti-robot",
-  pl: "Weryfikacja antybotowa",
-  pt: "Verificação Anti-Robô",
-  ru: "Проверка на Анти-Робота",
-  es: "Verificación anti-robot",
-  sv: "Anti-Robot Verifiering",
-  tr: "Anti-Robot doğrulaması",
-};
-
-// Languages that require a right-to-left layout.
-const RTL_LANGUAGES = ["ar", "he", "fa", "ur", "ps", "sd", "yi"];
-
-function getLanguageCode(lang: string): string {
-  return lang.toLowerCase().split("-")[0].split("_")[0];
-}
-
-export function getLocalizedWidgetTitle(lang: string): string {
-  lang = getLanguageCode(lang);
-  const name = WIDGET_TITLE_LOCALIZATIONS[lang] || WIDGET_TITLE_LOCALIZATIONS["en"];
-  return name + " - Widget";
-}
-
-export function isRTLLanguage(lang: string): boolean {
-  lang = getLanguageCode(lang);
-  return RTL_LANGUAGES.indexOf(lang) !== -1;
 }
 
 /**
@@ -221,7 +187,7 @@ export function createBanner(opts: CreateWidgetOptions) {
   opts.element.appendChild(el);
 }
 
-function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
+export function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
   let language = opts.language;
   if (!language || language === "html") {
     language = findFirstParentLangAttribute(opts.element) || "";
@@ -232,26 +198,26 @@ function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
 /**
  * Replaces element with a fallback message (ie, after all retries failed).
  */
-export function createFallback(el: HTMLElement, apiOrigin: string, siteHostname: string) {
+export function createFallback(el: HTMLElement, apiOrigin: string, language: string) {
   const link = (href: string, text: string) => {
-    const l = document.createElement('a');
+    const l = document.createElement("a");
     l.href = href;
-    l.target = '_blank';
-    l.rel = 'noopener';
+    l.target = "_blank";
+    l.rel = "noopener";
     l.textContent = text;
     const style = l.style;
     setCommonTextStyles(style);
-    style.textDecoration = 'underline';
-    style.color = '#565656';
-    l.onmouseenter = () => (style.textDecoration = 'none');
-    l.onmouseleave = () => (style.textDecoration = 'underline');
+    style.textDecoration = "underline";
+    style.color = "#565656";
+    l.onmouseenter = () => (style.textDecoration = "none");
+    l.onmouseleave = () => (style.textDecoration = "underline");
     return l;
   };
 
-  const els = [
-    link(`${apiOrigin}/connectionTest`, 'Anti-Robot check failed to connect.'),
-  ];
+  const failedText = getLocalizedPlaceholderText(language, "failed");
 
-  el.textContent = '';
-  els.forEach(e => el.appendChild(e));
+  const els = [link(`${apiOrigin}/connectionTest`, failedText)];
+
+  el.textContent = "";
+  els.forEach((e) => el.appendChild(e));
 }
