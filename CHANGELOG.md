@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.30
+
+* Add a specific error code that represents the widget being unreachable.
+
 ## 0.1.29
 
 * Localize placeholder texts and error messages.
