@@ -447,7 +447,7 @@ export class FriendlyCaptchaSDK {
           retry: retryLoadCounter + "",
           endpoint: origin,
           ua: navigator.userAgent,
-          tz: tz(),
+          tz: tz() || "",
         } as SentinelResponseDebugData),
       );
 

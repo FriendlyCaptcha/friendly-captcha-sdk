@@ -10,14 +10,14 @@
  *
  * @private
  */
-export function tz(): string {
+export function tz(): string | undefined {
   const intl = window.Intl;
   if (!intl || !intl.DateTimeFormat) {
-    return "";
+    return;
   }
   const dtf = new intl.DateTimeFormat();
   if (!dtf || !dtf.resolvedOptions) {
-    return "";
+    return;
   }
 
   return dtf.resolvedOptions().timeZone;
