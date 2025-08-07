@@ -26,11 +26,7 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import {
-  findCaptchaElements,
-  removeWidgetRootStyles,
-  setWidgetRootStyles,
-} from "./dom.js";
+import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -444,14 +440,16 @@ export class FriendlyCaptchaSDK {
     let retryLoadCounter = 1;
 
     function setUnreachableState(detail: string) {
-      const debugString= encodeStringToBase64Url(JSON.stringify({
-        sdk_v: SDK_VERSION,
-        sitekey: opts.sitekey || "",
-        retry: retryLoadCounter + "",
-        endpoint: origin,
-        ua: navigator.userAgent,
-        tz: tz(),
-      } as SentinelResponseDebugData));
+      const debugString = encodeStringToBase64Url(
+        JSON.stringify({
+          sdk_v: SDK_VERSION,
+          sitekey: opts.sitekey || "",
+          retry: retryLoadCounter + "",
+          endpoint: origin,
+          ua: navigator.userAgent,
+          tz: tz(),
+        } as SentinelResponseDebugData),
+      );
 
       let resp = ".ERROR.UNREACHABLE";
       if (debugString) {

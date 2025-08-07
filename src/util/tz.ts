@@ -7,18 +7,18 @@
 
 /**
  * Returns time zone name on a best-effort basis.
- * 
+ *
  * @private
  */
 export function tz(): string {
-    const intl = window.Intl;
-    if (!intl || !intl.DateTimeFormat) {
-        return "";
-    }
-    const dtf = new intl.DateTimeFormat();
-    if (!dtf || !dtf.resolvedOptions) {
-        return "";
-    }
+  const intl = window.Intl;
+  if (!intl || !intl.DateTimeFormat) {
+    return "";
+  }
+  const dtf = new intl.DateTimeFormat();
+  if (!dtf || !dtf.resolvedOptions) {
+    return "";
+  }
 
-    return dtf.resolvedOptions().timeZone;
+  return dtf.resolvedOptions().timeZone;
 }
