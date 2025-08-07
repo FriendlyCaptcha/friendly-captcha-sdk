@@ -7,7 +7,7 @@
 import { StartMode, APIEndpoint, CreateWidgetOptions } from "../types/widget.js";
 import { CommunicationBus } from "../communication/bus.js";
 import { randomId } from "../util/random.js";
-import { encodeQuery, originOf } from "../util/url.js";
+import { originOf } from "../util/url.js";
 import {
   createBanner,
   createAgentIFrame,
@@ -41,7 +41,7 @@ import { _RootTrigger } from "../types/trigger.js";
 import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
 import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
-import { encodeBase64Url, encodeStringToBase64Url } from "../util/encode.js";
+import { encodeStringToBase64Url } from "../util/encode.js";
 
 declare const SDK_VERSION: string;
 
@@ -444,14 +444,14 @@ export class FriendlyCaptchaSDK {
     let retryLoadCounter = 1;
 
     function setUnreachableState(detail: string) {
-      const debugString= encodeStringToBase64Url(encodeQuery({
+      const debugString= encodeStringToBase64Url(JSON.stringify({
         sdk_v: SDK_VERSION,
         sitekey: opts.sitekey || "",
         retry: retryLoadCounter + "",
         endpoint: origin,
         ua: navigator.userAgent,
         tz: tz(),
-      }));
+      } as SentinelResponseDebugData));
 
       let resp = ".ERROR.UNREACHABLE";
       if (debugString) {

@@ -14,6 +14,6 @@ test("encodes string to base64url correctly", (t) => {
   const inputString = "Hello, World!";
   const expectedOutput = "SGVsbG8sIFdvcmxkIQ==";
 
-    const encodedString = encodeStringToBase64Url(inputString);
-    t.is(encodedString, expectedOutput);
+  const encodedString = encodeStringToBase64Url(inputString);
+  t.is(encodedString, expectedOutput);
 });
