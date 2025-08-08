@@ -1,5 +1,9 @@
 # changelog
 
+## Unreleased
+
+* Encode debug information in the response in case the user agent can not connect to Friendly Captcha at all.
+
 ## 0.1.30
 
 * Add a specific error code that represents the widget being unreachable.

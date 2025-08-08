@@ -26,12 +26,7 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import {
-  findCaptchaElements,
-  removeWidgetRootStyles,
-  setWidgetRootStyles,
-  findFirstParentLangAttribute,
-} from "./dom.js";
+import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -40,6 +35,11 @@ import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
 import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
+import { SentinelResponseDebugData } from "../types/sentinel.js";
+import { tz } from "../util/tz.js";
+import { encodeStringToBase64Url } from "../util/encode.js";
+
+declare const SDK_VERSION: string;
 
 const agentEndpoint = "/api/v2/captcha/agent";
 const widgetEndpoint = "/api/v2/captcha/widget";
@@ -438,16 +438,37 @@ export class FriendlyCaptchaSDK {
     widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "connecting");
 
     let retryLoadCounter = 1;
+
+    function setUnreachableState(detail: string) {
+      const debugString = encodeStringToBase64Url(
+        JSON.stringify({
+          sdk_v: SDK_VERSION,
+          sitekey: opts.sitekey || "",
+          retry: retryLoadCounter + "",
+          endpoint: origin,
+          ua: navigator.userAgent,
+          tz: tz() || "",
+        } as SentinelResponseDebugData),
+      );
+
+      let resp = ".ERROR.UNREACHABLE";
+      if (debugString) {
+        resp += "~" + debugString;
+      }
+
+      widgetHandle.setState({
+        state: "error",
+        response: resp,
+        error: { code: "network_error", detail },
+      });
+    }
+
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(retryLoadCounter)).then((status) => {
         if (status === "timeout") {
           if (retryLoadCounter > 4) {
             console.error("[Friendly Captcha] Failed to load widget iframe after 4 retries.");
-            widgetHandle.setState({
-              state: "error",
-              response: ".ERROR.UNREACHABLE",
-              error: { code: "network_error", detail: "Widget load timeout, stopped retrying" },
-            });
+            setUnreachableState("Widget load timeout, stopped retrying");
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
             createFallback(widgetPlaceholder, originOf(wel.src), language);
@@ -458,11 +479,7 @@ export class FriendlyCaptchaSDK {
           widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "retrying") + ` (${retryLoadCounter})`;
 
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
-          widgetHandle.setState({
-            state: "error",
-            response: ".ERROR.UNREACHABLE",
-            error: { code: "network_error", detail: "Widget load timeout, will retry." },
-          });
+          setUnreachableState("Widget load timeout, will retry");
           wel.src += "&retry=" + retryLoadCounter++;
           registerWithRetry();
         } else if (status === "registered") {
