@@ -1,8 +1,8 @@
 <main>
     <form>
         <input type="textarea" />
-        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-api-endpoint="{{ .Config.APIEndpoint }}">
-        </div>
+        <div class="frc-captcha" data-sitekey="{{ .Config.Sitekey }}" data-api-endpoint="{{ .Config.APIEndpoint }}"></div>
+        <div class="frc-captcha hide-on-error-unreachable" data-sitekey="{{ .Config.Sitekey }}" data-api-endpoint="{{ .Config.APIEndpoint }}"></div>
         <input type="submit" />
     </form>
 </main>
