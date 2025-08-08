@@ -1,6 +1,6 @@
 # changelog
 
-## Unreleased
+## 0.1.31
 
 * Encode debug information in the response in case the user agent can not connect to Friendly Captcha at all.
 
