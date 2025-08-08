@@ -6,23 +6,22 @@
  */
 import { sdktest } from "../../sdktestlib/sdk.js";
 
-
 const mySubmitButton = document.querySelector("input[type=submit]") as HTMLButtonElement;
 mySubmitButton.disabled = true;
 
-const el = document.querySelector(".frc-captcha.hide-on-error-unreachable")!
-  el.addEventListener("frc:widget.error", function(event) {
-    //@ts-ignore
-    console.error("Friendly Captcha widget ran into an error, event:", event.detail);
+const el = document.querySelector(".frc-captcha.hide-on-error-unreachable")!;
+el.addEventListener("frc:widget.error", function (event) {
+  //@ts-ignore
+  console.error("Friendly Captcha widget ran into an error, event:", event.detail);
 
+  //@ts-ignore
+  if (event.detail.error.code === "network_error" && event.detail.response.indexOf(".ERROR.UNREACHABLE") !== -1) {
     //@ts-ignore
-    if (event.detail.error.code === "network_error" && event.detail.response.indexOf(".ERROR.UNREACHABLE") !== -1) {
-      //@ts-ignore
-      el.style.display = "none";
-    }
+    el.style.display = "none";
+  }
 
-    mySubmitButton.disabled = false;
-  });
+  mySubmitButton.disabled = false;
+});
 
 sdktest.description("The API endpoint is invalid (set to {{ .Config.APIEndpoint }}), which should error.");
 
@@ -50,4 +49,4 @@ sdktest.test({ name: "second widget is hidden on error" }, async (t) => {
   t.assert.equal("none", w.getElement().style.display, "The second widget should be hidden on error");
   // Button should be enabled again
   t.assert.equal(false, mySubmitButton.disabled, "The submit button should be enabled again after the error");
-})
+});
