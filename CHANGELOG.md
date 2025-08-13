@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.32
+
+* Fix rare case of wrongly resolving page language.
+
 ## 0.1.31
 
 * Encode debug information in the response in case the user agent can not connect to Friendly Captcha at all.

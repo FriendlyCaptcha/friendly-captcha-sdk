@@ -100,7 +100,7 @@ export function fireFRCEvent(element: HTMLElement, eventData: FRCEventData) {
  * Traverses parent nodes until an element with the `lang` attribute set is found and returns its value, returns null if not found.
  */
 export function findFirstParentLangAttribute(element: HTMLElement): string | null {
-  while (!element.lang) {
+  while (!element.lang || typeof element.lang !== "string") {
     element = element.parentElement as HTMLElement;
     if (!element) {
       return null;
