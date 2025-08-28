@@ -1,5 +1,9 @@
 # changelog
 
+## Unreleased
+
+* Add `user-select: none` style to Friendly Captcha link to prevent text selection.
+
 ## 0.1.32
 
 * Fix rare case of wrongly resolving page language.
