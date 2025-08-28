@@ -162,6 +162,7 @@ export function createBanner(opts: CreateWidgetOptions) {
   const s = a.style;
   setCommonTextStyles(s);
   s.fontSize = "10px";
+  s.userSelect = "none";
 
   const isDark =
     opts.theme === "dark" ||
