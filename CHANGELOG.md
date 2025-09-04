@@ -1,8 +1,9 @@
 # changelog
 
-## Unreleased
+## 0.1.33
 
 * Add `user-select: none` style to Friendly Captcha link to prevent text selection.
+* Add `"automatic"` to `WidgetMode` type definition.
 
 ## 0.1.32
 

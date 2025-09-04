@@ -39,11 +39,13 @@ export type StartMode = "focus" | "auto" | "none";
 
 /**
  * The mode of the widget.
- * * `"interactive"` (default): the widget is interactive: the user needs to click the checkbox to finalize the captcha.
+ * * `"automatic"` (default): the API algorithmically decides, based on signals from the current browsing session,
+ *   whether it needs to be clicked or not.
+ * * `"interactive"`: the widget is interactive: the user needs to click the checkbox to finalize the captcha.
  *   This mode offers the best anti-bot protection.
  * * `"noninteractive"`: the widget is non-interactive: the captcha is solved without any user interaction required.
  */
-export type WidgetMode = "interactive" | "noninteractive";
+export type WidgetMode = "automatic" | "interactive" | "noninteractive";
 
 /**
  * What caused the widget to reset.
