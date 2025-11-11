@@ -38,6 +38,17 @@ const widget = sdk.createWidget({
 });
 ```
 
+### CommonJS
+
+You can also `require` the SDK if your environment uses CommonJS.
+
+```js
+var { FriendlyCaptchaSDK } = require("@friendlycaptcha/sdk");
+
+// Re-use this SDK if you are creating multiple widgets.
+const sdk = new FriendlyCaptchaSDK();
+```
+
 ## Documentation
 
 The documentation can be found in our [Developer Hub](https://developer.friendlycaptcha.com/docs/v2/sdk/), and the [*Getting Started* guide](https://developer.friendlycaptcha.com/docs/v2/getting-started/).
