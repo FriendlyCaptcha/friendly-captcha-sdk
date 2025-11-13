@@ -1,8 +1,12 @@
 {
   "name": "@friendlycaptcha/sdk",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "In-browser SDK for Friendly Captcha v2",
   "main": "dist/sdk.js",
+  "exports": {
+    "import": "./dist/sdk.js",
+    "require": "./dist/sdk.cjs"
+  },
   "type": "module",
   "private": true,
   "scripts": {

@@ -18,6 +18,7 @@ version=$(node -p "require('./package.json').version")
 
 # Build site and library entry
 esbuild src/entry/sdk.ts --bundle --outfile=build/bundle/sdk.js --format=esm --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
+esbuild src/entry/sdk.ts --bundle --outfile=build/bundle/sdk.cjs --format=cjs --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
 
 esbuild src/entry/site.ts --bundle --outfile=build/bundle/site.js --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
 esbuild src/entry/recaptcha-site.ts --bundle --outfile=build/bundle/contrib/recaptcha-site.js --target=es6 --define:SDK_VERSION=\"$version\" --legal-comments=eof
