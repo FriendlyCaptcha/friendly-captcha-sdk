@@ -15,6 +15,18 @@ const PLACEHOLDER_LOCALIZATIONS: Record<
     retrying: "استغرق الاتصال بالتحقق من مكافحة الروبوتات وقتًا طويلاً.\n\nإعادة المحاولة…",
     failed: "فشل الاتصال بالتحقق من مكافحة الروبوتات.",
   },
+  bg: {
+    title: "Проверка срещу роботи",
+    connecting: "Зарежда се задачата…",
+    retrying: "Неуспешно свързване.\n\nОпит за повторно свързване…",
+    failed: "Неуспешно свързване.",
+  },
+  ca: {
+    title: "Verificació anti-robot",
+    connecting: "Carregant el desafiament…",
+    retrying: "Errada de conexió.\n\nReintentant…",
+    failed: "Errada de conexió.",
+  },
   cs: {
     title: "Ověření proti robotům",
     connecting: "Připojování kontroly proti robotům…",
@@ -57,6 +69,12 @@ const PLACEHOLDER_LOCALIZATIONS: Record<
     retrying: "Verbindung zur Anti-Roboter-Verifizierung hat zu lange gedauert.\n\nErneuter Versuch…",
     failed: "Verbindung zur Anti-Roboter-Verifizierung ist fehlgeschlagen.",
   },
+  hi: {
+    title: "एंटी-रोबोट सत्यापन",
+    connecting: "चुनौती लोड हो रही है…",
+    retrying: "कनेक्शन विफल.\n\nपुनः प्रयास कर रहे हैं…",
+    failed: "कनेक्शन विफल.",
+  },
   hu: {
     title: "Robotellenőrzés",
     connecting: "Robotellenőrzés csatlakozás…",
@@ -69,17 +87,35 @@ const PLACEHOLDER_LOCALIZATIONS: Record<
     retrying: "Pemeriksaan Anti-Robot memakan waktu terlalu lama untuk terhubung.\n\nMencoba lagi…",
     failed: "Pemeriksaan Anti-Robot gagal terhubung.",
   },
+  ja: {
+    title: "ロボット防止認証",
+    connecting: "チャレンジを読み込んでいます…",
+    retrying: "接続失敗.\n\n再試行中…",
+    failed: "接続失敗.",
+  },
   it: {
     title: "Verifica anti-robot",
     connecting: "Connessione verifica anti-robot in corso…",
     retrying: "La connessione alla verifica anti-robot ha richiesto troppo tempo.\n\nRiprovando…",
     failed: "Impossibile connettersi alla verifica anti-robot.",
   },
+  nb: {
+    title: "Anti-robot-verifisering",
+    connecting: "Laster inn utfordring…",
+    retrying: "Klarte ikke å koble til.\n\nPrøver igjen…",
+    failed: "Klarte ikke å koble til.",
+  },
   pl: {
     title: "Weryfikacja antyrobotowa",
     connecting: "Łączenie się z kontrolą antyrobotową…",
     retrying: "Łączenie się z kontrolą antyrobotową trwało zbyt długo. \n\nPonowna próba…",
     failed: "Nie udało się połączyć z kontrolą antyrobotową.",
+  },
+  ro: {
+    title: "Verificare anti-robot",
+    connecting: "Se incarca testul…",
+    retrying: "Conexiunea a esuat.\n\nReincercare…",
+    failed: "Conexiunea a esuat.",
   },
   pt: {
     title: "Verificação anti-robô",
@@ -99,6 +135,12 @@ const PLACEHOLDER_LOCALIZATIONS: Record<
     retrying: "Pripojenie kontroly proti robotom trvalo príliš dlho.\n\nOpakujem pokus…",
     failed: "Pripojenie kontroly proti robotom sa nepodarilo.",
   },
+  sl: {
+    title: "Preverjanje proti robotom",
+    connecting: "Nalaganje izziva…",
+    retrying: "Povezava ni uspela.\n\nPonovni poskus…",
+    failed: "Povezava ni uspela.",
+  },
   es: {
     title: "Verificación antirrobot",
     connecting: "Conectando verificación antirrobot…",
@@ -110,6 +152,12 @@ const PLACEHOLDER_LOCALIZATIONS: Record<
     connecting: "Anti-robotverifiering ansluter…",
     retrying: "Anti-robotverifiering tog för lång tid att ansluta.\n\nFörsöker igen…",
     failed: "Anti-robotverifiering kunde inte ansluta.",
+  },
+  th: {
+    title: "การตรวจสอบป้องกันบอท",
+    connecting: "กำลังโหลดการท้าทาย…",
+    retrying: "เชื่อมต่อไม่สำเร็จ.\n\nกำลังลองใหม่…",
+    failed: "เชื่อมต่อไม่สำเร็จ.",
   },
   tr: {
     title: "Robot önleme doğrulaması",
