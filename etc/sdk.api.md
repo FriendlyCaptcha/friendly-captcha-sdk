@@ -110,6 +110,7 @@ export type FRCWidgetStateChangeEvent = CustomEvent<FRCWidgetStateChangeEventDat
 export interface FRCWidgetStateChangeEventData {
     error?: WidgetErrorData;
     id: string;
+    mode?: WidgetMode;
     name: typeof FRCWidgetStateChangeEventName;
     response: string;
     state: WidgetState;
@@ -223,6 +224,7 @@ export class WidgetHandle {
         state: WidgetState;
         error?: WidgetErrorData;
         resetTrigger?: WidgetResetTrigger;
+        mode?: WidgetMode;
     }): void;
     readonly sitekey?: string;
     start(): void;
@@ -239,6 +241,9 @@ export interface _WidgetHandleOpts {
     // (undocumented)
     registered: Promise<undefined>;
 }
+
+// @public
+export type WidgetMode = "interactive" | "noninteractive";
 
 // @public
 export interface WidgetResetOptions {

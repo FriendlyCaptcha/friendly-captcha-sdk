@@ -17,6 +17,7 @@ export type {
   WidgetState,
   CreateWidgetOptions,
   StartMode,
+  WidgetMode,
   APIEndpoint,
   WidgetErrorData,
   WidgetResetTrigger,
