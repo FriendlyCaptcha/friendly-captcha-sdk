@@ -1,8 +1,9 @@
 # changelog
 
-## Unreleased
+## 0.1.34
 
 * Add placeholder localizations for more languages.
+* Add suport for exposing `WidgetMode` from the API in the `frc:widget.statechange` event.
 
 ## 0.1.33
 
