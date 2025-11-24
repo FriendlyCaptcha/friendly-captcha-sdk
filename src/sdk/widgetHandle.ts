@@ -61,7 +61,6 @@ export class WidgetHandle {
 
   private state: WidgetState = "init";
   private response: SentinelResponse | string = ".UNINITIALIZED";
-  private widgetMode?: WidgetMode;
   private focusEventPending = false;
 
   private _reset: (opts: WidgetResetOptions) => void;
@@ -195,12 +194,9 @@ export class WidgetHandle {
     if (this.hiddenFormEl && this.e.isConnected !== false) {
       this.hiddenFormEl.value = s.response;
     }
-    if (s.mode) {
-      this.widgetMode = s.mode;
-    }
 
     if (didStateChange) {
-      this.dispatchWidgetEvent({ name: "frc:widget.statechange", error: s.error, mode: this.widgetMode });
+      this.dispatchWidgetEvent({ name: "frc:widget.statechange", error: s.error, mode: s.mode });
     }
 
     if (this.state === "expired") {
