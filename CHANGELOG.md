@@ -1,5 +1,9 @@
 # changelog
 
+## Unreleased
+
+* Add placeholder localizations for more languages.
+
 ## 0.1.33
 
 * Add `user-select: none` style to Friendly Captcha link to prevent text selection.
