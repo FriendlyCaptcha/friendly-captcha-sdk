@@ -122,6 +122,7 @@ export interface RootSetResponseMessage {
   state: WidgetState;
   widget_id: string;
   response: SentinelResponse | string;
+  mode?: WidgetMode;
   error?: WidgetErrorData;
 }
 

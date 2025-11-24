@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { WidgetErrorData, WidgetResetTrigger, WidgetState } from "../types/widget";
+import { WidgetErrorData, WidgetResetTrigger, WidgetState, WidgetMode } from "../types/widget";
 /**
  * `"frc:widget.statechange"`
  * @public
@@ -75,6 +75,10 @@ export interface FRCWidgetStateChangeEventData {
    * The current `frc-captcha-response` value.
    */
   response: string;
+  /**
+   * The WidgetMode as returned by the API. Either "interactive" or "noninteractive".
+   */
+  mode?: WidgetMode;
   /**
    * The error that caused the state change, if any. Undefined if `state` is not equal to `"error"`.
    */

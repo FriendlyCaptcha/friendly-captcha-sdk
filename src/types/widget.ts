@@ -42,6 +42,8 @@ export type StartMode = "focus" | "auto" | "none";
  * * `"interactive"` (default): the widget is interactive: the user needs to click the checkbox to finalize the captcha.
  *   This mode offers the best anti-bot protection.
  * * `"noninteractive"`: the widget is non-interactive: the captcha is solved without any user interaction required.
+ *
+ * @public
  */
 export type WidgetMode = "interactive" | "noninteractive";
 
@@ -88,6 +90,13 @@ export interface WidgetStateData {
    * as proof that the captcha was completed succesfully.
    */
   response: SentinelResponse | string;
+
+  /**
+   * The WidgetMode returned from the API. Smart Mode ("automatic") intelligently chooses between
+   * One-click Mode ("interactive") and Zero-click Mode ("noninteractive"). The mode is configured
+   * in the Friendly Captcha dashboard.
+   */
+  mode?: WidgetMode;
 
   error?: WidgetErrorData;
 }

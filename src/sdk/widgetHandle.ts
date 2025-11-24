@@ -14,6 +14,7 @@ import {
   WidgetResetOptions,
   WidgetResetTrigger,
   WidgetState,
+  WidgetMode,
 } from "../types/widget.js";
 import { mergeObject } from "../util/object.js";
 import { executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom.js";
@@ -185,6 +186,7 @@ export class WidgetHandle {
     state: WidgetState;
     error?: WidgetErrorData;
     resetTrigger?: WidgetResetTrigger;
+    mode?: WidgetMode;
   }) {
     const didStateChange = this.state !== s.state;
     this.response = s.response;
@@ -194,7 +196,7 @@ export class WidgetHandle {
     }
 
     if (didStateChange) {
-      this.dispatchWidgetEvent({ name: "frc:widget.statechange", error: s.error });
+      this.dispatchWidgetEvent({ name: "frc:widget.statechange", error: s.error, mode: s.mode });
     }
 
     if (this.state === "expired") {
