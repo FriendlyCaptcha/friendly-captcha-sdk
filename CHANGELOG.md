@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.35
+
+* Fix package.json `exports` block to support importing modules from `src/` directory.
+
 ## 0.1.34
 
 * Add placeholder localizations for more languages.

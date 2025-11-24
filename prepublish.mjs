@@ -22,12 +22,12 @@ import filepath from "path";
   if (pkg.main.includes("dist/")) {
     pkg.main = pkg.main.replace("dist/", "");
   }
-  if (pkg.exports) {
-    if (pkg.exports.import && pkg.exports.import.includes("dist/")) {
-      pkg.exports.import = pkg.exports.import.replace("dist/", "");
+  if (pkg.exports && pkg.exports["."]) {
+    if (pkg.exports["."].import) {
+      pkg.exports["."].import = pkg.exports["."].import.replace("dist/", "");
     }
-    if (pkg.exports.require && pkg.exports.require.includes("dist/")) {
-      pkg.exports.require = pkg.exports.require.replace("dist/", "");
+    if (pkg.exports["."].require) {
+      pkg.exports["."].require = pkg.exports["."].require.replace("dist/", "");
     }
   }
 
