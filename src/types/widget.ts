@@ -92,7 +92,7 @@ export interface WidgetStateData {
   response: SentinelResponse | string;
 
   /**
-   * The WidgetMode returned from the API. Smart Mode ("automatic") intelligently chooses between
+   * The WidgetMode returned from the API. Smart Mode intelligently chooses between
    * One-click Mode ("interactive") and Zero-click Mode ("noninteractive"). The mode is configured
    * in the Friendly Captcha dashboard.
    */

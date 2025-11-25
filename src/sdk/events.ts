@@ -76,7 +76,15 @@ export interface FRCWidgetStateChangeEventData {
    */
   response: string;
   /**
-   * The WidgetMode as returned by the API. Either "interactive" or "noninteractive".
+   * The WidgetMode returned from the API. Smart Mode intelligently chooses between
+   * One-click Mode ("interactive") and Zero-click Mode ("noninteractive"). The mode is configured
+   * in the Friendly Captcha dashboard.
+   *
+   * @remarks
+   * The API chooses the mode during activation, meaning that the mode will not be available prior
+   * to the `"activated"` state. In other words, `mode` will be only be present for `"activated"`,
+   * `"requesting"`, `"solving"`, `"verifying"`, `"completed"`, and `"error"`. For other states, it
+   * will be `undefined`. See the [widget lifecycle](../lifecycle) docs for more information.
    */
   mode?: WidgetMode;
   /**
