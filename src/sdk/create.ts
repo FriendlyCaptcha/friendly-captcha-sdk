@@ -151,7 +151,7 @@ export function createBanner(opts: CreateWidgetOptions) {
 
   let primaryColor = "#565656";
   let secondaryColor = "#a2a2a2";
-  if (opts.theme === "dark") {
+  if (isDark) {
     primaryColor = "#a2a2a2";
     secondaryColor = "#565656";
   }
