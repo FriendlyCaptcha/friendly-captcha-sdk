@@ -158,7 +158,7 @@ export function createBanner(opts: CreateWidgetOptions) {
 
   const els = el.style;
   els.position = "absolute";
-  els.bottom = "4px";
+  els.bottom = "6px";
   if (isRTLLanguage(language)) {
     els.left = "6px";
   } else {
