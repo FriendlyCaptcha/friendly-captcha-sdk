@@ -145,9 +145,20 @@ export function createBanner(opts: CreateWidgetOptions) {
 
   const language = getLanguageFromOptionsOrParent(opts);
 
+  const isDark =
+    opts.theme === "dark" ||
+    (opts.theme === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  let primaryColor = "#565656";
+  let secondaryColor = "#a2a2a2";
+  if (isDark) {
+    primaryColor = "#a2a2a2";
+    secondaryColor = "#565656";
+  }
+
   const els = el.style;
   els.position = "absolute";
-  els.bottom = "2px";
+  els.bottom = "6px";
   if (isRTLLanguage(language)) {
     els.left = "6px";
   } else {
@@ -161,26 +172,20 @@ export function createBanner(opts: CreateWidgetOptions) {
 
   const s = a.style;
   setCommonTextStyles(s);
+  s.color = primaryColor;
   s.fontSize = "10px";
   s.userSelect = "none";
-
-  const isDark =
-    opts.theme === "dark" ||
-    (opts.theme === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-  if (isDark) {
-    s.color = "#a2a2a2";
-  } else {
-    s.color = "#565656";
-  }
+  s.textDecorationLine = "underline";
+  s.textDecorationThickness = "1px";
+  s.textDecorationColor = secondaryColor;
 
   s.letterSpacing = "-0.0125rem";
   a.target = "_blank";
   a.textContent = "Friendly Captcha";
 
   // A poor man's hover, we can't use the :hover pseudoclass with inline css.
-  a.onmouseenter = () => (s.textDecoration = "underline");
-  a.onmouseleave = () => (s.textDecoration = "none");
+  a.onmouseenter = () => (s.textDecorationColor = primaryColor);
+  a.onmouseleave = () => (s.textDecorationColor = secondaryColor);
 
   // Note: we must use `appendChild` instead of `append` for IE11.
   el.appendChild(a);
