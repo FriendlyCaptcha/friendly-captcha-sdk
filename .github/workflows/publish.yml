@@ -2,7 +2,7 @@ name: Publish to NPM
 
 permissions:
   contents: read
-  id-token: write  # for npm publish --provenance
+  id-token: write # for IODC
 
 on:
   release:
@@ -20,5 +20,3 @@ jobs:
       - run: npm run build:dist
       - run: npm test
       - run: npm run dist
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
