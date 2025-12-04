@@ -122,6 +122,7 @@ export function createWidgetPlaceholder(opts: CreateWidgetOptions) {
   s.padding = "8px";
   s.height = s.width = "100%";
   s.fontSize = "14px";
+  s.boxSizing = "border-box";
 
   setCommonTextStyles(s);
   opts.element.appendChild(el);
