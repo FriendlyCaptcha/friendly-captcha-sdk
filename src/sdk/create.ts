@@ -90,6 +90,8 @@ export function createWidgetIFrame(
   s.border = s.visibility = "0";
   s.position = "absolute";
   s.height = s.width = "100%";
+  s.userSelect = "none";
+  (s as any)["-webkit-tap-highlight-color"] = "transparent";
 
   s.display = "none";
 
