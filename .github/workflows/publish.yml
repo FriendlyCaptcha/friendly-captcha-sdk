@@ -16,7 +16,8 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run build:dist
       - run: npm test
-      - run: npm run dist
+      - run: node prepublish.mjs && cd dist && npm publish --provenance --access public
