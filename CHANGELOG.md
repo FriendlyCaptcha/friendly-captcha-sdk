@@ -1,5 +1,9 @@
 # changelog
 
+## 0.1.37
+
+- Add `user-select: none` and `-webkit-tap-highlight-color: transparent` on the widget iframe to prevent highlighting the whole widget.
+
 ## 0.1.36
 
 - Underline the Friendly Captcha link in non-hover states.
