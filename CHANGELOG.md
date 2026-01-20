@@ -3,6 +3,7 @@
 ## 0.1.37
 
 - Add `user-select: none` and `-webkit-tap-highlight-color: transparent` on the widget iframe to prevent highlighting the whole widget.
+- Add `box-sizing: border-box` on widget placeholder to prevent layout issues.
 
 ## 0.1.36
 
