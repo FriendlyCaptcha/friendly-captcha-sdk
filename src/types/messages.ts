@@ -9,6 +9,7 @@ import { SentinelResponse } from "./sentinel";
 import { RootSignalsV1Raw } from "./signals";
 import { _RootTrigger } from "./trigger";
 import { WidgetErrorData, WidgetMode, WidgetState, WidgetStateData } from "./widget";
+import { RiskIntelligenceGenerateData } from "./riskIntelligence";
 
 export type Message = ToAgentMessage | ToWidgetMessage | ToRootMessage;
 
@@ -21,7 +22,8 @@ export type ToAgentMessage =
   | RootTriggerWidgetMessage
   | RootStoreSetReplyMessage
   | RootStoreGetReplyMessage
-  | RootSignalsGetReplyMessage;
+  | RootSignalsGetReplyMessage
+  | RootRiskIntelligenceGenerateMessage;
 export type ToWidgetMessage = WidgetSetStateMessage | AgentInfoMessage;
 export type ToRootMessage =
   | AgentAnnounceMessage
@@ -30,7 +32,8 @@ export type ToRootMessage =
   | RootSetResponseMessage
   | RootStoreSetMessage
   | RootStoreGetMessage
-  | RootSignalsGetMessage;
+  | RootSignalsGetMessage
+  | RootRiskIntelligenceGenerateReplyMessage;
 
 export type EnvelopedMessage<M extends Message> = {
   from_id: string;
@@ -168,4 +171,16 @@ export interface RootSignalsGetReplyMessage {
   type: "root_signals_get_reply";
   rid: string;
   value: RootSignalsV1Raw;
+}
+
+// Related to Risk Intelligence without Challenge
+
+export interface RootRiskIntelligenceGenerateMessage {
+  type: "root_risk_intelligence_generate";
+  sitekey: string;
+}
+
+export interface RootRiskIntelligenceGenerateReplyMessage {
+  type: "root_risk_intelligence_generate_reply";
+  data: RiskIntelligenceGenerateData;
 }
