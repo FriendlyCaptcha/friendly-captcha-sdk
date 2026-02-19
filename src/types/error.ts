@@ -18,3 +18,14 @@
  * @public
  */
 export type WidgetErrorCode = "network_error" | "sitekey_invalid" | "sitekey_missing" | "other";
+
+/**
+ * Error codes that can be returned by the Risk Intelligence request.
+ *
+ * See {@link WidgetErrorCode} for the list of possible error codes.
+ *
+ * TODO: Should we rename WidgetErrorCode to APIErrorCode?
+ *
+ * @public
+ */
+export type RiskIntelligenceErrorCode = WidgetErrorCode;
