@@ -26,8 +26,17 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import { findCaptchaElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
-import { flatPromise } from "../util/flatPromise.js";
+import {
+  createManagedInputElement,
+  executeOnceOnFocusInEvent,
+  findCaptchaElements,
+  findParentFormElement,
+  findRiskIntelligenceElements,
+  fireFRCEvent,
+  removeWidgetRootStyles,
+  setWidgetRootStyles,
+} from "./dom.js";
+import { FlatPromise, flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
 import { Signals, getSignals } from "../signals/collect.js";
@@ -38,6 +47,8 @@ import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "
 import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
 import { encodeStringToBase64Url } from "../util/encode.js";
+import { RiskIntelligenceGenerateData, RiskIntelligenceOptions } from "../types/riskIntelligence.js";
+import { FRCRiskIntelligenceExpireEventName } from "./events.js";
 
 declare const SDK_VERSION: string;
 
@@ -131,6 +142,12 @@ export class FriendlyCaptchaSDK {
   public attached: Promise<WidgetHandle[]> = this._attached.promise;
 
   /**
+   * A promise that resolves to a risk intelligence token generation response.
+   */
+  private riskIntelligencePromise: FlatPromise<RiskIntelligenceGenerateData> | null = null;
+  private riskIntelligenceExpiryTimeout: number | undefined = undefined;
+
+  /**
    * @internal
    */
   private signals: Signals;
@@ -188,6 +205,13 @@ export class FriendlyCaptchaSDK {
         return;
       }
       w.reset({ trigger: "widget" });
+    } else if (msg.type === "root_risk_intelligence_generate_reply") {
+      if (this.riskIntelligencePromise) {
+        this.riskIntelligencePromise.resolve(msg.data);
+        this.riskIntelligencePromise = null;
+      } else {
+        console.warn("Received risk intelligence generate reply message with no promise to resolve");
+      }
     }
   }
 
@@ -349,6 +373,8 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public attach(elements?: HTMLElement | HTMLElement[] | NodeListOf<Element>): WidgetHandle[] {
+    this.attachRiskIntelligence();
+
     if (elements === undefined) {
       elements = findCaptchaElements();
     }
@@ -379,6 +405,76 @@ export class FriendlyCaptchaSDK {
     this.attached = Promise.resolve(allWidgets);
 
     return newWidgets;
+  }
+
+  private attachRiskIntelligence() {
+    const elements = findRiskIntelligenceElements();
+    for (let index = 0; index < elements.length; index++) {
+      const hElement = elements[index] as HTMLElement;
+      if (hElement) {
+        const ds = hElement.dataset;
+        if (!ds.sitekey) {
+          console.warn("Risk Intelligence <div> found with no sitekey, skipping...", hElement);
+          continue;
+        }
+
+        if (ds.start === "none") {
+          console.warn('Risk Intelligence <div> found with data-start="none" (no-op), skipping...');
+          continue;
+        }
+
+        const opts: RiskIntelligenceOptions = {
+          sitekey: ds.sitekey,
+          apiEndpoint: ds.apiEndpoint,
+        };
+
+        const setValue = createManagedInputElement(hElement, ds.formFieldName);
+        const fp = flatPromise();
+
+        if (ds.start === "auto") {
+          fp.resolve();
+        } else {
+          const parentForm = findParentFormElement(hElement);
+          if (!parentForm) {
+            console.warn(
+              '"Risk Intelligence <div> with startMode of "focus" found without a parent <form> element, skipping...',
+            );
+            continue;
+          }
+          executeOnceOnFocusInEvent(parentForm, () => {
+            fp.resolve();
+          });
+        }
+
+        fp.promise
+          .then(() => this.riskIntelligence(opts))
+          .then((data) => {
+            if (this.riskIntelligenceExpiryTimeout) {
+              clearTimeout(this.riskIntelligenceExpiryTimeout);
+            }
+            this.riskIntelligenceExpiryTimeout = setTimeout(() => {
+              fireFRCEvent(hElement, {
+                name: "frc:riskIntelligence.expire",
+              });
+            }, data.expires_at - Date.now());
+            setValue(data.token);
+            fireFRCEvent(hElement, {
+              name: "frc:riskIntelligence.complete",
+              token: data.token,
+              expiresAt: new Date(data.expires_at),
+            });
+          })
+          .catch((error) => {
+            fireFRCEvent(hElement, {
+              name: "frc:riskIntelligence.error",
+              error: {
+                code: error.code,
+                detail: error.detail,
+              },
+            });
+          });
+      }
+    }
   }
 
   /**
@@ -493,6 +589,30 @@ export class FriendlyCaptchaSDK {
     registered.resolve();
 
     return widgetHandle;
+  }
+
+  /**
+   * Creates a Friendly Captcha widget with given options under given HTML element.
+   * @public
+   */
+  public riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData> {
+    const origin = resolveAPIOrigin(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigin(origin);
+    const agentId = this.ensureAgentIFrame(origin);
+
+    this.bus.send({
+      type: "root_risk_intelligence_generate",
+      to_id: agentId,
+      from_id: "",
+      _frc: 1,
+      sitekey: opts.sitekey,
+    });
+
+    if (!this.riskIntelligencePromise) {
+      this.riskIntelligencePromise = flatPromise<RiskIntelligenceGenerateData>();
+    }
+
+    return this.riskIntelligencePromise.promise;
   }
 
   /**

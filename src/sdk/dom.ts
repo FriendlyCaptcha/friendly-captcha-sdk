@@ -11,6 +11,10 @@ export function findCaptchaElements() {
   return elements;
 }
 
+export function findRiskIntelligenceElements() {
+  return document.querySelectorAll(".frc-risk-intelligence");
+}
+
 /**
  * Traverses parent nodes until a <form> is found, returns null if not found.
  */
@@ -29,6 +33,20 @@ export function findParentFormElement(element: HTMLElement): HTMLFormElement | n
  */
 export function executeOnceOnFocusInEvent(element: HTMLElement, listener: (this: HTMLElement, fe: FocusEvent) => any) {
   element.addEventListener("focusin", listener, { once: true, passive: true });
+}
+
+type ValueSetter = (value: string) => void;
+
+export function createManagedInputElement(element: HTMLElement, formFieldName?: string): ValueSetter {
+  const iel = document.createElement("input");
+  iel.type = "hidden";
+  iel.style.display = "none";
+  iel.name = formFieldName || "token";
+  // Note: we must use `appendChild` instead of `append` for IE11.
+  element.appendChild(iel);
+  return (value: string) => {
+    iel.value = value;
+  }
 }
 
 /**
