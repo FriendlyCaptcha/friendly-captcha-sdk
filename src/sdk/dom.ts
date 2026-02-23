@@ -32,18 +32,14 @@ export function executeOnceOnFocusInEvent(element: HTMLElement, listener: (this:
   element.addEventListener("focusin", listener, { once: true, passive: true });
 }
 
-type ValueSetter = (value: string) => void;
-
-export function createManagedInputElement(element: HTMLElement, formFieldName?: string): ValueSetter {
+export function createManagedInputElement(element: HTMLElement, formFieldName: string): HTMLInputElement {
   const iel = document.createElement("input");
   iel.type = "hidden";
   iel.style.display = "none";
-  iel.name = formFieldName || "token";
+  iel.name = formFieldName;
   // Note: we must use `appendChild` instead of `append` for IE11.
   element.appendChild(iel);
-  return (value: string) => {
-    iel.value = value;
-  }
+  return iel;
 }
 
 /**

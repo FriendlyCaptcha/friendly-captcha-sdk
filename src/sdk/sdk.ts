@@ -437,7 +437,6 @@ export class FriendlyCaptchaSDK {
       apiEndpoint: ds.apiEndpoint,
     };
 
-    const setValue = createManagedInputElement(element, ds.formFieldName);
     const triggerPromise = flatPromise();
 
     if (ds.start === "auto") {
@@ -470,7 +469,10 @@ export class FriendlyCaptchaSDK {
             });
           }, data.expires_at - Date.now()),
         );
-        setValue(data.token);
+
+        const iel = createManagedInputElement(element, ds.formFieldName || "token");
+        iel.value = data.token;
+
         fireFRCEvent(element, {
           name: "frc:riskintelligence.complete",
           token: data.token,
