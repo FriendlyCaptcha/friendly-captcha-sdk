@@ -141,10 +141,16 @@ export class FriendlyCaptchaSDK {
   public attached: Promise<WidgetHandle[]> = this._attached.promise;
 
   /**
-   * A promise that resolves to a risk intelligence token generation response.
+   * A mapping of agentIds to promises that resolves to a risk intelligence
+   * token generation response. Agents intelligently cache risk intelligence
+   * requests, so we just need to keep track of one promise per agent.
    */
-  private riskIntelligencePromise: FlatPromise<RiskIntelligenceGenerateData> | null = null;
-  private riskIntelligenceExpiryTimeout: number | undefined = undefined;
+  private riskIntelligencePromises: Map<string, FlatPromise<RiskIntelligenceGenerateData>> = new Map();
+
+  /**
+   * A mapping of risk intelligence tokens to their expiration timeouts.
+   */
+  private riskIntelligenceTimeouts: Map<string, number> = new Map();
 
   /**
    * @internal
@@ -205,9 +211,10 @@ export class FriendlyCaptchaSDK {
       }
       w.reset({ trigger: "widget" });
     } else if (msg.type === "root_risk_intelligence_generate_reply") {
-      if (this.riskIntelligencePromise) {
-        this.riskIntelligencePromise.resolve(msg.data);
-        this.riskIntelligencePromise = null;
+      const riskIntelligencePromise = this.riskIntelligencePromises.get(msg.from_id);
+      if (riskIntelligencePromise) {
+        riskIntelligencePromise.resolve(msg.data);
+        this.riskIntelligencePromises.delete(msg.from_id);
       } else {
         console.warn("Received risk intelligence generate reply message with no promise to resolve");
       }
@@ -452,14 +459,17 @@ export class FriendlyCaptchaSDK {
     fp.promise
       .then(() => this.riskIntelligence(opts))
       .then((data) => {
-        if (this.riskIntelligenceExpiryTimeout) {
-          clearTimeout(this.riskIntelligenceExpiryTimeout);
+        if (this.riskIntelligenceTimeouts.has(data.token)) {
+          clearTimeout(this.riskIntelligenceTimeouts.get(data.token));
         }
-        this.riskIntelligenceExpiryTimeout = setTimeout(() => {
-          fireFRCEvent(element, {
-            name: "frc:riskintelligence.expire",
-          });
-        }, data.expires_at - Date.now());
+        this.riskIntelligenceTimeouts.set(
+          data.token,
+          setTimeout(() => {
+            fireFRCEvent(element, {
+              name: "frc:riskintelligence.expire",
+            });
+          }, data.expires_at - Date.now()),
+        );
         setValue(data.token);
         fireFRCEvent(element, {
           name: "frc:riskintelligence.complete",
@@ -609,11 +619,11 @@ export class FriendlyCaptchaSDK {
       sitekey: opts.sitekey,
     });
 
-    if (!this.riskIntelligencePromise) {
-      this.riskIntelligencePromise = flatPromise<RiskIntelligenceGenerateData>();
+    if (!this.riskIntelligencePromises.has(agentId)) {
+      this.riskIntelligencePromises.set(agentId, flatPromise<RiskIntelligenceGenerateData>());
     }
 
-    return this.riskIntelligencePromise.promise;
+    return this.riskIntelligencePromises.get(agentId)!.promise;
   }
 
   /**
