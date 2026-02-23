@@ -438,10 +438,10 @@ export class FriendlyCaptchaSDK {
     };
 
     const setValue = createManagedInputElement(element, ds.formFieldName);
-    const fp = flatPromise();
+    const triggerPromise = flatPromise();
 
     if (ds.start === "auto") {
-      fp.resolve();
+      triggerPromise.resolve();
     } else {
       const parentForm = findParentFormElement(element);
       if (!parentForm) {
@@ -452,11 +452,11 @@ export class FriendlyCaptchaSDK {
         return;
       }
       executeOnceOnFocusInEvent(parentForm, () => {
-        fp.resolve();
+        triggerPromise.resolve();
       });
     }
 
-    fp.promise
+    triggerPromise.promise
       .then(() => this.riskIntelligence(opts))
       .then((data) => {
         if (this.riskIntelligenceTimeouts.has(data.token)) {
