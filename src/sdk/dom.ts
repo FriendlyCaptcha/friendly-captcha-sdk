@@ -6,13 +6,10 @@
  */
 import type { FRCEventData } from "./events";
 
-export function findCaptchaElements() {
-  const elements = document.querySelectorAll(".frc-captcha");
-  return elements;
-}
-
-export function findRiskIntelligenceElements() {
-  return document.querySelectorAll(".frc-risk-intelligence");
+export function findFRCElements() {
+  const captchaElements = document.querySelectorAll(".frc-captcha");
+  const riskIntelligenceElements = document.querySelectorAll(".frc-risk-intelligence");
+  return [captchaElements, riskIntelligenceElements];
 }
 
 /**

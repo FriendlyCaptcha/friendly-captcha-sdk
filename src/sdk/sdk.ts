@@ -29,9 +29,8 @@ import {
 import {
   createManagedInputElement,
   executeOnceOnFocusInEvent,
-  findCaptchaElements,
+  findFRCElements,
   findParentFormElement,
-  findRiskIntelligenceElements,
   fireFRCEvent,
   removeWidgetRootStyles,
   setWidgetRootStyles,
@@ -373,10 +372,17 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public attach(elements?: HTMLElement | HTMLElement[] | NodeListOf<Element>): WidgetHandle[] {
-    this.attachRiskIntelligence();
+    const [captchaElements, riskIntelligenceElements] = findFRCElements();
+
+    for (let index = 0; index < riskIntelligenceElements.length; index++) {
+      const hElement = riskIntelligenceElements[index] as HTMLElement;
+      if (hElement) {
+        this.attachRiskIntelligence(hElement);
+      }
+    }
 
     if (elements === undefined) {
-      elements = findCaptchaElements();
+      elements = captchaElements;
     }
 
     if (!(Array.isArray(elements) || elements instanceof NodeList)) {
@@ -407,74 +413,69 @@ export class FriendlyCaptchaSDK {
     return newWidgets;
   }
 
-  private attachRiskIntelligence() {
-    const elements = findRiskIntelligenceElements();
-    for (let index = 0; index < elements.length; index++) {
-      const hElement = elements[index] as HTMLElement;
-      if (hElement) {
-        const ds = hElement.dataset;
-        if (!ds.sitekey) {
-          console.warn("Risk Intelligence <div> found with no sitekey, skipping...", hElement);
-          continue;
-        }
-
-        if (ds.start === "none") {
-          console.warn('Risk Intelligence <div> found with data-start="none" (no-op), skipping...');
-          continue;
-        }
-
-        const opts: RiskIntelligenceOptions = {
-          sitekey: ds.sitekey,
-          apiEndpoint: ds.apiEndpoint,
-        };
-
-        const setValue = createManagedInputElement(hElement, ds.formFieldName);
-        const fp = flatPromise();
-
-        if (ds.start === "auto") {
-          fp.resolve();
-        } else {
-          const parentForm = findParentFormElement(hElement);
-          if (!parentForm) {
-            console.warn(
-              '"Risk Intelligence <div> with startMode of "focus" found without a parent <form> element, skipping...',
-            );
-            continue;
-          }
-          executeOnceOnFocusInEvent(parentForm, () => {
-            fp.resolve();
-          });
-        }
-
-        fp.promise
-          .then(() => this.riskIntelligence(opts))
-          .then((data) => {
-            if (this.riskIntelligenceExpiryTimeout) {
-              clearTimeout(this.riskIntelligenceExpiryTimeout);
-            }
-            this.riskIntelligenceExpiryTimeout = setTimeout(() => {
-              fireFRCEvent(hElement, {
-                name: "frc:riskintelligence.expire",
-              });
-            }, data.expires_at - Date.now());
-            setValue(data.token);
-            fireFRCEvent(hElement, {
-              name: "frc:riskintelligence.complete",
-              token: data.token,
-              expiresAt: new Date(data.expires_at),
-            });
-          })
-          .catch((error) => {
-            fireFRCEvent(hElement, {
-              name: "frc:riskintelligence.error",
-              error: {
-                code: error.code,
-                detail: error.detail,
-              },
-            });
-          });
-      }
+  private attachRiskIntelligence(element: HTMLElement) {
+    const ds = element.dataset;
+    if (!ds.sitekey) {
+      console.warn("Risk Intelligence <div> found with no sitekey, skipping...", element);
+      return;
     }
+
+    if (ds.start === "none") {
+      console.warn('Risk Intelligence <div> found with data-start="none" (no-op), skipping...', element);
+      return;
+    }
+
+    const opts: RiskIntelligenceOptions = {
+      sitekey: ds.sitekey,
+      apiEndpoint: ds.apiEndpoint,
+    };
+
+    const setValue = createManagedInputElement(element, ds.formFieldName);
+    const fp = flatPromise();
+
+    if (ds.start === "auto") {
+      fp.resolve();
+    } else {
+      const parentForm = findParentFormElement(element);
+      if (!parentForm) {
+        console.warn(
+          '"Risk Intelligence <div> with startMode of "focus" found without a parent <form> element, skipping...',
+          element,
+        );
+        return;
+      }
+      executeOnceOnFocusInEvent(parentForm, () => {
+        fp.resolve();
+      });
+    }
+
+    fp.promise
+      .then(() => this.riskIntelligence(opts))
+      .then((data) => {
+        if (this.riskIntelligenceExpiryTimeout) {
+          clearTimeout(this.riskIntelligenceExpiryTimeout);
+        }
+        this.riskIntelligenceExpiryTimeout = setTimeout(() => {
+          fireFRCEvent(element, {
+            name: "frc:riskintelligence.expire",
+          });
+        }, data.expires_at - Date.now());
+        setValue(data.token);
+        fireFRCEvent(element, {
+          name: "frc:riskintelligence.complete",
+          token: data.token,
+          expiresAt: new Date(data.expires_at),
+        });
+      })
+      .catch((error) => {
+        fireFRCEvent(element, {
+          name: "frc:riskintelligence.error",
+          error: {
+            code: error.code,
+            detail: error.detail,
+          },
+        });
+      });
   }
 
   /**
