@@ -33,20 +33,20 @@ export const FRCWidgetErrorEventName = "frc:widget.error";
 export const FRCWidgetResetEventName = "frc:widget.reset";
 
 /**
- * `"frc:riskIntelligence.complete"`
+ * `"frc:riskintelligence.complete"`
  * @public
  */
-export const FRCRiskIntelligenceCompleteEventName = "frc:riskIntelligence.complete";
+export const FRCRiskIntelligenceCompleteEventName = "frc:riskintelligence.complete";
 /**
- * `"frc:riskIntelligence.error"`
+ * `"frc:riskintelligence.error"`
  * @public
  */
-export const FRCRiskIntelligenceErrorEventName = "frc:riskIntelligence.error";
+export const FRCRiskIntelligenceErrorEventName = "frc:riskintelligence.error";
 /**
- * `"frc:riskIntelligence.expire"`
+ * `"frc:riskintelligence.expire"`
  * @public
  */
-export const FRCRiskIntelligenceExpireEventName = "frc:riskIntelligence.expire";
+export const FRCRiskIntelligenceExpireEventName = "frc:riskintelligence.expire";
 
 /**
  * A DOM event map for all events that can be dispatched by a widget.
@@ -235,12 +235,12 @@ export interface FRCWidgetResetEventData {
 export type FRCWidgetWidgetResetEvent = CustomEvent<FRCWidgetResetEventData>;
 
 /**
- * Payload of the `"frc:riskIntelligence.complete"` event.
+ * Payload of the `"frc:riskintelligence.complete"` event.
  * @public
  */
 export interface FRCRiskIntelligenceCompleteEventData {
   /**
-   * `"frc:riskIntelligence.complete"`
+   * `"frc:riskintelligence.complete"`
    */
   name: typeof FRCRiskIntelligenceCompleteEventName;
   /**
@@ -259,12 +259,12 @@ export interface FRCRiskIntelligenceCompleteEventData {
 export type FRCRiskIntelligenceCompleteEvent = CustomEvent<FRCRiskIntelligenceCompleteEventData>;
 
 /**
- * Payload of the `"frc:riskIntelligence.error"` event.
+ * Payload of the `"frc:riskintelligence.error"` event.
  * @public
  */
 export interface FRCRiskIntelligenceErrorEventData {
   /**
-   * `"frc:riskIntelligence.error"`
+   * `"frc:riskintelligence.error"`
    */
   name: typeof FRCRiskIntelligenceErrorEventName;
   /**
@@ -279,12 +279,12 @@ export interface FRCRiskIntelligenceErrorEventData {
 export type FRCRiskIntelligenceErrorEvent = CustomEvent<FRCRiskIntelligenceErrorEventData>;
 
 /**
- * Payload of the `"frc:riskIntelligence.expire"` event.
+ * Payload of the `"frc:riskintelligence.expire"` event.
  * @public
  */
 export interface FRCRiskIntelligenceExpireEventData {
   /**
-   * `"frc:riskIntelligence.expire"`
+   * `"frc:riskintelligence.expire"`
    */
   name: typeof FRCRiskIntelligenceExpireEventName;
 }

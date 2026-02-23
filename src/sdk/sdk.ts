@@ -454,19 +454,19 @@ export class FriendlyCaptchaSDK {
             }
             this.riskIntelligenceExpiryTimeout = setTimeout(() => {
               fireFRCEvent(hElement, {
-                name: "frc:riskIntelligence.expire",
+                name: "frc:riskintelligence.expire",
               });
             }, data.expires_at - Date.now());
             setValue(data.token);
             fireFRCEvent(hElement, {
-              name: "frc:riskIntelligence.complete",
+              name: "frc:riskintelligence.complete",
               token: data.token,
               expiresAt: new Date(data.expires_at),
             });
           })
           .catch((error) => {
             fireFRCEvent(hElement, {
-              name: "frc:riskIntelligence.error",
+              name: "frc:riskintelligence.error",
               error: {
                 code: error.code,
                 detail: error.detail,
