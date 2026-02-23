@@ -467,7 +467,7 @@ export class FriendlyCaptchaSDK {
             fireFRCEvent(element, {
               name: "frc:riskintelligence.expire",
             });
-          }, data.expires_at - Date.now()),
+          }, data.expiresAt - Date.now()),
         );
 
         const iel = createManagedInputElement(element, ds.formFieldName || "token");
@@ -476,7 +476,7 @@ export class FriendlyCaptchaSDK {
         fireFRCEvent(element, {
           name: "frc:riskintelligence.complete",
           token: data.token,
-          expiresAt: new Date(data.expires_at),
+          expiresAt: new Date(data.expiresAt),
         });
       })
       .catch((error) => {

@@ -3,7 +3,7 @@ import { APIEndpoint } from "./widget";
 
 export interface RiskIntelligenceGenerateData {
   token: string;
-  expires_at: number;
+  expiresAt: number;
 }
 
 /**
