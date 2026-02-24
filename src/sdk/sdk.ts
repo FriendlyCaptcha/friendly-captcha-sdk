@@ -26,15 +26,7 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import {
-  createManagedInputElement,
-  executeOnceOnFocusInEvent,
-  findFRCElements,
-  findParentFormElement,
-  fireFRCEvent,
-  removeWidgetRootStyles,
-  setWidgetRootStyles,
-} from "./dom.js";
+import { findFRCElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { FlatPromise, flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -47,7 +39,7 @@ import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
 import { encodeStringToBase64Url } from "../util/encode.js";
 import { RiskIntelligenceGenerateData, RiskIntelligenceOptions } from "../types/riskIntelligence.js";
-import { FRCRiskIntelligenceExpireEventName } from "./events.js";
+import { RiskIntelligenceHandle } from "./riskIntelligenceHandle.js";
 
 declare const SDK_VERSION: string;
 
@@ -147,10 +139,7 @@ export class FriendlyCaptchaSDK {
    */
   private riskIntelligencePromises: Map<string, FlatPromise<RiskIntelligenceGenerateData>> = new Map();
 
-  /**
-   * A mapping of risk intelligence tokens to their expiration timeouts.
-   */
-  private riskIntelligenceTimeouts: Map<string, number> = new Map();
+  private riskIntelligenceHandles: RiskIntelligenceHandle[] = [];
 
   /**
    * @internal
@@ -384,7 +373,26 @@ export class FriendlyCaptchaSDK {
     for (let index = 0; index < riskIntelligenceElements.length; index++) {
       const hElement = riskIntelligenceElements[index] as HTMLElement;
       if (hElement) {
-        this.attachRiskIntelligence(hElement);
+        const ds = hElement.dataset;
+        const sitekey = ds.sitekey;
+        if (!sitekey) {
+          console.warn("Risk Intelligence <div> found with no sitekey, skipping...", hElement);
+          continue;
+        }
+
+        this.riskIntelligenceHandles.push(
+          new RiskIntelligenceHandle({
+            element: hElement,
+            formFieldName: ds.formFieldName,
+            startMode: ds.start as StartMode,
+            riskIntelligence: () => {
+              return this.riskIntelligence({
+                sitekey,
+                apiEndpoint: ds.apiEndpoint,
+              });
+            },
+          }),
+        );
       }
     }
 
@@ -418,76 +426,6 @@ export class FriendlyCaptchaSDK {
     this.attached = Promise.resolve(allWidgets);
 
     return newWidgets;
-  }
-
-  private attachRiskIntelligence(element: HTMLElement) {
-    const ds = element.dataset;
-    if (!ds.sitekey) {
-      console.warn("Risk Intelligence <div> found with no sitekey, skipping...", element);
-      return;
-    }
-
-    if (ds.start === "none") {
-      console.warn('Risk Intelligence <div> found with data-start="none" (no-op), skipping...', element);
-      return;
-    }
-
-    const opts: RiskIntelligenceOptions = {
-      sitekey: ds.sitekey,
-      apiEndpoint: ds.apiEndpoint,
-    };
-
-    const triggerPromise = flatPromise();
-
-    if (ds.start === "auto") {
-      triggerPromise.resolve();
-    } else {
-      const parentForm = findParentFormElement(element);
-      if (!parentForm) {
-        console.warn(
-          '"Risk Intelligence <div> with startMode of "focus" found without a parent <form> element, skipping...',
-          element,
-        );
-        return;
-      }
-      executeOnceOnFocusInEvent(parentForm, () => {
-        triggerPromise.resolve();
-      });
-    }
-
-    triggerPromise.promise
-      .then(() => this.riskIntelligence(opts))
-      .then((data) => {
-        if (this.riskIntelligenceTimeouts.has(data.token)) {
-          clearTimeout(this.riskIntelligenceTimeouts.get(data.token));
-        }
-        this.riskIntelligenceTimeouts.set(
-          data.token,
-          setTimeout(() => {
-            fireFRCEvent(element, {
-              name: "frc:riskintelligence.expire",
-            });
-          }, data.expiresAt - Date.now()),
-        );
-
-        const iel = createManagedInputElement(element, ds.formFieldName || "token");
-        iel.value = data.token;
-
-        fireFRCEvent(element, {
-          name: "frc:riskintelligence.complete",
-          token: data.token,
-          expiresAt: new Date(data.expiresAt),
-        });
-      })
-      .catch((error) => {
-        fireFRCEvent(element, {
-          name: "frc:riskintelligence.error",
-          error: {
-            code: error.code,
-            detail: error.detail,
-          },
-        });
-      });
   }
 
   /**
@@ -647,6 +585,18 @@ export class FriendlyCaptchaSDK {
    */
   public getWidgetById(id: string): WidgetHandle | undefined {
     return this.widgets.get(id);
+  }
+
+  /**
+   * Returns all current Risk Intelligence handles known about (in an unspecified order).
+   * @public
+   */
+  public getAllRiskIntelligenceHandles(): RiskIntelligenceHandle[] {
+    const out: RiskIntelligenceHandle[] = [];
+    this.riskIntelligenceHandles.forEach((rih) => {
+      out.push(rih);
+    });
+    return out;
   }
 
   /**
