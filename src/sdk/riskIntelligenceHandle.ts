@@ -32,6 +32,8 @@ export class RiskIntelligenceHandle {
 
   private timeout: number | null = null;
 
+  private data: RiskIntelligenceGenerateData | null = null;
+
   /**
    * A function that closes over configuration parameters from the HTML element's
    * `data-*` attributes, used for requesting Risk Intelligence.
@@ -62,7 +64,7 @@ export class RiskIntelligenceHandle {
     this.handleStartMode();
   }
 
-  handleStartMode() {
+  private handleStartMode() {
     if (this.startMode === "none") {
       console.warn('Risk Intelligence <div> found with data-start="none" (no-op), skipping...', this.e);
     } else if (this.startMode === "auto") {
@@ -80,7 +82,7 @@ export class RiskIntelligenceHandle {
     }
   }
 
-  request() {
+  private request() {
     this.requestRiskIntelligence()
       .then((data) => {
         if (this.timeout !== null) {
@@ -91,6 +93,11 @@ export class RiskIntelligenceHandle {
             name: "frc:riskintelligence.expire",
           });
         }, data.expiresAt - Date.now());
+
+        this.data = {
+          token: data.token,
+          expiresAt: data.expiresAt,
+        }
 
         if (this.hiddenFormEl) {
           this.hiddenFormEl.value = data.token;
@@ -111,6 +118,13 @@ export class RiskIntelligenceHandle {
           },
         });
       });
+  }
+
+  /**
+   * @returns Risk Intelligence data if request is done and `null` if not.
+   */
+  public getData(): RiskIntelligenceGenerateData | null {
+    return this.data;
   }
 }
 
