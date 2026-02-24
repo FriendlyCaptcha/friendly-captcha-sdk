@@ -1,3 +1,9 @@
+/*!
+ * Copyright (c) Friendly Captcha GmbH 2026.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 import { RiskIntelligenceGenerateData } from "../types/riskIntelligence";
 import { StartMode } from "../types/widget";
 import { createManagedInputElement, executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom";
