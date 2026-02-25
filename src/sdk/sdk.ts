@@ -200,10 +200,10 @@ export class FriendlyCaptchaSDK {
       }
       w.reset({ trigger: "widget" });
     } else if (msg.type === "root_risk_intelligence_generate_reply") {
-      const riskIntelligencePromise = this.riskIntelligencePromises.get(msg.from_id);
+      const riskIntelligencePromise = this.riskIntelligencePromises.get(msg.pid);
       if (riskIntelligencePromise) {
         riskIntelligencePromise.resolve(msg.data);
-        this.riskIntelligencePromises.delete(msg.from_id);
+        this.riskIntelligencePromises.delete(msg.pid);
       } else {
         console.warn("Received risk intelligence generate reply message with no promise to resolve");
       }
@@ -550,6 +550,7 @@ export class FriendlyCaptchaSDK {
     const origin = resolveAPIOrigin(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
     this.bus.addOrigin(origin);
     const agentId = this.ensureAgentIFrame(origin);
+    const promiseId = agentId + ":" + opts.sitekey;
 
     this.bus.send({
       type: "root_risk_intelligence_generate",
@@ -557,13 +558,15 @@ export class FriendlyCaptchaSDK {
       from_id: "",
       _frc: 1,
       sitekey: opts.sitekey,
+      pid: promiseId,
     });
 
-    if (!this.riskIntelligencePromises.has(agentId)) {
-      this.riskIntelligencePromises.set(agentId, flatPromise<RiskIntelligenceGenerateData>());
+
+    if (!this.riskIntelligencePromises.has(promiseId)) {
+      this.riskIntelligencePromises.set(promiseId, flatPromise<RiskIntelligenceGenerateData>());
     }
 
-    return this.riskIntelligencePromises.get(agentId)!.promise;
+    return this.riskIntelligencePromises.get(promiseId)!.promise;
   }
 
   /**

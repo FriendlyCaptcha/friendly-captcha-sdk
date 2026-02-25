@@ -177,10 +177,12 @@ export interface RootSignalsGetReplyMessage {
 
 export interface RootRiskIntelligenceGenerateMessage {
   type: "root_risk_intelligence_generate";
+  pid: string;
   sitekey: string;
 }
 
 export interface RootRiskIntelligenceGenerateReplyMessage {
   type: "root_risk_intelligence_generate_reply";
+  pid: string;
   data: RiskIntelligenceGenerateData;
 }
