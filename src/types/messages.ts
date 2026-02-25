@@ -9,7 +9,7 @@ import { SentinelResponse } from "./sentinel";
 import { RootSignalsV1Raw } from "./signals";
 import { _RootTrigger } from "./trigger";
 import { WidgetErrorData, WidgetMode, WidgetState, WidgetStateData } from "./widget";
-import { RiskIntelligenceGenerateData } from "./riskIntelligence";
+import { RiskIntelligenceErrorData, RiskIntelligenceGenerateData } from "./riskIntelligence";
 
 export type Message = ToAgentMessage | ToWidgetMessage | ToRootMessage;
 
@@ -184,5 +184,6 @@ export interface RootRiskIntelligenceGenerateMessage {
 export interface RootRiskIntelligenceGenerateReplyMessage {
   type: "root_risk_intelligence_generate_reply";
   pid: string;
-  data: RiskIntelligenceGenerateData;
+  data?: RiskIntelligenceGenerateData;
+  error?: RiskIntelligenceErrorData;
 }

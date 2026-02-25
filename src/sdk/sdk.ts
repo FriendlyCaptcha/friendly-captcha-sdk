@@ -202,7 +202,13 @@ export class FriendlyCaptchaSDK {
     } else if (msg.type === "root_risk_intelligence_generate_reply") {
       const riskIntelligencePromise = this.riskIntelligencePromises.get(msg.pid);
       if (riskIntelligencePromise) {
-        riskIntelligencePromise.resolve(msg.data);
+        if (msg.data) {
+          riskIntelligencePromise.resolve(msg.data);
+        } else if (msg.error) {
+          riskIntelligencePromise.reject(msg.error);
+        } else {
+          console.warn("Received risk intelligence generate reply message with no data");
+        }
         this.riskIntelligencePromises.delete(msg.pid);
       } else {
         console.warn("Received risk intelligence generate reply message with no promise to resolve");
@@ -560,7 +566,6 @@ export class FriendlyCaptchaSDK {
       sitekey: opts.sitekey,
       pid: promiseId,
     });
-
 
     if (!this.riskIntelligencePromises.has(promiseId)) {
       this.riskIntelligencePromises.set(promiseId, flatPromise<RiskIntelligenceGenerateData>());
