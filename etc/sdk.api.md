@@ -212,8 +212,12 @@ export interface RiskIntelligenceGenerateData {
 
 // @public
 export class RiskIntelligenceHandle {
-    // Warning: (ae-forgotten-export) The symbol "Options" needs to be exported by the entry point sdk.d.ts
-    constructor(opts: Options);
+    constructor(opts: {
+        element: HTMLElement;
+        formFieldName?: string;
+        startMode?: StartMode;
+        riskIntelligence: () => Promise<RiskIntelligenceGenerateData>;
+    });
     addEventListener<K extends keyof FRCEventMap>(type: K, listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | {
         handleEvent: (ev: FRCEventMap[K]) => any;
     }, options?: AddEventListenerOptions): void;

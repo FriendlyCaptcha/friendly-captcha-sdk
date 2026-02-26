@@ -51,7 +51,12 @@ export class RiskIntelligenceHandle {
 
   private startMode: StartMode;
 
-  constructor(opts: Options) {
+  constructor(opts: {
+    element: HTMLElement;
+    formFieldName?: string;
+    startMode?: StartMode;
+    riskIntelligence: () => Promise<RiskIntelligenceGenerateData>;
+  }) {
     this.e = opts.element;
     if (!this.e) throw new Error("No element provided for mounting Risk Intelligence handle.");
     (this.e as any).frcRiskIntelligence = this;
@@ -158,11 +163,4 @@ export class RiskIntelligenceHandle {
   ) {
     this.e.removeEventListener(type, listener as EventListenerOrEventListenerObject, options);
   }
-}
-
-interface Options {
-  element: HTMLElement;
-  formFieldName?: string;
-  startMode?: StartMode;
-  riskIntelligence: () => Promise<RiskIntelligenceGenerateData>;
 }
