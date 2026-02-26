@@ -563,19 +563,20 @@ export class FriendlyCaptchaSDK {
     const agentId = this.ensureAgentIFrame(origin);
     const uid = randomId(8);
 
-    if (!this.riskIntelligencePromises.has(uid)) {
-      this.bus.send({
-        type: "root_risk_intelligence_generate",
-        to_id: agentId,
-        from_id: "",
-        _frc: 1,
-        sitekey: opts.sitekey,
-        uid,
-      });
-      this.riskIntelligencePromises.set(uid, flatPromise<RiskIntelligenceGenerateData>());
-    }
+    this.bus.send({
+      type: "root_risk_intelligence_generate",
+      to_id: agentId,
+      from_id: "",
+      _frc: 1,
+      sitekey: opts.sitekey,
+      uid,
+    });
 
-    return this.riskIntelligencePromises.get(uid)!.promise;
+    const riskIntelligencePromise = flatPromise<RiskIntelligenceGenerateData>();
+
+    this.riskIntelligencePromises.set(uid, riskIntelligencePromise);
+
+    return riskIntelligencePromise.promise;
   }
 
   /**
