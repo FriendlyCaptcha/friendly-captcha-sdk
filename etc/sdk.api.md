@@ -31,10 +31,16 @@ export interface _FocusTrigger extends _TriggerBase {
 }
 
 // @public
-export type FRCEventData = FRCWidgetStateChangeEventData | FRCWidgetCompleteEventData | FRCWidgetExpireEventData | FRCWidgetErrorEventData | FRCWidgetResetEventData;
+export type FRCEventData = FRCWidgetStateChangeEventData | FRCWidgetCompleteEventData | FRCWidgetExpireEventData | FRCWidgetErrorEventData | FRCWidgetResetEventData | FRCRiskIntelligenceCompleteEventData | FRCRiskIntelligenceErrorEventData | FRCRiskIntelligenceExpireEventData;
 
 // @public
 export interface FRCEventMap {
+    // (undocumented)
+    [FRCRiskIntelligenceCompleteEventName]: FRCRiskIntelligenceCompleteEvent;
+    // (undocumented)
+    [FRCRiskIntelligenceErrorEventName]: FRCRiskIntelligenceErrorEvent;
+    // (undocumented)
+    [FRCRiskIntelligenceExpireEventName]: FRCRiskIntelligenceExpireEvent;
     // (undocumented)
     [FRCWidgetCompleteEventName]: FRCWidgetCompleteEvent;
     // (undocumented)
@@ -49,6 +55,43 @@ export interface FRCEventMap {
 
 // @public
 export type FRCEventName = keyof FRCEventMap;
+
+// @public
+export type FRCRiskIntelligenceCompleteEvent = CustomEvent<FRCRiskIntelligenceCompleteEventData>;
+
+// @public
+export interface FRCRiskIntelligenceCompleteEventData {
+    expiresAt: Date;
+    name: typeof FRCRiskIntelligenceCompleteEventName;
+    token: string;
+}
+
+// @public
+export const FRCRiskIntelligenceCompleteEventName = "frc:riskintelligence.complete";
+
+// @public
+export type FRCRiskIntelligenceErrorEvent = CustomEvent<FRCRiskIntelligenceErrorEventData>;
+
+// @public
+export interface FRCRiskIntelligenceErrorEventData {
+    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceErrorData" needs to be exported by the entry point sdk.d.ts
+    error: RiskIntelligenceErrorData;
+    name: typeof FRCRiskIntelligenceErrorEventName;
+}
+
+// @public
+export const FRCRiskIntelligenceErrorEventName = "frc:riskintelligence.error";
+
+// @public
+export type FRCRiskIntelligenceExpireEvent = CustomEvent<FRCRiskIntelligenceExpireEventData>;
+
+// @public
+export interface FRCRiskIntelligenceExpireEventData {
+    name: typeof FRCRiskIntelligenceExpireEventName;
+}
+
+// @public
+export const FRCRiskIntelligenceExpireEventName = "frc:riskintelligence.expire";
 
 // @public
 export type FRCWidgetCompleteEvent = CustomEvent<FRCWidgetCompleteEventData>;
@@ -135,8 +178,13 @@ export class FriendlyCaptchaSDK {
     attached: Promise<WidgetHandle[]>;
     clear(): void;
     createWidget(opts: CreateWidgetOptions): WidgetHandle;
+    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceHandle" needs to be exported by the entry point sdk.d.ts
+    getAllRiskIntelligenceHandles(): RiskIntelligenceHandle[];
     getAllWidgets(): WidgetHandle[];
     getWidgetById(id: string): WidgetHandle | undefined;
+    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceOptions" needs to be exported by the entry point sdk.d.ts
+    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceGenerateData" needs to be exported by the entry point sdk.d.ts
+    riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData>;
 }
 
 // @public
