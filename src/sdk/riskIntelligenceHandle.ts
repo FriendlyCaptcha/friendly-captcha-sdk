@@ -31,6 +31,10 @@ export class RiskIntelligenceHandle {
    */
   private hiddenFormEl?: HTMLInputElement;
 
+  /**
+   * A timeout ID used for firing an expiration event when this handle's
+   * token expires.
+   */
   private timeout: number | null = null;
 
   private data: RiskIntelligenceGenerateData | null = null;

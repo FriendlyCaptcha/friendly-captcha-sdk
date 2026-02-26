@@ -133,12 +133,17 @@ export class FriendlyCaptchaSDK {
   public attached: Promise<WidgetHandle[]> = this._attached.promise;
 
   /**
-   * A mapping of agentIds to promises that resolves to a risk intelligence
-   * token generation response. Agents intelligently cache risk intelligence
-   * requests, so we just need to keep track of one promise per agent.
+   * A mapping of random IDs to promises that resolve to a risk intelligence
+   * token generation response. Each call to `riskIntelligence()` will return
+   * a promise that gets a unique ID. The mapping is used for tying the agent
+   * message to its reply.
    */
   private riskIntelligencePromises: Map<string, FlatPromise<RiskIntelligenceGenerateData>> = new Map();
 
+  /**
+   * A list of handles (objects that manage a Risk Intelligence DOM element)
+   * associated with the SDK instance.
+   */
   private riskIntelligenceHandles: RiskIntelligenceHandle[] = [];
 
   /**
