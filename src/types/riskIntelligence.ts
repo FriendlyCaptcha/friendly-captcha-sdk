@@ -1,11 +1,6 @@
 import { RiskIntelligenceErrorCode } from "./error";
 import { APIEndpoint } from "./widget";
 
-export interface RiskIntelligenceGenerateData {
-  token: string;
-  expiresAt: number;
-}
-
 /**
  * Options for configuring a Risk Intelligence request.
  * @public
@@ -21,6 +16,22 @@ export interface RiskIntelligenceOptions {
    * requests are made.
    */
   apiEndpoint?: APIEndpoint;
+}
+
+/**
+ * Data returned by the Risk Intelligence API request.
+ * @public
+ */
+export interface RiskIntelligenceGenerateData {
+  /**
+   * The Risk Intelligence token, which can be used to retrieve Risk Intelligence
+   * from the Friendly Captcha API.
+   */
+  token: string;
+  /**
+   * A timestamp, represented as a Unix epoch, for when the token will expire.
+   */
+  expiresAt: number;
 }
 
 /**

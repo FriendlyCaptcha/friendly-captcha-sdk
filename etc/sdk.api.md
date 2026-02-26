@@ -74,7 +74,6 @@ export type FRCRiskIntelligenceErrorEvent = CustomEvent<FRCRiskIntelligenceError
 
 // @public
 export interface FRCRiskIntelligenceErrorEventData {
-    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceErrorData" needs to be exported by the entry point sdk.d.ts
     error: RiskIntelligenceErrorData;
     name: typeof FRCRiskIntelligenceErrorEventName;
 }
@@ -178,12 +177,9 @@ export class FriendlyCaptchaSDK {
     attached: Promise<WidgetHandle[]>;
     clear(): void;
     createWidget(opts: CreateWidgetOptions): WidgetHandle;
-    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceHandle" needs to be exported by the entry point sdk.d.ts
     getAllRiskIntelligenceHandles(): RiskIntelligenceHandle[];
     getAllWidgets(): WidgetHandle[];
     getWidgetById(id: string): WidgetHandle | undefined;
-    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceOptions" needs to be exported by the entry point sdk.d.ts
-    // Warning: (ae-forgotten-export) The symbol "RiskIntelligenceGenerateData" needs to be exported by the entry point sdk.d.ts
     riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData>;
 }
 
@@ -197,6 +193,43 @@ export interface FriendlyCaptchaSDKOptions {
 // @internal
 export interface _ProgrammaticTrigger extends _TriggerBase {
     tt: "programmatic";
+}
+
+// @public
+export type RiskIntelligenceErrorCode = WidgetErrorCode;
+
+// @public
+export interface RiskIntelligenceErrorData {
+    code: RiskIntelligenceErrorCode;
+    detail: string;
+}
+
+// @public
+export interface RiskIntelligenceGenerateData {
+    expiresAt: number;
+    token: string;
+}
+
+// @public
+export class RiskIntelligenceHandle {
+    // Warning: (ae-forgotten-export) The symbol "Options" needs to be exported by the entry point sdk.d.ts
+    constructor(opts: Options);
+    addEventListener<K extends keyof FRCEventMap>(type: K, listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | {
+        handleEvent: (ev: FRCEventMap[K]) => any;
+    }, options?: AddEventListenerOptions): void;
+    // (undocumented)
+    getData(): RiskIntelligenceGenerateData | null;
+    // (undocumented)
+    getElement(): HTMLElement;
+    removeEventListener<K extends keyof FRCEventMap>(type: K, listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | {
+        handleEvent: (ev: FRCEventMap[K]) => any;
+    }, options?: EventListenerOptions): void;
+}
+
+// @public
+export interface RiskIntelligenceOptions {
+    apiEndpoint?: APIEndpoint;
+    sitekey: string;
 }
 
 // @internal
