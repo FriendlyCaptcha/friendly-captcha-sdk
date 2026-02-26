@@ -78,7 +78,9 @@ export class RiskIntelligenceHandle {
           this.e,
         );
       } else {
-        executeOnceOnFocusInEvent(parentForm, this.request);
+        executeOnceOnFocusInEvent(parentForm, () => {
+          this.request();
+        });
       }
     }
   }
