@@ -7,6 +7,7 @@
 import { RiskIntelligenceGenerateData } from "../types/riskIntelligence";
 import { StartMode } from "../types/widget";
 import { createManagedInputElement, executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom";
+import { FRCEventMap } from "./events";
 
 const DEFAULT_FORM_FIELD_NAME = "frc-risk-intelligence-token";
 
@@ -97,7 +98,7 @@ export class RiskIntelligenceHandle {
         this.data = {
           token: data.token,
           expiresAt: data.expiresAt,
-        }
+        };
 
         if (this.hiddenFormEl) {
           this.hiddenFormEl.value = data.token;
@@ -125,6 +126,35 @@ export class RiskIntelligenceHandle {
    */
   public getData(): RiskIntelligenceGenerateData | null {
     return this.data;
+  }
+
+  /**
+   * @returns The HTML element used to configure the Risk Intelligence request.
+   */
+  public getElement() {
+    return this.e;
+  }
+
+  /**
+   * Shorthand for `this.getElement().addEventListener`  (that is strictly typed in Typescript)
+   */
+  public addEventListener<K extends keyof FRCEventMap>(
+    type: K,
+    listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | { handleEvent: (ev: FRCEventMap[K]) => any },
+    options?: AddEventListenerOptions,
+  ) {
+    this.e.addEventListener(type, listener as EventListenerOrEventListenerObject, options);
+  }
+
+  /**
+   * Shorthand for `this.getElement().removeEventListener` (that is strictly typed in Typescript)
+   */
+  public removeEventListener<K extends keyof FRCEventMap>(
+    type: K,
+    listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | { handleEvent: (ev: FRCEventMap[K]) => any },
+    options?: EventListenerOptions,
+  ) {
+    this.e.removeEventListener(type, listener as EventListenerOrEventListenerObject, options);
   }
 }
 
