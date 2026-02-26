@@ -267,7 +267,7 @@ export class SDKTestObject {
 
   async waitUntilWidgetEntersState(widget: WidgetHandle, state: WidgetState) {
     return new Promise<FRCWidgetStateChangeEventData>((resolve) => {
-      const listener = (ev) => {
+      const listener = (ev: CustomEvent<FRCWidgetStateChangeEventData>) => {
         if (ev.detail.state === state) {
           widget.removeEventListener("frc:widget.statechange", listener);
           resolve(ev.detail);
@@ -279,7 +279,7 @@ export class SDKTestObject {
 
   async waitUntilWidgetCompletes(widget: WidgetHandle, state: WidgetState) {
     return new Promise<FRCWidgetCompleteEventData>((resolve) => {
-      const listener = (ev) => {
+      const listener = (ev: CustomEvent<FRCWidgetCompleteEventData>) => {
         if (ev.detail.state === state) {
           widget.removeEventListener("frc:widget.complete", listener);
           resolve(ev.detail);
@@ -291,7 +291,7 @@ export class SDKTestObject {
 
   async waitUntilRiskIntelligenceHandleCompletes(rih: RiskIntelligenceHandle) {
     return new Promise<FRCRiskIntelligenceCompleteEventData>((resolve) => {
-      const listener = (ev) => {
+      const listener = (ev: CustomEvent<FRCRiskIntelligenceCompleteEventData>) => {
         rih.removeEventListener("frc:riskintelligence.complete", listener);
         resolve(ev.detail);
       };
