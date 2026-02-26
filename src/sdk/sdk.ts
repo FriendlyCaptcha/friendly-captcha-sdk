@@ -378,7 +378,7 @@ export class FriendlyCaptchaSDK {
 
     for (let index = 0; index < riskIntelligenceElements.length; index++) {
       const hElement = riskIntelligenceElements[index] as HTMLElement;
-      if (hElement) {
+      if (hElement && !(hElement as any).frcRiskIntelligence) {
         const ds = hElement.dataset;
         const sitekey = ds.sitekey;
         if (!sitekey) {
