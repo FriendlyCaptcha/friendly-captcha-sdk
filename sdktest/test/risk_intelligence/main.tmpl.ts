@@ -16,6 +16,68 @@ sdktest.test({ name: "risk intelligence returns a token with valid length and fu
   t.assert.truthy(data.expiresAt > Date.now(), "expiresAt should be in the future");
 });
 
+sdktest.test({ name: "risk intelligence token is cached" }, async (t) => {
+  const { token } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+  const { token: secondToken } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  t.assert.equal(token, secondToken);
+});
+
+sdktest.test({ name: "risk intelligence token cache can be cleared" }, async (t) => {
+  const { token } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  await sdk.clearRiskIntelligence({
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  const { token: secondToken } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  t.assert.notEqual(token, secondToken);
+});
+
+sdktest.test({ name: "risk intelligence token cache can be selectively cleared" }, async (t) => {
+  const { token } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  await sdk.clearRiskIntelligence({
+    sitekey: "FCNONEXISTENT",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  const { token: secondToken } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  t.assert.equal(token, secondToken);
+
+  await sdk.clearRiskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  const { token: thirdToken } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  t.assert.notEqual(token, thirdToken);
+});
+
 sdktest.test({ name: "risk intelligence rejects with an invalid sitekey" }, async (t) => {
   try {
     await sdk.riskIntelligence({

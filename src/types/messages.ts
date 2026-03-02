@@ -23,7 +23,8 @@ export type ToAgentMessage =
   | RootStoreSetReplyMessage
   | RootStoreGetReplyMessage
   | RootSignalsGetReplyMessage
-  | RootRiskIntelligenceGenerateMessage;
+  | RootRiskIntelligenceGenerateMessage
+  | RootRiskIntelligenceClearMessage;
 export type ToWidgetMessage = WidgetSetStateMessage | AgentInfoMessage;
 export type ToRootMessage =
   | AgentAnnounceMessage
@@ -33,7 +34,8 @@ export type ToRootMessage =
   | RootStoreSetMessage
   | RootStoreGetMessage
   | RootSignalsGetMessage
-  | RootRiskIntelligenceGenerateReplyMessage;
+  | RootRiskIntelligenceGenerateReplyMessage
+  | RootRiskIntelligenceClearReplyMessage;
 
 export type EnvelopedMessage<M extends Message> = {
   from_id: string;
@@ -173,7 +175,7 @@ export interface RootSignalsGetReplyMessage {
   value: RootSignalsV1Raw;
 }
 
-// Related to Risk Intelligence without Challenge
+// Risk Intelligence
 
 export interface RootRiskIntelligenceGenerateMessage {
   type: "root_risk_intelligence_generate";
@@ -186,4 +188,16 @@ export interface RootRiskIntelligenceGenerateReplyMessage {
   uid: string;
   data?: RiskIntelligenceGenerateData;
   error?: RiskIntelligenceErrorData;
+}
+
+export interface RootRiskIntelligenceClearMessage {
+  type: "root_risk_intelligence_clear";
+  sitekey?: string;
+  uid: string;
+}
+
+export interface RootRiskIntelligenceClearReplyMessage {
+  type: "root_risk_intelligence_clear_reply";
+  error?: RiskIntelligenceErrorData;
+  uid: string;
 }

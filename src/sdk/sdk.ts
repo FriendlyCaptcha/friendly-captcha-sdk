@@ -141,6 +141,14 @@ export class FriendlyCaptchaSDK {
   private riskIntelligencePromises: Map<string, FlatPromise<RiskIntelligenceGenerateData>> = new Map();
 
   /**
+   * A mapping of random IDs to promises that resolve when a risk intelligence
+   * clear request completes. Each call to `clearRiskIntelligence()`  will return
+   * a promise that gets a unique ID. The mapping is used for tying the agent message
+   * to its reply.
+   */
+  private clearRiskIntelligencePromises: Map<string, FlatPromise> = new Map();
+
+  /**
    * A list of handles (objects that manage a Risk Intelligence DOM element)
    * associated with the SDK instance.
    */
@@ -204,13 +212,19 @@ export class FriendlyCaptchaSDK {
         return;
       }
       w.reset({ trigger: "widget" });
-    } else if (msg.type === "root_risk_intelligence_generate_reply") {
-      const riskIntelligencePromise = this.riskIntelligencePromises.get(msg.uid);
-      if (riskIntelligencePromise) {
+    } else if (stringHasPrefix(msg.type, "root_risk_intelligence")) {
+      this.handleRiskIntelligenceMessage(msg);
+    }
+  }
+
+  private handleRiskIntelligenceMessage(msg: EnvelopedMessage<ToRootMessage>) {
+    if (msg.type === "root_risk_intelligence_generate_reply") {
+      const promise = this.riskIntelligencePromises.get(msg.uid);
+      if (promise) {
         if (msg.data) {
-          riskIntelligencePromise.resolve(msg.data);
+          promise.resolve(msg.data);
         } else if (msg.error) {
-          riskIntelligencePromise.reject(msg.error);
+          promise.reject(msg.error);
         } else {
           console.warn("Received risk intelligence generate reply message with no data");
         }
@@ -218,6 +232,18 @@ export class FriendlyCaptchaSDK {
       } else {
         console.warn("Received risk intelligence generate reply message with no promise to resolve");
       }
+    } else if (msg.type === "root_risk_intelligence_clear_reply") {
+      const promise = this.clearRiskIntelligencePromises.get(msg.uid);
+      if (promise) {
+        if (msg.error) {
+          promise.reject(msg.error);
+        } else {
+          promise.resolve();
+        }
+      } else {
+        console.warn("Received risk intelligence clear reply message with no promise to resolve");
+      }
+      this.clearRiskIntelligencePromises.delete(msg.uid);
     }
   }
 
@@ -573,10 +599,33 @@ export class FriendlyCaptchaSDK {
     });
 
     const riskIntelligencePromise = flatPromise<RiskIntelligenceGenerateData>();
-
     this.riskIntelligencePromises.set(uid, riskIntelligencePromise);
-
     return riskIntelligencePromise.promise;
+  }
+
+  /**
+   * Clears cached Risk Intelligence tokens. A token for a given sitekey can be cached
+   * by specifying it; if none are specified, all tokens will be cleared from the cache.
+   * @public
+   */
+  public clearRiskIntelligence(opts?: RiskIntelligenceOptions) {
+    const origin = resolveAPIOrigin(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigin(origin);
+    const agentId = this.ensureAgentIFrame(origin);
+    const uid = randomId(8);
+
+    this.bus.send({
+      type: "root_risk_intelligence_clear",
+      to_id: agentId,
+      from_id: "",
+      _frc: 1,
+      sitekey: opts?.sitekey,
+      uid,
+    });
+
+    const clearRiskIntelligencePromise = flatPromise();
+    this.clearRiskIntelligencePromises.set(uid, clearRiskIntelligencePromise);
+    return clearRiskIntelligencePromise.promise;
   }
 
   /**
