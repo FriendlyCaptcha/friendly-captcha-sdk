@@ -1,5 +1,9 @@
 # changelog
 
+## 0.2.0
+
+- New product launch: Risk Intelligence
+
 ## 0.1.37
 
 - Add `user-select: none` and `-webkit-tap-highlight-color: transparent` on the widget iframe to prevent highlighting the whole widget.
