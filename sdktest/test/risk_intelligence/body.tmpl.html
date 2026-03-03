@@ -1,19 +1,13 @@
 <main>
-    <form>
-        <input type="text">
-        <div
-            id="just-risk-intelligence"
-            class="frc-risk-intelligence"
-            data-api-endpoint="{{ .Config.APIEndpoint }}"
-            data-sitekey="{{ .Config.Sitekey }}"
-        ></div>
-        <div
-            id="risk-intelligence-and-captcha"
-            class="frc-risk-intelligence frc-captcha"
-            data-api-endpoint="{{ .Config.APIEndpoint }}"
-            data-sitekey="{{ .Config.Sitekey }}"
-        ></div>
-    </form>
+  <form>
+    <input type="text" />
+    <div id="just-risk-intelligence" class="frc-risk-intelligence" data-sitekey="{{ .Config.Sitekey }}"></div>
+    <div
+      id="risk-intelligence-and-captcha"
+      class="frc-risk-intelligence frc-captcha"
+      data-sitekey="{{ .Config.Sitekey }}"
+    ></div>
+  </form>
 </main>
 
 <script defer src="main.tmpl.ts"></script>

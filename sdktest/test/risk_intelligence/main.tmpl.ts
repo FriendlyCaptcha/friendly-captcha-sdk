@@ -7,97 +7,49 @@ const sdk = new FriendlyCaptchaSDK();
 sdk.attach();
 
 sdktest.test({ name: "risk intelligence returns a token with valid length and future expiresAt" }, async (t) => {
-  const data = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
+  const data = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
   t.assert.truthy(typeof data.token === "string", "token should be a string");
   t.assert.truthy(data.token.length > 0, "token should be non-empty");
   t.assert.truthy(data.expiresAt > Date.now(), "expiresAt should be in the future");
 });
 
 sdktest.test({ name: "risk intelligence token is cached" }, async (t) => {
-  const { token } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-  const { token: secondToken } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
+  const { token } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
+  const { token: secondToken } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
 
   t.assert.equal(token, secondToken);
 });
 
 sdktest.test({ name: "risk intelligence token cache can be bypassed" }, async (t) => {
-  const { token } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
+  const { token } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
   const { token: secondToken } = await sdk.riskIntelligence({
     sitekey: "{{.Config.Sitekey}}",
     bypassCache: true,
-    apiEndpoint: "{{.Config.APIEndpoint}}",
   });
 
   t.assert.notEqual(token, secondToken);
 });
 
 sdktest.test({ name: "risk intelligence token cache can be cleared" }, async (t) => {
-  const { token } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
-  await sdk.clearRiskIntelligence({
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
-  const { token: secondToken } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
+  const { token } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
+  await sdk.clearRiskIntelligence();
+  const { token: secondToken } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
   t.assert.notEqual(token, secondToken);
 });
 
 sdktest.test({ name: "risk intelligence token cache can be selectively cleared" }, async (t) => {
-  const { token } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
-  await sdk.clearRiskIntelligence({
-    sitekey: "FCNONEXISTENT",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
-  const { token: secondToken } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
+  const { token } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
+  await sdk.clearRiskIntelligence({ sitekey: "FCNONEXISTENT" });
+  const { token: secondToken } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
   t.assert.equal(token, secondToken);
-
-  await sdk.clearRiskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
-  const { token: thirdToken } = await sdk.riskIntelligence({
-    sitekey: "{{.Config.Sitekey}}",
-    apiEndpoint: "{{.Config.APIEndpoint}}",
-  });
-
+  await sdk.clearRiskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
+  const { token: thirdToken } = await sdk.riskIntelligence({ sitekey: "{{.Config.Sitekey}}" });
   t.assert.notEqual(token, thirdToken);
 });
 
 sdktest.test({ name: "risk intelligence rejects with an invalid sitekey" }, async (t) => {
   try {
-    await sdk.riskIntelligence({
-      sitekey: "invalid",
-      apiEndpoint: "{{.Config.APIEndpoint}}",
-    });
+    await sdk.riskIntelligence({ sitekey: "invalid" });
     throw "fail";
   } catch (error: any) {
     t.assert.notEqual("fail", error);
@@ -108,9 +60,7 @@ sdktest.test({ name: "risk intelligence rejects with an invalid sitekey" }, asyn
 
 sdktest.test({ name: "risk intelligence rejects with missing sitekey" }, async (t) => {
   try {
-    await sdk.riskIntelligence({
-      apiEndpoint: "{{.Config.APIEndpoint}}",
-    });
+    await sdk.riskIntelligence({});
     throw "fail";
   } catch (error: any) {
     t.assert.notEqual("fail", error);
