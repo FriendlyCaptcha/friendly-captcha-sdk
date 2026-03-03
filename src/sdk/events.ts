@@ -248,9 +248,9 @@ export interface FRCRiskIntelligenceCompleteEventData {
    */
   token: string;
   /**
-   * The date at which the token expires.
+   * A timestamp, represented as a Unix epoch, for when the Risk Intelligence token will expire.
    */
-  expiresAt: Date;
+  expiresAt: number;
 }
 /**
  * Event that gets dispatched when a Risk Intelligence token has been successfully generated.

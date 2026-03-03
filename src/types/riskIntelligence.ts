@@ -51,7 +51,7 @@ export interface RiskIntelligenceGenerateData {
    */
   token: string;
   /**
-   * A timestamp, represented as a Unix epoch, for when the token will expire.
+   * A timestamp, represented as a Unix epoch, for when the Risk Intelligence token will expire.
    */
   expiresAt: number;
 }

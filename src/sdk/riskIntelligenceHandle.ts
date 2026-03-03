@@ -118,7 +118,7 @@ export class RiskIntelligenceHandle {
         fireFRCEvent(this.e, {
           name: "frc:riskintelligence.complete",
           token: data.token,
-          expiresAt: new Date(data.expiresAt),
+          expiresAt: data.expiresAt,
         });
       })
       .catch((error) => {

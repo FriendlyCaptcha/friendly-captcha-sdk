@@ -61,7 +61,7 @@ export type FRCRiskIntelligenceCompleteEvent = CustomEvent<FRCRiskIntelligenceCo
 
 // @public
 export interface FRCRiskIntelligenceCompleteEventData {
-    expiresAt: Date;
+    expiresAt: number;
     name: typeof FRCRiskIntelligenceCompleteEventName;
     token: string;
 }
