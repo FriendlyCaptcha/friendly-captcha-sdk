@@ -176,6 +176,7 @@ export class FriendlyCaptchaSDK {
     attach(elements?: HTMLElement | HTMLElement[] | NodeListOf<Element>): WidgetHandle[];
     attached: Promise<WidgetHandle[]>;
     clear(): void;
+    clearRiskIntelligence(opts?: RiskIntelligenceClearOptions): Promise<any>;
     createWidget(opts: CreateWidgetOptions): WidgetHandle;
     getAllRiskIntelligenceHandles(): RiskIntelligenceHandle[];
     getAllWidgets(): WidgetHandle[];
@@ -193,6 +194,12 @@ export interface FriendlyCaptchaSDKOptions {
 // @internal
 export interface _ProgrammaticTrigger extends _TriggerBase {
     tt: "programmatic";
+}
+
+// @public
+export interface RiskIntelligenceClearOptions {
+    apiEndpoint?: APIEndpoint;
+    sitekey?: string;
 }
 
 // @public
@@ -233,6 +240,7 @@ export class RiskIntelligenceHandle {
 // @public
 export interface RiskIntelligenceOptions {
     apiEndpoint?: APIEndpoint;
+    bypassCache?: boolean;
     sitekey: string;
 }
 

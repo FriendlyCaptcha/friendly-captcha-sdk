@@ -39,6 +39,7 @@ export type { SentinelResponse } from "../types/sentinel";
 export type { WidgetErrorCode, RiskIntelligenceErrorCode } from "../types/error.js";
 export type {
   RiskIntelligenceOptions,
+  RiskIntelligenceClearOptions,
   RiskIntelligenceGenerateData,
   RiskIntelligenceErrorData,
 } from "../types/riskIntelligence.js";

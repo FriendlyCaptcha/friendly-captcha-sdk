@@ -38,7 +38,11 @@ import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "
 import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
 import { encodeStringToBase64Url } from "../util/encode.js";
-import { RiskIntelligenceGenerateData, RiskIntelligenceOptions } from "../types/riskIntelligence.js";
+import {
+  RiskIntelligenceGenerateData,
+  RiskIntelligenceOptions,
+  RiskIntelligenceClearOptions,
+} from "../types/riskIntelligence.js";
 import { RiskIntelligenceHandle } from "./riskIntelligenceHandle.js";
 
 declare const SDK_VERSION: string;
@@ -609,7 +613,7 @@ export class FriendlyCaptchaSDK {
    * by specifying it; if none are specified, all tokens will be cleared from the cache.
    * @public
    */
-  public clearRiskIntelligence(opts?: RiskIntelligenceOptions) {
+  public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
     const origin = resolveAPIOrigin(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
     this.bus.addOrigin(origin);
     const agentId = this.ensureAgentIFrame(origin);
