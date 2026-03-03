@@ -181,6 +181,7 @@ export interface RootRiskIntelligenceGenerateMessage {
   type: "root_risk_intelligence_generate";
   uid: string;
   sitekey: string;
+  bypassCache: boolean;
 }
 
 export interface RootRiskIntelligenceGenerateReplyMessage {

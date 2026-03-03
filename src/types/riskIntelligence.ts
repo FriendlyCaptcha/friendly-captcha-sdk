@@ -16,6 +16,11 @@ export interface RiskIntelligenceOptions {
    * requests are made.
    */
   apiEndpoint?: APIEndpoint;
+  /**
+   * Whether to bypass the token cache and force the request of a new token from the
+   * API.
+   */
+  bypassCache?: boolean;
 }
 
 /**

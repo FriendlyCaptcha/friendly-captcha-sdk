@@ -595,6 +595,7 @@ export class FriendlyCaptchaSDK {
       from_id: "",
       _frc: 1,
       sitekey: opts.sitekey,
+      bypassCache: opts.bypassCache || false,
       uid,
     });
 

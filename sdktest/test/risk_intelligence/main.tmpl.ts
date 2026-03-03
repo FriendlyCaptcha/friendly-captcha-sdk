@@ -29,6 +29,20 @@ sdktest.test({ name: "risk intelligence token is cached" }, async (t) => {
   t.assert.equal(token, secondToken);
 });
 
+sdktest.test({ name: "risk intelligence token cache can be bypassed" }, async (t) => {
+  const { token } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+  const { token: secondToken } = await sdk.riskIntelligence({
+    sitekey: "{{.Config.Sitekey}}",
+    bypassCache: true,
+    apiEndpoint: "{{.Config.APIEndpoint}}",
+  });
+
+  t.assert.notEqual(token, secondToken);
+});
+
 sdktest.test({ name: "risk intelligence token cache can be cleared" }, async (t) => {
   const { token } = await sdk.riskIntelligence({
     sitekey: "{{.Config.Sitekey}}",
