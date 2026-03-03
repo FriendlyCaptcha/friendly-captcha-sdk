@@ -17,7 +17,7 @@ import {
   WidgetMode,
 } from "../types/widget.js";
 import { mergeObject } from "../util/object.js";
-import { executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom.js";
+import { createManagedInputElement, executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom.js";
 import { FRCEventData, FRCEventMap, FRCEventName } from "./events.js";
 
 const DEFAULT_FORM_FIELD_NAME = "frc-captcha-response";
@@ -99,13 +99,7 @@ export class WidgetHandle {
     this.startMode = opts.createOpts.startMode || "focus";
 
     if (this.formFieldName !== null) {
-      const iel = document.createElement("input");
-      iel.type = "hidden";
-      iel.style.display = "none";
-      iel.name = this.formFieldName;
-      this.hiddenFormEl = iel;
-      // Note: we must use `appendChild` instead of `append` for IE11.
-      this.e.appendChild(iel);
+      this.hiddenFormEl = createManagedInputElement(this.e, this.formFieldName);
     }
     this.setState({ response: ".UNCONNECTED", state: "init" });
 

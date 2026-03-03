@@ -6,9 +6,10 @@
  */
 import type { FRCEventData } from "./events";
 
-export function findCaptchaElements() {
-  const elements = document.querySelectorAll(".frc-captcha");
-  return elements;
+export function findFRCElements() {
+  const captchaElements = document.querySelectorAll(".frc-captcha");
+  const riskIntelligenceElements = document.querySelectorAll(".frc-risk-intelligence");
+  return [captchaElements, riskIntelligenceElements];
 }
 
 /**
@@ -29,6 +30,16 @@ export function findParentFormElement(element: HTMLElement): HTMLFormElement | n
  */
 export function executeOnceOnFocusInEvent(element: HTMLElement, listener: (this: HTMLElement, fe: FocusEvent) => any) {
   element.addEventListener("focusin", listener, { once: true, passive: true });
+}
+
+export function createManagedInputElement(parentElement: HTMLElement, formFieldName: string): HTMLInputElement {
+  const iel = document.createElement("input");
+  iel.type = "hidden";
+  iel.style.display = "none";
+  iel.name = formFieldName;
+  // Note: we must use `appendChild` instead of `append` for IE11.
+  parentElement.appendChild(iel);
+  return iel;
 }
 
 /**

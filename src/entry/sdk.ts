@@ -36,6 +36,13 @@ export type {
   _TriggerType,
 } from "../types/trigger";
 export type { SentinelResponse } from "../types/sentinel";
-export type { WidgetErrorCode } from "../types/error.js";
+export type { WidgetErrorCode, RiskIntelligenceErrorCode } from "../types/error.js";
+export type {
+  RiskIntelligenceOptions,
+  RiskIntelligenceClearOptions,
+  RiskIntelligenceGenerateData,
+  RiskIntelligenceErrorData,
+} from "../types/riskIntelligence.js";
+export type { RiskIntelligenceHandle } from "../sdk/riskIntelligenceHandle.js";
 
 export * from "../sdk/events.js";

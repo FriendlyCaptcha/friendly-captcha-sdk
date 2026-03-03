@@ -31,10 +31,16 @@ export interface _FocusTrigger extends _TriggerBase {
 }
 
 // @public
-export type FRCEventData = FRCWidgetStateChangeEventData | FRCWidgetCompleteEventData | FRCWidgetExpireEventData | FRCWidgetErrorEventData | FRCWidgetResetEventData;
+export type FRCEventData = FRCWidgetStateChangeEventData | FRCWidgetCompleteEventData | FRCWidgetExpireEventData | FRCWidgetErrorEventData | FRCWidgetResetEventData | FRCRiskIntelligenceCompleteEventData | FRCRiskIntelligenceErrorEventData | FRCRiskIntelligenceExpireEventData;
 
 // @public
 export interface FRCEventMap {
+    // (undocumented)
+    [FRCRiskIntelligenceCompleteEventName]: FRCRiskIntelligenceCompleteEvent;
+    // (undocumented)
+    [FRCRiskIntelligenceErrorEventName]: FRCRiskIntelligenceErrorEvent;
+    // (undocumented)
+    [FRCRiskIntelligenceExpireEventName]: FRCRiskIntelligenceExpireEvent;
     // (undocumented)
     [FRCWidgetCompleteEventName]: FRCWidgetCompleteEvent;
     // (undocumented)
@@ -49,6 +55,42 @@ export interface FRCEventMap {
 
 // @public
 export type FRCEventName = keyof FRCEventMap;
+
+// @public
+export type FRCRiskIntelligenceCompleteEvent = CustomEvent<FRCRiskIntelligenceCompleteEventData>;
+
+// @public
+export interface FRCRiskIntelligenceCompleteEventData {
+    expiresAt: number;
+    name: typeof FRCRiskIntelligenceCompleteEventName;
+    token: string;
+}
+
+// @public
+export const FRCRiskIntelligenceCompleteEventName = "frc:riskintelligence.complete";
+
+// @public
+export type FRCRiskIntelligenceErrorEvent = CustomEvent<FRCRiskIntelligenceErrorEventData>;
+
+// @public
+export interface FRCRiskIntelligenceErrorEventData {
+    error: RiskIntelligenceErrorData;
+    name: typeof FRCRiskIntelligenceErrorEventName;
+}
+
+// @public
+export const FRCRiskIntelligenceErrorEventName = "frc:riskintelligence.error";
+
+// @public
+export type FRCRiskIntelligenceExpireEvent = CustomEvent<FRCRiskIntelligenceExpireEventData>;
+
+// @public
+export interface FRCRiskIntelligenceExpireEventData {
+    name: typeof FRCRiskIntelligenceExpireEventName;
+}
+
+// @public
+export const FRCRiskIntelligenceExpireEventName = "frc:riskintelligence.expire";
 
 // @public
 export type FRCWidgetCompleteEvent = CustomEvent<FRCWidgetCompleteEventData>;
@@ -134,9 +176,12 @@ export class FriendlyCaptchaSDK {
     attach(elements?: HTMLElement | HTMLElement[] | NodeListOf<Element>): WidgetHandle[];
     attached: Promise<WidgetHandle[]>;
     clear(): void;
+    clearRiskIntelligence(opts?: RiskIntelligenceClearOptions): Promise<any>;
     createWidget(opts: CreateWidgetOptions): WidgetHandle;
+    getAllRiskIntelligenceHandles(): RiskIntelligenceHandle[];
     getAllWidgets(): WidgetHandle[];
     getWidgetById(id: string): WidgetHandle | undefined;
+    riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData>;
 }
 
 // @public
@@ -149,6 +194,54 @@ export interface FriendlyCaptchaSDKOptions {
 // @internal
 export interface _ProgrammaticTrigger extends _TriggerBase {
     tt: "programmatic";
+}
+
+// @public
+export interface RiskIntelligenceClearOptions {
+    apiEndpoint?: APIEndpoint;
+    sitekey?: string;
+}
+
+// @public
+export type RiskIntelligenceErrorCode = WidgetErrorCode;
+
+// @public
+export interface RiskIntelligenceErrorData {
+    code: RiskIntelligenceErrorCode;
+    detail: string;
+}
+
+// @public
+export interface RiskIntelligenceGenerateData {
+    expiresAt: number;
+    token: string;
+}
+
+// @public
+export class RiskIntelligenceHandle {
+    constructor(opts: {
+        element: HTMLElement;
+        formFieldName?: string;
+        startMode?: StartMode;
+        riskIntelligence: () => Promise<RiskIntelligenceGenerateData>;
+    });
+    addEventListener<K extends keyof FRCEventMap>(type: K, listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | {
+        handleEvent: (ev: FRCEventMap[K]) => any;
+    }, options?: AddEventListenerOptions): void;
+    // (undocumented)
+    getData(): RiskIntelligenceGenerateData | null;
+    // (undocumented)
+    getElement(): HTMLElement;
+    removeEventListener<K extends keyof FRCEventMap>(type: K, listener: (this: HTMLElement, ev: FRCEventMap[K]) => any | {
+        handleEvent: (ev: FRCEventMap[K]) => any;
+    }, options?: EventListenerOptions): void;
+}
+
+// @public
+export interface RiskIntelligenceOptions {
+    apiEndpoint?: APIEndpoint;
+    bypassCache?: boolean;
+    sitekey: string;
 }
 
 // @internal

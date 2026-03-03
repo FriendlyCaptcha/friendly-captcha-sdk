@@ -10,9 +10,13 @@ import {
   FRCWidgetExpireEventData,
   FRCWidgetStateChangeEvent,
   FRCWidgetStateChangeEventData,
+  FRCRiskIntelligenceErrorEventData,
+  FRCRiskIntelligenceCompleteEventData,
+  FRCRiskIntelligenceExpireEventData,
   FriendlyCaptchaSDK,
   WidgetHandle,
   WidgetState,
+  RiskIntelligenceHandle,
 } from "../../dist/sdk";
 import { SDKTestFramework } from "./framework";
 import type { TestOpts } from "./types";
@@ -108,6 +112,30 @@ export class AssertLib {
   async widgetExpires(widget: WidgetHandle) {
     return new Promise<FRCWidgetExpireEventData>((resolve) => {
       widget.addEventListener("frc:widget.expire", (ev) => {
+        resolve(ev.detail);
+      });
+    });
+  }
+
+  async riskIntelligenceHandleErrors(rih: RiskIntelligenceHandle) {
+    return new Promise<FRCRiskIntelligenceErrorEventData>((resolve) => {
+      rih.addEventListener("frc:riskintelligence.error", (ev) => {
+        resolve(ev.detail);
+      });
+    });
+  }
+
+  async riskIntelligenceHandleCompletes(rih: RiskIntelligenceHandle) {
+    return new Promise<FRCRiskIntelligenceCompleteEventData>((resolve) => {
+      rih.addEventListener("frc:riskintelligence.complete", (ev) => {
+        resolve(ev.detail);
+      });
+    });
+  }
+
+  async riskIntelligenceHandleExpires(rih: RiskIntelligenceHandle) {
+    return new Promise<FRCRiskIntelligenceExpireEventData>((resolve) => {
+      rih.addEventListener("frc:riskintelligence.expire", (ev) => {
         resolve(ev.detail);
       });
     });
@@ -229,9 +257,17 @@ export class SDKTestObject {
     }
   }
 
+  getRiskIntelligenceHandle(index?: number) {
+    if (index === undefined) {
+      return this.sdk.getAllRiskIntelligenceHandles()[0];
+    } else {
+      return this.sdk.getAllRiskIntelligenceHandles()[index];
+    }
+  }
+
   async waitUntilWidgetEntersState(widget: WidgetHandle, state: WidgetState) {
     return new Promise<FRCWidgetStateChangeEventData>((resolve) => {
-      const listener = (ev) => {
+      const listener = (ev: CustomEvent<FRCWidgetStateChangeEventData>) => {
         if (ev.detail.state === state) {
           widget.removeEventListener("frc:widget.statechange", listener);
           resolve(ev.detail);
@@ -243,13 +279,23 @@ export class SDKTestObject {
 
   async waitUntilWidgetCompletes(widget: WidgetHandle, state: WidgetState) {
     return new Promise<FRCWidgetCompleteEventData>((resolve) => {
-      const listener = (ev) => {
+      const listener = (ev: CustomEvent<FRCWidgetCompleteEventData>) => {
         if (ev.detail.state === state) {
           widget.removeEventListener("frc:widget.complete", listener);
           resolve(ev.detail);
         }
       };
       widget.addEventListener("frc:widget.complete", listener);
+    });
+  }
+
+  async waitUntilRiskIntelligenceHandleCompletes(rih: RiskIntelligenceHandle) {
+    return new Promise<FRCRiskIntelligenceCompleteEventData>((resolve) => {
+      const listener = (ev: CustomEvent<FRCRiskIntelligenceCompleteEventData>) => {
+        rih.removeEventListener("frc:riskintelligence.complete", listener);
+        resolve(ev.detail);
+      };
+      rih.addEventListener("frc:riskintelligence.complete", listener);
     });
   }
 }

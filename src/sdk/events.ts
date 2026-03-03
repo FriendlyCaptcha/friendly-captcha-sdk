@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import { RiskIntelligenceErrorData } from "../types/riskIntelligence";
 import { WidgetErrorData, WidgetResetTrigger, WidgetState, WidgetMode } from "../types/widget";
 /**
  * `"frc:widget.statechange"`
@@ -32,6 +33,22 @@ export const FRCWidgetErrorEventName = "frc:widget.error";
 export const FRCWidgetResetEventName = "frc:widget.reset";
 
 /**
+ * `"frc:riskintelligence.complete"`
+ * @public
+ */
+export const FRCRiskIntelligenceCompleteEventName = "frc:riskintelligence.complete";
+/**
+ * `"frc:riskintelligence.error"`
+ * @public
+ */
+export const FRCRiskIntelligenceErrorEventName = "frc:riskintelligence.error";
+/**
+ * `"frc:riskintelligence.expire"`
+ * @public
+ */
+export const FRCRiskIntelligenceExpireEventName = "frc:riskintelligence.expire";
+
+/**
  * A DOM event map for all events that can be dispatched by a widget.
  * @public
  */
@@ -41,6 +58,10 @@ export interface FRCEventMap {
   [FRCWidgetExpireEventName]: FRCWidgetWidgetExpireEvent;
   [FRCWidgetErrorEventName]: FRCWidgetWidgetErrorEvent;
   [FRCWidgetResetEventName]: FRCWidgetWidgetResetEvent;
+
+  [FRCRiskIntelligenceCompleteEventName]: FRCRiskIntelligenceCompleteEvent;
+  [FRCRiskIntelligenceErrorEventName]: FRCRiskIntelligenceErrorEvent;
+  [FRCRiskIntelligenceExpireEventName]: FRCRiskIntelligenceExpireEvent;
 }
 /**
  * Names of any of the events that can be dispatched by a widget.
@@ -56,7 +77,10 @@ export type FRCEventData =
   | FRCWidgetCompleteEventData
   | FRCWidgetExpireEventData
   | FRCWidgetErrorEventData
-  | FRCWidgetResetEventData;
+  | FRCWidgetResetEventData
+  | FRCRiskIntelligenceCompleteEventData
+  | FRCRiskIntelligenceErrorEventData
+  | FRCRiskIntelligenceExpireEventData;
 
 /**
  * Payload of the `"frc:widget.statechange"` event.
@@ -209,3 +233,63 @@ export interface FRCWidgetResetEventData {
  * @public
  */
 export type FRCWidgetWidgetResetEvent = CustomEvent<FRCWidgetResetEventData>;
+
+/**
+ * Payload of the `"frc:riskintelligence.complete"` event.
+ * @public
+ */
+export interface FRCRiskIntelligenceCompleteEventData {
+  /**
+   * `"frc:riskintelligence.complete"`
+   */
+  name: typeof FRCRiskIntelligenceCompleteEventName;
+  /**
+   * The Risk Intelligence response token, to be verified server-side.
+   */
+  token: string;
+  /**
+   * A timestamp, represented as a Unix epoch, for when the Risk Intelligence token will expire.
+   */
+  expiresAt: number;
+}
+/**
+ * Event that gets dispatched when a Risk Intelligence token has been successfully generated.
+ * @public
+ */
+export type FRCRiskIntelligenceCompleteEvent = CustomEvent<FRCRiskIntelligenceCompleteEventData>;
+
+/**
+ * Payload of the `"frc:riskintelligence.error"` event.
+ * @public
+ */
+export interface FRCRiskIntelligenceErrorEventData {
+  /**
+   * `"frc:riskintelligence.error"`
+   */
+  name: typeof FRCRiskIntelligenceErrorEventName;
+  /**
+   * The error that occurred.
+   */
+  error: RiskIntelligenceErrorData;
+}
+/**
+ * Event that gets dispatched when the Risk Intelligence request fails.
+ * @public
+ */
+export type FRCRiskIntelligenceErrorEvent = CustomEvent<FRCRiskIntelligenceErrorEventData>;
+
+/**
+ * Payload of the `"frc:riskintelligence.expire"` event.
+ * @public
+ */
+export interface FRCRiskIntelligenceExpireEventData {
+  /**
+   * `"frc:riskintelligence.expire"`
+   */
+  name: typeof FRCRiskIntelligenceExpireEventName;
+}
+/**
+ * Event that gets dispatched when a Risk Intelligence token expires.
+ * @public
+ */
+export type FRCRiskIntelligenceExpireEvent = CustomEvent<FRCRiskIntelligenceExpireEventData>;
