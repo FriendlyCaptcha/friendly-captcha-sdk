@@ -584,7 +584,9 @@ export class FriendlyCaptchaSDK {
   }
 
   /**
-   * Creates a Friendly Captcha widget with given options under given HTML element.
+   * Creates a Risk Intelligence token generation request, returning a Promise that resolves
+   * to the generated token.
+   *
    * @public
    */
   public riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData> {
