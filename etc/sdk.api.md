@@ -219,6 +219,7 @@ export interface RiskIntelligenceGenerateData {
 
 // @public
 export class RiskIntelligenceHandle {
+    // @internal
     constructor(opts: {
         element: HTMLElement;
         formFieldName?: string;

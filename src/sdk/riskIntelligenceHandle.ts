@@ -55,6 +55,12 @@ export class RiskIntelligenceHandle {
 
   private startMode: StartMode;
 
+  /**
+   * This class is only instantiated by the SDK by calling FriendlyCaptchaSDK.attach()
+   * Do not create a handle manually.
+   *
+   * @internal
+   */
   constructor(opts: {
     element: HTMLElement;
     formFieldName?: string;
