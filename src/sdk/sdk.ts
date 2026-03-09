@@ -611,8 +611,9 @@ export class FriendlyCaptchaSDK {
   }
 
   /**
-   * Clears cached Risk Intelligence tokens. A token for a given sitekey can be cached
-   * by specifying it; if none are specified, all tokens will be cleared from the cache.
+   * Clears cached Risk Intelligence tokens. Cached tokens for a given sitekey can be cleared
+   * by specifying it; if a sitekey is not specified, all tokens will be cleared from the cache.
+   *
    * @public
    */
   public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
