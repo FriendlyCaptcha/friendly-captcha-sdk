@@ -64,8 +64,14 @@ async function main() {
         // column delimiters, but docusaurus uses a markdown processor
         // that doesn't support this. Replace with an escape sequence
         // that renders |.
+        // Also escape { and } in table cells, as MDX treats them as JSX
+        // expressions and fails to parse type signatures like `{ handleEvent: ... }`.
+        // Strip <!-- --> comments that api-documenter injects as separators.
         if (line.startsWith("|")) {
           line = line.replace(/\\\|/g, "&#124;");
+          line = line.replace(/<!-- -->/g, "");
+          line = line.replace(/\{/g, "&#123;");
+          line = line.replace(/\}/g, "&#125;");
         }
 
         // api-documenter escapes markdown links, so we need to unescape them
@@ -82,7 +88,7 @@ async function main() {
       await new Promise((resolve) => lines.once("close", resolve));
       input.close();
 
-      let hide = id.includes(".");
+      let hide = id.includes(".") || id === "index";
       // console.log(id, hide)
 
       const header = [
