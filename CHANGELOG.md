@@ -1,8 +1,10 @@
 # changelog
 
-## Unreleased
+## 0.1.33
 
 * Add `user-select: none` style to Friendly Captcha link to prevent text selection.
+* The SDK is now available as a UMD module via the `dist/sdk.umd.js` file.
+* Updated dependencies.
 
 ## 0.1.32
 

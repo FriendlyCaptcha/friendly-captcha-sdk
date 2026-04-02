@@ -18,4 +18,17 @@ module.exports = {
       },
     ],
   ],
+  env: {
+    umd: {
+      presets: [
+        [
+          "@babel/preset-env",
+          {
+            modules: "umd",
+            useBuiltIns: false,
+          },
+        ],
+      ],
+    },
+  },
 };

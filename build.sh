@@ -27,9 +27,12 @@ esbuild src/entry/hcaptcha-site.ts --bundle --outfile=build/bundle/contrib/hcapt
 
 if [ -z "${SKIP_BABEL:-}" ]; then
     echo "Running babel"
-    babel build/bundle/site.js -o build/bundle/site.compat.nopolyfill.js --config-file ./babel.config.cjs
-    babel build/bundle/contrib/recaptcha-site.js -o build/bundle/contrib/recaptcha-site.compat.nopolyfill.js --config-file ./babel.config.cjs
-    babel build/bundle/contrib/hcaptcha-site.js -o build/bundle/contrib/hcaptcha-site.compat.nopolyfill.js --config-file ./babel.config.cjs
+    npx babel build/bundle/site.js -o build/bundle/site.compat.nopolyfill.js --config-file ./babel.config.cjs
+    npx babel build/bundle/contrib/recaptcha-site.js -o build/bundle/contrib/recaptcha-site.compat.nopolyfill.js --config-file ./babel.config.cjs
+    npx babel build/bundle/contrib/hcaptcha-site.js -o build/bundle/contrib/hcaptcha-site.compat.nopolyfill.js --config-file ./babel.config.cjs
+
+    # UMD build of SDK
+    npx babel build/bundle/sdk.js -o build/bundle/sdk.umd.js --config-file ./babel.config.cjs --env-name umd
 else
     echo "Skipping babel"
     cp build/bundle/site.js build/bundle/site.compat.nopolyfill.js
@@ -45,20 +48,20 @@ cat src/polyfill/polyfills.min.js build/bundle/contrib/hcaptcha-site.compat.nopo
 echo "Minifying"
 
 # Minify
-terser build/bundle/site.js -o build/bundle/site.min.js --config-file ./terser.json
-terser build/bundle/contrib/recaptcha-site.js -o build/bundle/contrib/recaptcha-site.min.js --config-file ./terser.json
-terser build/bundle/contrib/hcaptcha-site.js -o build/bundle/contrib/hcaptcha-site.min.js --config-file ./terser.json
+npx terser build/bundle/site.js -o build/bundle/site.min.js --config-file ./terser.json
+npx terser build/bundle/contrib/recaptcha-site.js -o build/bundle/contrib/recaptcha-site.min.js --config-file ./terser.json
+npx terser build/bundle/contrib/hcaptcha-site.js -o build/bundle/contrib/hcaptcha-site.min.js --config-file ./terser.json
 
-terser build/bundle/site.compat.js -o build/bundle/site.compat.min.js --config-file ./terser.json
-terser build/bundle/contrib/recaptcha-site.compat.js -o build/bundle/contrib/recaptcha-site.compat.min.js --config-file ./terser.json
-terser build/bundle/contrib/hcaptcha-site.compat.js -o build/bundle/contrib/hcaptcha-site.compat.min.js --config-file ./terser.json
+npx terser build/bundle/site.compat.js -o build/bundle/site.compat.min.js --config-file ./terser.json
+npx terser build/bundle/contrib/recaptcha-site.compat.js -o build/bundle/contrib/recaptcha-site.compat.min.js --config-file ./terser.json
+npx terser build/bundle/contrib/hcaptcha-site.compat.js -o build/bundle/contrib/hcaptcha-site.compat.min.js --config-file ./terser.json
 
 ############## Remove nopolyfill versions of recaptcha and hcaptcha compat builds.
 # I don't think nopolyfill version makes sense for site.js.. Users that really want it can minify it themselves.
 rm build/bundle/contrib/recaptcha-site.compat.nopolyfill.js
 rm build/bundle/contrib/hcaptcha-site.compat.nopolyfill.js
 
-terser build/bundle/site.compat.nopolyfill.js -o build/bundle/site.compat.nopolyfill.min.js --config-file ./terser.json
+npx terser build/bundle/site.compat.nopolyfill.js -o build/bundle/site.compat.nopolyfill.min.js --config-file ./terser.json
 
 echo "Copying to dist"
 
