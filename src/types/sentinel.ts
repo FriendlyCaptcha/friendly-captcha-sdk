@@ -23,13 +23,13 @@ export type SentinelResponse =
   | ".ERROR.UNREACHABLE"
   | ".RESET";
 
-  /**
-   * Sentinel Response Debug Data
-   * 
-   * @private
-   */
+/**
+ * Sentinel Response Debug Data
+ *
+ * @private
+ */
 export interface SentinelResponseDebugData {
-  sdk_v: string
+  sdk_v: string;
   sitekey: string;
   retry: string;
   endpoint: string;

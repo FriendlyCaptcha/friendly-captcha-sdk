@@ -1,5 +1,9 @@
 # changelog
 
+## 0.2.1
+- Remove indexedDB codepaths and dependencies (they were unused).
+- Update development and test dependencies.
+
 ## 0.2.0
 
 - New product launch: Risk Intelligence

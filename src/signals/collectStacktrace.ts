@@ -120,7 +120,8 @@ export const patchNativeFunctions = function (opts: { disableEvalPatching?: bool
       }
     }
 
-    let l = 0, c = 0;
+    let l = 0,
+      c = 0;
     const newAccessor = function fcPatch(this: unknown, ...args: unknown[]) {
       const now = Date.now();
       if (now - l >= 1_000) {
@@ -136,7 +137,7 @@ export const patchNativeFunctions = function (opts: { disableEvalPatching?: bool
           st: getStackSafely(),
         };
 
-        if (queue.length > 20_000) { 
+        if (queue.length > 20_000) {
           queue.splice(0, 1_000);
         }
 
