@@ -34,7 +34,7 @@ import { Signals, getSignals } from "../signals/collect.js";
 import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
-import { resolveAPIOrigin, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
+import { resolveAPIOrigins, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
 import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
 import { encodeStringToBase64Url } from "../util/encode.js";
@@ -182,7 +182,7 @@ export class FriendlyCaptchaSDK {
     });
 
     if (opts.startAgent) {
-      const o = resolveAPIOrigin(this.apiEndpoint || getSDKAPIEndpoint());
+      const o = resolveAPIOrigins(this.apiEndpoint || getSDKAPIEndpoint());
       this.ensureAgentIFrame(o);
     }
 
@@ -332,7 +332,8 @@ export class FriendlyCaptchaSDK {
    * @param origin - Origin of the API endpoint to use.
    * @returns String - The agent ID.
    */
-  private ensureAgentIFrame(origin: string): string {
+  private ensureAgentIFrame(origins: string[]): string {
+    const origin = origins[0];
     const src = origin + agentEndpoint;
 
     // We try to be idempotent - see if an iframe already exists for the given origin.
@@ -474,9 +475,10 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
-    const origin = resolveAPIOrigin(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
-    this.bus.addOrigin(origin);
-    const agentId = this.ensureAgentIFrame(origin);
+    const origins = resolveAPIOrigins(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigins(origins);
+    const origin = origins[0];
+    const agentId = this.ensureAgentIFrame(origins);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -590,8 +592,9 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData> {
-    const origin = resolveAPIOrigin(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
-    this.bus.addOrigin(origin);
+    const origins = resolveAPIOrigins(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigins(origins);
+    const origin = origins[0];
     const agentId = this.ensureAgentIFrame(origin);
     const uid = randomId(8);
 
@@ -617,8 +620,9 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
-    const origin = resolveAPIOrigin(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
-    this.bus.addOrigin(origin);
+    const origins = resolveAPIOrigins(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    this.bus.addOrigins(origins);
+    const origin = origins[0];
     const agentId = this.ensureAgentIFrame(origin);
     const uid = randomId(8);
 

@@ -25,7 +25,7 @@ export class CommunicationBus {
    */
   origins: Set<string> = new Set();
 
-  // We use a map here to prevent the need to add a Map polyfill in the widget.
+  // We use a Record here to prevent the need to add a Map polyfill in the widget.
   targets: Record<string, CommunicationTarget> = {};
 
   /** Some messages that expect an answer may be handled twice if two SDKs are present. Here we keep track of those and deliver them only once. */
@@ -57,11 +57,11 @@ export class CommunicationBus {
   }
 
   /**
-   * Add an origin to allow messages from.
+   * Add origins to allow messages from.
    * @internal
    */
-  public addOrigin(origin: string) {
-    this.origins.add(origin);
+  public addOrigins(origins: string[]) {
+    origins.forEach((origin) => this.origins.add(origin));
   }
 
   /**
