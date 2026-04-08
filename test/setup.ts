@@ -4,11 +4,5 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-// @ts-ignore
-import setGlobalVars from "indexeddbshim";
 
-setGlobalVars(globalThis)
-// @ts-ignore
-globalThis.shimIndexedDB.__useShim();
-// @ts-ignore
-globalThis.shimIndexedDB.__setConfig({checkOrigin: false});
+// If any globals need to be set, they can be set here. This file is executed before any test files are executed.
