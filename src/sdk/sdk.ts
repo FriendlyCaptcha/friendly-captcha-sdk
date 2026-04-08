@@ -44,6 +44,7 @@ import {
   RiskIntelligenceClearOptions,
 } from "../types/riskIntelligence.js";
 import { RiskIntelligenceHandle } from "./riskIntelligenceHandle.js";
+import { getRetryOrigins as buildRetryOrigins, getRetryOriginIndex } from "./retry.js";
 
 declare const SDK_VERSION: string;
 
@@ -51,6 +52,9 @@ const agentEndpoint = "/api/v2/captcha/agent";
 const widgetEndpoint = "/api/v2/captcha/widget";
 
 const FRAME_ID_DATASET_FIELD = "FrcFrameId";
+// Stable key for deduplicating agent iframes by their configured primary origin.
+// We cannot rely on iframe src origin because retries may switch the iframe to fallback origins.
+const AGENT_ORIGIN_KEY_DATASET_FIELD = "FrcAgentOriginKey";
 
 /**
  * After a long interval we refresh the agent and widget iframes.
@@ -58,6 +62,14 @@ const FRAME_ID_DATASET_FIELD = "FrcFrameId";
  * into some weird state due to outdated versions of the page.
  */
 const IFRAME_EXP_TIME = 1000 * 60 * 60 * 36; // 36 hours
+const MAX_IFRAME_LOAD_ATTEMPTS = 5;
+
+function getRetrySrc(src: string, nextOrigin: string, retryCount: number): string {
+  const srcOrigin = originOf(src);
+  const pathAndQuery = src.slice(srcOrigin.length);
+  const separator = pathAndQuery.indexOf("?") === -1 ? "?" : "&";
+  return nextOrigin + pathAndQuery + separator + "retry=" + retryCount;
+}
 
 /**
  * Options when creating a new SDK instance.
@@ -163,6 +175,10 @@ export class FriendlyCaptchaSDK {
    */
   private signals: Signals;
 
+  private getRetryOrigins(origins: string[]): string[] {
+    return buildRetryOrigins(origins);
+  }
+
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
     this.apiEndpoint = opts.apiEndpoint;
 
@@ -182,8 +198,9 @@ export class FriendlyCaptchaSDK {
     });
 
     if (opts.startAgent) {
-      const o = resolveAPIOrigins(this.apiEndpoint || getSDKAPIEndpoint());
-      this.ensureAgentIFrame(o);
+      const origins = resolveAPIOrigins(this.apiEndpoint || getSDKAPIEndpoint());
+      const retryOrigins = this.getRetryOrigins(origins);
+      this.ensureAgentIFrame(retryOrigins);
     }
 
     this.setupPeriodicRefresh();
@@ -329,39 +346,58 @@ export class FriendlyCaptchaSDK {
    * @param origin - Origin of the API endpoint to use.
    * @returns String - The agent ID.
    */
-  private ensureAgentIFrame(origins: string[]): string {
-    const origin = origins[0];
+  private ensureAgentIFrame(retryOrigins: string[]): string {
+    let attempt = 1;
+    const originIndex = getRetryOriginIndex(attempt, retryOrigins);
+    const origin = retryOrigins[originIndex];
     const src = origin + agentEndpoint;
+    const maxAttempts = MAX_IFRAME_LOAD_ATTEMPTS;
 
-    // We try to be idempotent - see if an iframe already exists for the given origin.
+    // Fast-path: if this SDK instance already tracks an agent for this configured origin, reuse it.
+    const existing = this.agents.get(origin);
+    if (existing && existing.dataset[FRAME_ID_DATASET_FIELD]) {
+      return existing.dataset[FRAME_ID_DATASET_FIELD] as string;
+    }
+
+    // Cross-instance idempotency: if another SDK instance already created an agent for this origin,
+    // find and reuse it using the stable configured-origin key.
     let agentIFrames = document.getElementsByClassName(AGENT_FRAME_CLASSNAME) as HTMLCollectionOf<HTMLIFrameElement>;
     for (let index = 0; index < agentIFrames.length; index++) {
       const i = agentIFrames[index];
-      if (originOf(i.src) === origin && i.dataset[FRAME_ID_DATASET_FIELD]) {
+      if (i.dataset[AGENT_ORIGIN_KEY_DATASET_FIELD] === origin && i.dataset[FRAME_ID_DATASET_FIELD]) {
+        this.agents.set(origin, i);
         return i.dataset[FRAME_ID_DATASET_FIELD] as string;
       }
     }
 
     const agentId = "a_" + randomId(12);
     const el = createAgentIFrame(this, agentId, src);
+    el.dataset[AGENT_ORIGIN_KEY_DATASET_FIELD] = origin;
+    const initialSrc = el.src;
+    let currentOrigin = origin;
 
     this.agents.set(origin, el);
     this.agentState.set(agentId, { store: new Store(origin), origin: origin });
     document.body.appendChild(el);
 
-    let retryLoadCounter = 1;
     const registerWithRetry = () => {
-      this.bus.registerTargetIFrame("agent", agentId, el, this.getRetryTimeout(retryLoadCounter)).then((status) => {
+      this.bus.registerTargetIFrame("agent", agentId, el, this.getRetryTimeout(attempt)).then((status) => {
         if (status === "timeout") {
-          if (retryLoadCounter > 4) {
-            console.error("[Friendly Captcha] Failed to load agent iframe after 4 retries.");
+          if (attempt >= maxAttempts) {
+            console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
             el.remove();
             this.agents.delete(origin);
             // We can consider reloading all widgets that use this agent ID.
             return;
           }
+
+          const nextAttempt = attempt + 1;
+          const nextIndex = getRetryOriginIndex(nextAttempt, retryOrigins);
+          currentOrigin = retryOrigins[nextIndex] || currentOrigin;
+
           console.warn("[Friendly Captcha] Retrying agent iframe load.");
-          el.src += "&retry=" + retryLoadCounter++;
+          el.src = getRetrySrc(initialSrc, currentOrigin, nextAttempt - 1);
+          attempt = nextAttempt;
           registerWithRetry();
         }
       });
@@ -393,8 +429,8 @@ export class FriendlyCaptchaSDK {
    * @internal
    */
   private getRetryTimeout(retryLoadCounter: number) {
-    // 1st timeout = 3 secs, 5th timeout = 19.4 secs, sum of all timeouts = 52 secs
-    return Math.pow(retryLoadCounter, 1.8) * 1000 + 2000;
+    // 1st timeout = 2.5 secs, 5th timeout = 19.6 secs, sum of all timeouts = 49.5 secs
+    return (1.5+Math.pow(retryLoadCounter, 1.8)) * 1000;
   }
 
   /**
@@ -473,9 +509,11 @@ export class FriendlyCaptchaSDK {
    */
   public createWidget(opts: CreateWidgetOptions): WidgetHandle {
     const origins = resolveAPIOrigins(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    const retryOrigins = this.getRetryOrigins(origins);
+    let attempt = 1;
     this.bus.addOrigins(origins);
-    const origin = origins[0];
-    const agentId = this.ensureAgentIFrame(origins);
+    const origin = retryOrigins[getRetryOriginIndex(attempt, retryOrigins)] || origins[0];
+    const agentId = this.ensureAgentIFrame(retryOrigins);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -512,6 +550,9 @@ export class FriendlyCaptchaSDK {
 
     const widgetUrl = origin + widgetEndpoint;
     const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
+    const maxAttempts = MAX_IFRAME_LOAD_ATTEMPTS;
+    const initialSrc = wel.src;
+    let currentOrigin = origin;
     const widgetPlaceholder = createWidgetPlaceholder(opts);
     setWidgetRootStyles(opts.element);
     createBanner(opts);
@@ -524,15 +565,13 @@ export class FriendlyCaptchaSDK {
     const widgetPlaceholderStyle = widgetPlaceholder.style;
     widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "connecting");
 
-    let retryLoadCounter = 1;
-
     function setUnreachableState(detail: string) {
       const debugString = encodeStringToBase64Url(
         JSON.stringify({
           sdk_v: SDK_VERSION,
           sitekey: opts.sitekey || "",
-          retry: retryLoadCounter + "",
-          endpoint: origin,
+          retry: attempt + "",
+          endpoint: currentOrigin,
           ua: navigator.userAgent,
           tz: tz() || "",
         } as SentinelResponseDebugData),
@@ -551,23 +590,29 @@ export class FriendlyCaptchaSDK {
     }
 
     const registerWithRetry = () => {
-      this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(retryLoadCounter)).then((status) => {
+      this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(attempt)).then((status) => {
         if (status === "timeout") {
-          if (retryLoadCounter > 4) {
-            console.error("[Friendly Captcha] Failed to load widget iframe after 4 retries.");
+          if (attempt >= maxAttempts) {
+            console.error(`[Friendly Captcha] Failed to load widget iframe after ${attempt - 1} retries.`);
             setUnreachableState("Widget load timeout, stopped retrying");
             widgetPlaceholderStyle.borderColor = "#f00";
             widgetPlaceholderStyle.fontSize = "12px";
             createFallback(widgetPlaceholder, originOf(wel.src), language);
             return;
           }
+
+          const nextAttempt = attempt + 1;
+          const nextIndex = getRetryOriginIndex(nextAttempt, retryOrigins);
+          currentOrigin = retryOrigins[nextIndex] || currentOrigin;
+
           widgetPlaceholderStyle.backgroundColor = "#fee";
           widgetPlaceholderStyle.color = "#222";
-          widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "retrying") + ` (${retryLoadCounter})`;
+          widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "retrying") + ` (${attempt})`;
 
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
           setUnreachableState("Widget load timeout, will retry");
-          wel.src += "&retry=" + retryLoadCounter++;
+          wel.src = getRetrySrc(initialSrc, currentOrigin, nextAttempt - 1);
+          attempt = nextAttempt;
           registerWithRetry();
         } else if (status === "registered") {
           // After successful registration, we remove the placeholder and show the widget.
@@ -590,9 +635,9 @@ export class FriendlyCaptchaSDK {
    */
   public riskIntelligence(opts: RiskIntelligenceOptions): Promise<RiskIntelligenceGenerateData> {
     const origins = resolveAPIOrigins(opts.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    const retryOrigins = this.getRetryOrigins(origins);
     this.bus.addOrigins(origins);
-    const origin = origins[0];
-    const agentId = this.ensureAgentIFrame(origin);
+    const agentId = this.ensureAgentIFrame(retryOrigins);
     const uid = randomId(8);
 
     this.bus.send({
@@ -618,9 +663,9 @@ export class FriendlyCaptchaSDK {
    */
   public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
     const origins = resolveAPIOrigins(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    const retryOrigins = this.getRetryOrigins(origins);
     this.bus.addOrigins(origins);
-    const origin = origins[0];
-    const agentId = this.ensureAgentIFrame(origin);
+    const agentId = this.ensureAgentIFrame(retryOrigins);
     const uid = randomId(8);
 
     this.bus.send({

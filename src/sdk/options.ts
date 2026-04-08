@@ -27,9 +27,17 @@ const expandEndpointShorthand = (value: string) => splitCSV(SHORTHANDS[value] ||
  */
 export function resolveAPIOrigins(optionValue: string | undefined): string[] {
   const endpointList = optionValue || SHORTHANDS.global;
-  return splitCSV(endpointList)
+  const resolved = splitCSV(endpointList)
     .reduce((acc: string[], endpoint) => acc.concat(expandEndpointShorthand(endpoint)), [])
     .map(originOf);
+
+  if (resolved.length > 0) {
+    return resolved;
+  }
+
+  // If the endpoint string was provided but resolved to nothing (e.g. ", ,"),
+  // fall back to the default global endpoint instead of returning an empty list.
+  return splitCSV(SHORTHANDS.global).map(originOf);
 }
 
 export function getSDKDisableEvalPatching(): boolean {
