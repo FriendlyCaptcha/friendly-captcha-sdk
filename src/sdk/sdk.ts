@@ -302,15 +302,13 @@ export class FriendlyCaptchaSDK {
     }
 
     if (msg.type === "root_store_get") {
-      const v = s.store.get(msg.key);
-
       this.bus.send({
         type: "root_store_get_reply",
         from_id: "",
         to_id: from,
         _frc: 1,
         rid: msg.rid,
-        value: v,
+        value: s.store.get(msg.key),
         sa: true, // Backwards compatibility: we always say that storage access is possible.
       });
     } else if (msg.type === "root_store_set") {
