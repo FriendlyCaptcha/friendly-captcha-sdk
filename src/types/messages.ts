@@ -138,7 +138,8 @@ export interface RootStoreSetMessage {
   rid: string;
   key: string;
   value: string | undefined;
-  p: boolean;
+  /** @deprecated No longer used, remove from future messages. */
+  p?: boolean;
 }
 
 export interface RootStoreSetReplyMessage {
@@ -151,7 +152,8 @@ export interface RootStoreGetMessage {
   type: "root_store_get";
   rid: string;
   key: string;
-  p: boolean;
+  /** @deprecated No longer used, remove from future messages. */
+  p?: boolean;
 }
 
 export interface RootStoreGetReplyMessage {

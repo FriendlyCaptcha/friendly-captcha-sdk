@@ -302,27 +302,24 @@ export class FriendlyCaptchaSDK {
     }
 
     if (msg.type === "root_store_get") {
-      s.store.get(msg.key, { p: msg.p }).then((v) => {
-        this.bus.send({
-          type: "root_store_get_reply",
-          from_id: "",
-          to_id: from,
-          _frc: 1,
-          rid: msg.rid,
-          value: v,
-          sa: s.store.hasSA(),
-        });
+      this.bus.send({
+        type: "root_store_get_reply",
+        from_id: "",
+        to_id: from,
+        _frc: 1,
+        rid: msg.rid,
+        value: s.store.get(msg.key),
+        sa: true, // Backwards compatibility: we always say that storage access is possible.
       });
     } else if (msg.type === "root_store_set") {
-      s.store.set(msg.key, msg.value, { p: msg.p }).then(() => {
-        this.bus.send({
-          type: "root_store_set_reply",
-          from_id: "",
-          to_id: from,
-          _frc: 1,
-          rid: msg.rid,
-          sa: s.store.hasSA(),
-        });
+      s.store.set(msg.key, msg.value);
+      this.bus.send({
+        type: "root_store_set_reply",
+        from_id: "",
+        to_id: from,
+        _frc: 1,
+        rid: msg.rid,
+        sa: true, // Backwards compatibility: we always say that storage access is possible.
       });
     }
   }
