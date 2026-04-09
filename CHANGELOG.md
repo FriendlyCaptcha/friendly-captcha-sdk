@@ -1,5 +1,8 @@
 # changelog
 
+## Unreleased
+- Support for fallback endpoints (for retrying with a different endpoint when the primary one is unreachable).
+
 ## 0.2.1
 - Remove indexedDB codepaths and dependencies (they were unused).
 - Update development and test dependencies.
