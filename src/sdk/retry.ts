@@ -6,6 +6,8 @@
  */
 
 import { shuffledCopy } from "../util/random.js";
+import { originOf } from "../util/url.js";
+import { stringHasPrefix } from "../util/string.js";
 
 /**
  * Build a retry origin list with these rules:
@@ -32,7 +34,7 @@ export function getRetryOrigins(origins: string[]): string[] {
 /**
  * Returns the index in retryOrigins to use for a given attempt number.
  *
- * - Attempt 1 and 2 always map to index 0 (primary).
+ * - Attempts 0, 1, and 2 map to index 0 (primary).
  * - Following attempts map to fallback indices in order.
  * - If attempts exceed unique fallbacks, a random fallback index is used.
  * 
@@ -54,4 +56,29 @@ export function getRetryOriginIndex(
   }
 
   return 1 + Math.floor(Math.random() * fallbackCount);
+}
+
+/**
+ * Builds a retry URL by replacing the source origin with `nextOrigin` and
+ * appending a `retry=<n>` query parameter.
+ *
+ * - Supports absolute and relative `src` values.
+ * - Normalizes `nextOrigin` to its origin (ignoring trailing slashes/paths).
+ * - Assumes `src` does not contain a URL fragment (`#...`).
+ *
+ * @private
+ */
+export function getRetrySrc(src: string, nextOrigin: string, retryCount: number): string {
+  const srcOrigin = originOf(src);
+  const normalizedNextOrigin = originOf(nextOrigin);
+
+  let pathAndQuery = stringHasPrefix(src, srcOrigin) ? src.slice(srcOrigin.length) : src;
+  if (pathAndQuery.length === 0) {
+    pathAndQuery = "/";
+  } else if (!stringHasPrefix(pathAndQuery, "/")) {
+    pathAndQuery = "/" + pathAndQuery;
+  }
+
+  const separator = pathAndQuery.indexOf("?") === -1 ? "?" : "&";
+  return normalizedNextOrigin + pathAndQuery + separator + "retry=" + retryCount;
 }

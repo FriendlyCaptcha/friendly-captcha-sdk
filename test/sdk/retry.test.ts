@@ -5,7 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 import test from "ava";
-import { getRetryOrigins, getRetryOriginIndex } from "../../src/sdk/retry.js";
+import { getRetryOrigins, getRetryOriginIndex, getRetrySrc } from "../../src/sdk/retry.js";
+
+test.before(() => {
+  globalThis.document = { location: { origin: "https://localhost:1234" } } as any;
+});
 
 test("getRetryOrigins keeps primary first and shuffles fallbacks", (t) => {
   const origins = [
@@ -57,4 +61,24 @@ test("getRetryOriginIndex always returns primary when no fallback origins exist"
   t.is(getRetryOriginIndex(2, retryOrigins), 0);
   t.is(getRetryOriginIndex(3, retryOrigins), 0);
   t.is(getRetryOriginIndex(4, retryOrigins), 0);
+});
+
+test("getRetrySrc supports relative src and normalizes next origin", (t) => {
+  const out = getRetrySrc(
+    "/api/v2/captcha/widget?foo=1",
+    "https://fallback.example.com/some/path/",
+    2,
+  );
+
+  t.is(out, "https://fallback.example.com/api/v2/captcha/widget?foo=1&retry=2");
+});
+
+test("getRetrySrc appends retry for absolute src", (t) => {
+  const out = getRetrySrc(
+    "https://primary.example.com/api/v2/captcha/widget?foo=1",
+    "https://fallback.example.com/",
+    3,
+  );
+
+  t.is(out, "https://fallback.example.com/api/v2/captcha/widget?foo=1&retry=3");
 });

@@ -44,7 +44,7 @@ import {
   RiskIntelligenceClearOptions,
 } from "../types/riskIntelligence.js";
 import { RiskIntelligenceHandle } from "./riskIntelligenceHandle.js";
-import { getRetryOrigins as buildRetryOrigins, getRetryOriginIndex } from "./retry.js";
+import { getRetryOrigins as buildRetryOrigins, getRetryOriginIndex, getRetrySrc } from "./retry.js";
 
 declare const SDK_VERSION: string;
 
@@ -63,13 +63,6 @@ const AGENT_ORIGIN_KEY_DATASET_FIELD = "FrcAgentOriginKey";
  */
 const IFRAME_EXP_TIME = 1000 * 60 * 60 * 36; // 36 hours
 const MAX_IFRAME_LOAD_ATTEMPTS = 5;
-
-function getRetrySrc(src: string, nextOrigin: string, retryCount: number): string {
-  const srcOrigin = originOf(src);
-  const pathAndQuery = src.slice(srcOrigin.length);
-  const separator = pathAndQuery.indexOf("?") === -1 ? "?" : "&";
-  return nextOrigin + pathAndQuery + separator + "retry=" + retryCount;
-}
 
 /**
  * Options when creating a new SDK instance.
@@ -342,9 +335,14 @@ export class FriendlyCaptchaSDK {
   }
 
   /**
-   * Creates an agent IFrame with the given API endpoint. Returns the Agent ID.
-   * @param origin - Origin of the API endpoint to use.
-   * @returns String - The agent ID.
+   * Ensures an agent iframe exists for the configured primary origin in `retryOrigins`.
+   *
+   * Reuses an existing iframe when possible (within this SDK instance and across SDK
+   * instances on the same page), otherwise creates and registers a new one with retry
+   * failover across `retryOrigins`.
+   *
+   * @param retryOrigins - Ordered retry origins with the primary origin at index 0.
+   * @returns String - The agent ID for the reused or newly created iframe.
    */
   private ensureAgentIFrame(retryOrigins: string[]): string {
     let attempt = 1;
