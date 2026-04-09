@@ -12,7 +12,7 @@ const toFRCAPIUrl = (hosts: string[]) => hosts.map((h) => `https://${h}.frcapi.c
 
 const SHORTHANDS: Record<string, string> = {
   eu: toFRCAPIUrl(["eu", "eu0", "eu1"]),
-  global: toFRCAPIUrl(["global"]),
+  global: toFRCAPIUrl(["global", "global0", "global1"]),
 };
 
 const splitCSV = (value: string) => value.split(",").map((v) => v.trim()).filter((v) => !!v);
