@@ -12,7 +12,11 @@ test.before(() => {
 });
 
 test("resolveAPIOrigin defaults to global shorthand", (t) => {
-  t.deepEqual(resolveAPIOrigins(undefined), ["https://global.frcapi.com"]);
+  t.deepEqual(resolveAPIOrigins(undefined), [
+    "https://global.frcapi.com",
+    "https://global0.frcapi.com",
+    "https://global1.frcapi.com",
+  ]);
 });
 
 test("resolveAPIOrigin expands eu shorthand", (t) => {
@@ -47,7 +51,11 @@ test("resolveAPIOrigin resolves relative URLs to the current origin", (t) => {
 });
 
 test("resolveAPIOrigin falls back to global shorthand when endpoint list is empty", (t) => {
-  t.deepEqual(resolveAPIOrigins(" , , "), ["https://global.frcapi.com"]);
+  t.deepEqual(resolveAPIOrigins(" , , "), [
+    "https://global.frcapi.com",
+    "https://global0.frcapi.com",
+    "https://global1.frcapi.com",
+  ]);
 });
 
 test("data-api-endpoint CSV from widget attribute is split correctly", (t) => {
