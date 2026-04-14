@@ -16,13 +16,28 @@ export function findFRCElements() {
  * Traverses parent nodes until a <form> is found, returns null if not found.
  */
 export function findParentFormElement(element: HTMLElement): HTMLFormElement | null {
-  while (element.tagName !== "FORM") {
-    element = element.parentElement as HTMLElement;
-    if (!element) {
-      return null;
+  let current: HTMLElement | null = element;
+
+  while (current) {
+    if (current.tagName === "FORM") {
+      return current as HTMLFormElement;
     }
+
+    if (current.parentElement) {
+      current = current.parentElement;
+      continue;
+    }
+
+    const parentNode = current.parentNode as (Node & { host?: EventTarget | null }) | null;
+    if (parentNode && parentNode.host) {
+      current = parentNode.host as HTMLElement;
+      continue;
+    }
+
+    current = null;
   }
-  return element as HTMLFormElement;
+
+  return null;
 }
 
 /**
