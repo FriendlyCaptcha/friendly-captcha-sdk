@@ -1,5 +1,8 @@
 # changelog
 
+## 0.2.3
+- Support for fallback endpoints (for retrying with a different endpoint when the primary one is unreachable).
+
 ## 0.2.2
 - Fix `startMode: "focus"` not working if the widget is mounted under a shadow root (e.g. in a web component).
 

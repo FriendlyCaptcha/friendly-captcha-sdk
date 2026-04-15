@@ -58,8 +58,12 @@ export type WidgetMode = "interactive" | "noninteractive";
 export type WidgetResetTrigger = "widget" | "root" | "agent";
 
 /**
- * Which API endpoint to use for the SDK. Typically "eu" or "global", but a URL can be used to specify a custom endpoint.
+ * Which API endpoint to use for the SDK. Typically `"eu"` or `"global"`, but a URL can be used to specify a custom endpoint.
  * Defaults to "global".
+ * 
+ * Advanced usage: Fallback endpoints can be specified by appending them (comma-separated).
+ * The SDK first tries the first endpoint, and then goes through the fallback endpoints in a random order if the first one is not reachable.
+ * Note that the `"eu"` and `"global` shortcuts already contain multiple endpoints for redundancy, so you generally don't need to specify fallback endpoints when using those.
  *
  * @public
  */

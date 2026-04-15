@@ -6,20 +6,38 @@
  */
 import { originOf } from "../util/url.js";
 
+
+
+const toFRCAPIUrl = (hosts: string[]) => hosts.map((h) => `https://${h}.frcapi.com`).join(",");
+
 const SHORTHANDS: Record<string, string> = {
-  eu: "https://eu.frcapi.com",
-  global: "https://global.frcapi.com",
+  eu: toFRCAPIUrl(["eu", "eu0", "eu1"]),
+  global: toFRCAPIUrl(["global", "global0", "global1"]),
 };
 
-export function resolveAPIOrigin(optionValue: string | undefined) {
-  let v = optionValue;
-  if (!v) {
-    // We default to the global endpoint
-    v = SHORTHANDS.global;
-  } else if (SHORTHANDS[v]) {
-    v = SHORTHANDS[v];
+const splitCSV = (value: string) => value.split(",").map((v) => v.trim()).filter((v) => !!v);
+
+const expandEndpointShorthand = (value: string) => splitCSV(SHORTHANDS[value] || value);
+
+/**
+ * resolveAPIOrigin resolves the value of the API origin to use for the SDK.
+ * If no value is specified, it defaults to the "global" shorthand. The "eu" and "global" shorthands are expanded to multiple endpoints for redundancy. Custom URLs are used as-is.
+ * @param optionValue The value of the API origin to use for the SDK.
+ * @returns A list of API origins to use for the SDK, with shorthands expanded.
+ */
+export function resolveAPIOrigins(optionValue: string | undefined): string[] {
+  const endpointList = optionValue || SHORTHANDS.global;
+  const resolved = splitCSV(endpointList)
+    .reduce((acc: string[], endpoint) => acc.concat(expandEndpointShorthand(endpoint)), [])
+    .map(originOf);
+
+  if (resolved.length > 0) {
+    return resolved;
   }
-  return originOf(v);
+
+  // If the endpoint string was provided but resolved to nothing (e.g. ", ,"),
+  // fall back to the default global endpoint instead of returning an empty list.
+  return splitCSV(SHORTHANDS.global).map(originOf);
 }
 
 export function getSDKDisableEvalPatching(): boolean {
