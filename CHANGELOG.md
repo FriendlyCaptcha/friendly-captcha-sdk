@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.0
+
+- **There are no changes from `0.2.3` to `1.0.0`.** There have never been incompatible API changes, so it should be safe to upgrade to `1.0.0` from any current version.
+
 ## 0.2.3
 - Support for fallback endpoints (for retrying with a different endpoint when the primary one is unreachable).
 
