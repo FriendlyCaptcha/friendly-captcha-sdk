@@ -185,7 +185,6 @@ export function createBanner(opts: CreateWidgetOptions) {
   s.letterSpacing = "-0.0125rem";
   a.target = "_blank";
   a.textContent = "Friendly Captcha";
-  a.ariaLabel = "Friendly Captcha (opens in new tab)";
 
   // A poor man's hover, we can't use the :hover pseudoclass with inline css.
   a.onmouseenter = () => (s.textDecorationColor = primaryColor);
