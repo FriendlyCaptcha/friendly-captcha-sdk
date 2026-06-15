@@ -11,7 +11,7 @@ import { supportAllowClipboardWrite } from "./supports";
 import { encodeQuery } from "../util/url";
 import { FriendlyCaptchaSDK } from "./sdk";
 import { findFirstParentLangAttribute } from "./dom";
-import { getLocalizedPlaceholderText, getLocalizedWidgetTitle, isRTLLanguage } from "./localization";
+import { getLocalizedText, getLocalizedWidgetTitle, isRTLLanguage } from "./localization";
 
 // Injected by esbuild
 declare const SDK_VERSION: string;
@@ -185,6 +185,7 @@ export function createBanner(opts: CreateWidgetOptions) {
   s.letterSpacing = "-0.0125rem";
   a.target = "_blank";
   a.textContent = "Friendly Captcha";
+  a.ariaLabel = "Friendly Captcha (" + getLocalizedText(language, "newTab") + ")";
 
   // A poor man's hover, we can't use the :hover pseudoclass with inline css.
   a.onmouseenter = () => (s.textDecorationColor = primaryColor);
@@ -223,7 +224,7 @@ export function createFallback(el: HTMLElement, apiOrigin: string, language: str
     return l;
   };
 
-  const failedText = getLocalizedPlaceholderText(language, "failed");
+  const failedText = getLocalizedText(language, "failed");
 
   const els = [link(`${apiOrigin}/connectionTest`, failedText)];
 
