@@ -17,7 +17,7 @@ import {
   createWidgetPlaceholder,
   getLanguageFromOptionsOrParent,
 } from "./create.js";
-import { getLocalizedWidgetTitle, getLocalizedPlaceholderText, isRTLLanguage } from "./localization.js";
+import { getLocalizedWidgetTitle, getLocalizedText, isRTLLanguage } from "./localization.js";
 import {
   EnvelopedMessage,
   Message,
@@ -561,7 +561,7 @@ export class FriendlyCaptchaSDK {
     }
 
     const widgetPlaceholderStyle = widgetPlaceholder.style;
-    widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "connecting");
+    widgetPlaceholder.textContent = getLocalizedText(language, "connecting");
 
     function setUnreachableState(detail: string) {
       const debugString = encodeStringToBase64Url(
@@ -605,7 +605,7 @@ export class FriendlyCaptchaSDK {
 
           widgetPlaceholderStyle.backgroundColor = "#fee";
           widgetPlaceholderStyle.color = "#222";
-          widgetPlaceholder.textContent = getLocalizedPlaceholderText(language, "retrying") + ` (${attempt})`;
+          widgetPlaceholder.textContent = getLocalizedText(language, "retrying") + ` (${attempt})`;
 
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
           setUnreachableState("Widget load timeout, will retry");
