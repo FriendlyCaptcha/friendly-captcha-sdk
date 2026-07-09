@@ -62,7 +62,10 @@ const AGENT_ORIGIN_KEY_DATASET_FIELD = "FrcAgentOriginKey";
  * into some weird state due to outdated versions of the page.
  */
 const IFRAME_EXP_TIME = 1000 * 60 * 60 * 36; // 36 hours
-const MAX_IFRAME_LOAD_ATTEMPTS = 5;
+// In ms, one per attempt. Short first try, then much longer waits so slow connections can finish.
+// Total ~72 secs before giving up.
+const IFRAME_LOAD_TIMEOUTS = [3000, 5000, 8000, 18000, 38000];
+const MAX_IFRAME_LOAD_ATTEMPTS = IFRAME_LOAD_TIMEOUTS.length;
 
 /**
  * Options when creating a new SDK instance.
@@ -427,8 +430,8 @@ export class FriendlyCaptchaSDK {
    * @internal
    */
   private getRetryTimeout(retryLoadCounter: number) {
-    // 1st timeout = 2.5 secs, 5th timeout = 19.6 secs, sum of all timeouts = 49.5 secs
-    return (1.5+Math.pow(retryLoadCounter, 1.8)) * 1000;
+    // Clamped so an out-of-range attempt reuses the nearest timeout instead of undefined.
+    return IFRAME_LOAD_TIMEOUTS[Math.min(Math.max(retryLoadCounter, 1), MAX_IFRAME_LOAD_ATTEMPTS) - 1];
   }
 
   /**

@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.2
+
+- Lengthen the iframe load retry timeouts so that slow or lossy connections have more time to finish loading.
+
 ## 1.0.1
 
 - Add "opens in new tab" aria-label to the Friendly Captcha link.
