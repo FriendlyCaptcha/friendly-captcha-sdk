@@ -31,6 +31,7 @@ firstWidget.destroy();
 const secondWidget = sdk.createWidget({ element: mount, sitekey, apiEndpoint });
 const secondWidgetId = secondWidget.id;
 
+// Mirrors the first entry of IFRAME_LOAD_TIMEOUTS in src/sdk/sdk.ts.
 const FIRST_RETRY_TIMEOUT = 3000;
 
 sdktest.description(
@@ -44,7 +45,7 @@ sdktest.test({ name: "only the second widget remains", sdk }, async (t) => {
 });
 
 sdktest.test({ name: "destroying a widget cancels its pending iframe retries", sdk, timeout: 25_000 }, async (t) => {
-  await new Promise((resolve) => setTimeout(resolve, FIRST_RETRY_TIMEOUT + 2000));
+  await new Promise((resolve) => setTimeout(resolve, FIRST_RETRY_TIMEOUT + 1000));
 
   const strayWarnings = retryWarnings.filter((w) => w.indexOf(firstWidgetId) !== -1);
   t.assert.equal(0, strayWarnings.length, `The destroyed widget logged ${strayWarnings.length} iframe retries`);

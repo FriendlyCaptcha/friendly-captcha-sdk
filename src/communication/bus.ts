@@ -151,15 +151,15 @@ export class CommunicationBus {
       id: id,
       element: iframe,
       type: type,
-      onReady: () => fp.resolve("registered"),
+      onReady: () => {
+        // Without this the timer outlives a successful registration by up to its full duration.
+        clearTimeout(timeoutHandle);
+        fp.resolve("registered");
+      },
     });
     this.registerTarget(t);
 
-    // Clearing the timer on registration keeps a resolved race from holding on to it for its full duration.
-    return Promise.race([fp.promise, timeoutPromise]).then((status) => {
-      clearTimeout(timeoutHandle);
-      return status;
-    });
+    return Promise.race([fp.promise, timeoutPromise]);
   }
 
   /**

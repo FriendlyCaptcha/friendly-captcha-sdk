@@ -525,12 +525,8 @@ export class FriendlyCaptchaSDK {
       this.bus.send(mergeObject(msgToSend, msg));
     };
 
-    // Set on destroy so that a pending iframe load retry stops instead of touching a widget that is gone.
-    let destroyed = false;
-
     const callbacks = {
       onDestroy: () => {
-        destroyed = true;
         send({ type: "root_destroy_widget" });
         this.bus.removeTarget(widgetId);
         this.widgets.delete(widgetId);
@@ -599,7 +595,8 @@ export class FriendlyCaptchaSDK {
 
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(attempt)).then((status) => {
-        if (destroyed) return;
+        // Retrying a widget that was destroyed while its iframe was still loading is pointless.
+        if (widgetHandle.isDestroyed) return;
 
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
