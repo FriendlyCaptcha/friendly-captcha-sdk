@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.3
+
+- Fix a destroyed widget continuing to retry its iframe load, which logged retry warnings and could move the widget into an error state after it was destroyed. This shows up in React StrictMode, which mounts, unmounts and mounts again.
+
 ## 1.0.2
 
 - Lengthen the iframe load retry timeouts so that slow or lossy connections have more time to finish loading.

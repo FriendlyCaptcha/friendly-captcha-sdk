@@ -143,7 +143,10 @@ export class CommunicationBus {
   ): Promise<"registered" | "timeout"> {
     const fp = flatPromise<"registered">();
     // Create a promise that resolves to `"timeout"` after some time.
-    let timeoutPromise = new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), timeout));
+    let timeoutHandle: ReturnType<typeof setTimeout>;
+    let timeoutPromise = new Promise<"timeout">((resolve) => {
+      timeoutHandle = setTimeout(() => resolve("timeout"), timeout);
+    });
     const t = new IFrameCommunicationTarget({
       id: id,
       element: iframe,
@@ -152,7 +155,11 @@ export class CommunicationBus {
     });
     this.registerTarget(t);
 
-    return Promise.race([fp.promise, timeoutPromise]);
+    // Clearing the timer on registration keeps a resolved race from holding on to it for its full duration.
+    return Promise.race([fp.promise, timeoutPromise]).then((status) => {
+      clearTimeout(timeoutHandle);
+      return status;
+    });
   }
 
   /**
