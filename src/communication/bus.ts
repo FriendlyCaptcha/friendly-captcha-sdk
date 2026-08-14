@@ -143,12 +143,19 @@ export class CommunicationBus {
   ): Promise<"registered" | "timeout"> {
     const fp = flatPromise<"registered">();
     // Create a promise that resolves to `"timeout"` after some time.
-    let timeoutPromise = new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), timeout));
+    let timeoutHandle: ReturnType<typeof setTimeout>;
+    let timeoutPromise = new Promise<"timeout">((resolve) => {
+      timeoutHandle = setTimeout(() => resolve("timeout"), timeout);
+    });
     const t = new IFrameCommunicationTarget({
       id: id,
       element: iframe,
       type: type,
-      onReady: () => fp.resolve("registered"),
+      onReady: () => {
+        // Without this the timer outlives a successful registration by up to its full duration.
+        clearTimeout(timeoutHandle);
+        fp.resolve("registered");
+      },
     });
     this.registerTarget(t);
 

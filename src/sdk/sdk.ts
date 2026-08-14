@@ -383,6 +383,9 @@ export class FriendlyCaptchaSDK {
 
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("agent", agentId, el, this.getRetryTimeout(attempt)).then((status) => {
+        // The agent is no longer tracked once `clear()` runs, at which point retrying it is pointless.
+        if (this.agents.get(origin) !== el) return;
+
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
             console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
@@ -592,6 +595,9 @@ export class FriendlyCaptchaSDK {
 
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(attempt)).then((status) => {
+        // Retrying a widget that was destroyed while its iframe was still loading is pointless.
+        if (widgetHandle.isDestroyed) return;
+
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
             console.error(`[Friendly Captcha] Failed to load widget iframe after ${attempt - 1} retries.`);
