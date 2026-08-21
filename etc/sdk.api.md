@@ -17,6 +17,7 @@ export interface CreateWidgetOptions {
     apiEndpoint?: APIEndpoint;
     element: HTMLElement;
     formFieldName?: string | null;
+    guardContext?: string;
     language?: string;
     sitekey?: string;
     startMode?: StartMode;
@@ -242,6 +243,7 @@ export class RiskIntelligenceHandle {
 export interface RiskIntelligenceOptions {
     apiEndpoint?: APIEndpoint;
     bypassCache?: boolean;
+    guardContext?: string;
     sitekey: string;
 }
 

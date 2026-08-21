@@ -12,6 +12,12 @@ export interface RiskIntelligenceOptions {
   sitekey: string;
 
   /**
+   * Opaque context used to associate a Risk Intelligence flow with Friendly Guard.
+   * Only used by Friendly Guard integrations and is set by the interstitial renderer. End users should never need to set this parameter.
+   */
+  guardContext?: string;
+
+  /**
    * A custom endpoint from which the agent is loaded and to which Risk Intelligence
    * requests are made.
    */

@@ -629,6 +629,11 @@ export class FriendlyCaptchaSDK {
       });
     };
     registerWithRetry();
+
+    if (opts.guardContext) {
+      send({ type: "root_set_guard_context", guard_context: opts.guardContext });
+    }
+
     registered.resolve();
 
     return widgetHandle;
@@ -653,6 +658,7 @@ export class FriendlyCaptchaSDK {
       from_id: "",
       _frc: 1,
       sitekey: opts.sitekey,
+      guard_context: opts.guardContext,
       bypassCache: opts.bypassCache || false,
       uid,
     });
