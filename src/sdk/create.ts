@@ -77,6 +77,10 @@ export function createWidgetIFrame(
     frameData.theme = opts.theme;
   }
 
+  if (opts.guardContext) {
+    frameData.guard_c = opts.guardContext;
+  }
+
   if (supportAllowClipboardWrite) {
     el.allow = "clipboard-write";
   }

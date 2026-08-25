@@ -629,11 +629,6 @@ export class FriendlyCaptchaSDK {
       });
     };
     registerWithRetry();
-
-    if (opts.guardContext) {
-      send({ type: "root_set_guard_context", guard_context: opts.guardContext });
-    }
-
     registered.resolve();
 
     return widgetHandle;

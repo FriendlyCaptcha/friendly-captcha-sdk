@@ -20,7 +20,6 @@ export type ToAgentMessage =
   | RootDestroyWidgetMessage
   | RootResetWidgetMessage
   | RootTriggerWidgetMessage
-  | RootSetGuardContextMessage
   | RootStoreSetReplyMessage
   | RootStoreGetReplyMessage
   | RootSignalsGetReplyMessage
@@ -106,11 +105,6 @@ export interface RootResetWidgetMessage {
 
 export interface RootDestroyWidgetMessage {
   type: "root_destroy_widget";
-}
-
-export interface RootSetGuardContextMessage {
-  type: "root_set_guard_context";
-  guard_context: string;
 }
 // Messages to the widget from the agent
 
