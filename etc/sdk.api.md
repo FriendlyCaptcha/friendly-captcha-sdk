@@ -188,6 +188,7 @@ export class FriendlyCaptchaSDK {
 export interface FriendlyCaptchaSDKOptions {
     apiEndpoint?: APIEndpoint;
     disableEvalPatching?: boolean;
+    // @internal
     guardContext?: string;
     startAgent?: boolean;
 }
