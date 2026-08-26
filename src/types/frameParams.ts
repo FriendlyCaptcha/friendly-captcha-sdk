@@ -55,5 +55,10 @@ export type FrameParams = {
    */
   theme?: string;
 
+  /**
+   * Opaque context that associates this frame with a Friendly Guard screening flow.
+   */
+  guard_c?: string;
+
   expire?: string;
 };

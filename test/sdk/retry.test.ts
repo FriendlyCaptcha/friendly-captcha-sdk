@@ -64,11 +64,7 @@ test("getRetryOriginIndex always returns primary when no fallback origins exist"
 });
 
 test("getRetrySrc supports relative src and normalizes next origin", (t) => {
-  const out = getRetrySrc(
-    "/api/v2/captcha/widget?foo=1",
-    "https://fallback.example.com/some/path/",
-    2,
-  );
+  const out = getRetrySrc("/api/v2/captcha/widget?foo=1", "https://fallback.example.com/some/path/", 2);
 
   t.is(out, "https://fallback.example.com/api/v2/captcha/widget?foo=1&retry=2");
 });

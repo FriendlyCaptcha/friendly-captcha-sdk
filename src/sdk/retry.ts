@@ -23,7 +23,7 @@ import { stringHasPrefix } from "../util/string.js";
  *   "https://3.example.com",
  *   "https://1.example.com"
  * ]
- * 
+ *
  * @private
  */
 export function getRetryOrigins(origins: string[]): string[] {
@@ -37,13 +37,10 @@ export function getRetryOrigins(origins: string[]): string[] {
  * - Attempts 0, 1, and 2 map to index 0 (primary).
  * - Following attempts map to fallback indices in order.
  * - If attempts exceed unique fallbacks, a random fallback index is used.
- * 
+ *
  * @private
  */
-export function getRetryOriginIndex(
-  attemptNumber: number,
-  retryOrigins: string[],
-): number {
+export function getRetryOriginIndex(attemptNumber: number, retryOrigins: string[]): number {
   const retryOriginsLength = retryOrigins.length;
   if (retryOriginsLength === 0) return -1;
   // We intentionally map attempt 0 to primary as a bug-tolerant fallback.

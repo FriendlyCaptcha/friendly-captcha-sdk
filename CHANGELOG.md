@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.4
+
+- Add the `guardContext` SDK option to associate with a Friendly Guard screening flow if used in that context (no effect for normal implementations).
+
 ## 1.0.3
 
 - Fix a destroyed widget continuing to retry its iframe load, which logged retry warnings and could move the widget into an error state after it was destroyed. This shows up in React StrictMode, which mounts, unmounts and mounts again.
@@ -17,12 +21,15 @@
 - **There are no changes from `0.2.3` to `1.0.0`.** There have never been incompatible API changes, so it should be safe to upgrade to `1.0.0` from any current version.
 
 ## 0.2.3
+
 - Support for fallback endpoints (for retrying with a different endpoint when the primary one is unreachable).
 
 ## 0.2.2
+
 - Fix `startMode: "focus"` not working if the widget is mounted under a shadow root (e.g. in a web component).
 
 ## 0.2.1
+
 - Remove indexedDB codepaths and dependencies (they were unused).
 - Update development and test dependencies.
 

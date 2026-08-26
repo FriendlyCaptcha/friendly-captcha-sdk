@@ -6,8 +6,6 @@
  */
 import { originOf } from "../util/url.js";
 
-
-
 const toFRCAPIUrl = (hosts: string[]) => hosts.map((h) => `https://${h}.frcapi.com`).join(",");
 
 const SHORTHANDS: Record<string, string> = {
@@ -15,7 +13,11 @@ const SHORTHANDS: Record<string, string> = {
   global: toFRCAPIUrl(["global", "global0", "global1"]),
 };
 
-const splitCSV = (value: string) => value.split(",").map((v) => v.trim()).filter((v) => !!v);
+const splitCSV = (value: string) =>
+  value
+    .split(",")
+    .map((v) => v.trim())
+    .filter((v) => !!v);
 
 const expandEndpointShorthand = (value: string) => splitCSV(SHORTHANDS[value] || value);
 
