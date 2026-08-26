@@ -92,7 +92,7 @@ export interface FriendlyCaptchaSDKOptions {
   disableEvalPatching?: boolean;
 
   /**
-   * Opaque context that associates this SDK creates with a Friendly Guard screening flow.
+   * Opaque context that associates this SDK with a Friendly Guard screening flow.
    * You should never need to set this option, this is for (internal) Friendly Guard interstitial integrations only.
    * 
    * @internal
