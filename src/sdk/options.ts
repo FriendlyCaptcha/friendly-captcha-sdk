@@ -42,18 +42,26 @@ export function resolveAPIOrigins(optionValue: string | undefined): string[] {
   return splitCSV(SHORTHANDS.global).map(originOf);
 }
 
-export function getSDKDisableEvalPatching(): boolean {
-  // We check if the meta tag `frc-disable-eval-patching` is present.
-  const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-disable-eval-patching"]`);
-  if (!m) return false;
+/**
+ * Returns the content of the `<meta name="frc-{name}">` tag, or undefined if there is no such tag.
+ */
+function getMetaContent(name: string): string | undefined {
+  const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-${name}"]`);
+  return m ? m.content : undefined;
+}
 
-  return !!m.content;
+export function getSDKDisableEvalPatching(): boolean {
+  return !!getMetaContent("disable-eval-patching");
+}
+
+export function getSDKGuardContext(): string | undefined {
+  return getMetaContent("guard-context");
 }
 
 export function getSDKAPIEndpoint(): string | undefined {
   // 1. We check for the meta tag `frc-api-endpoint`
-  const m: HTMLMetaElement | null = document.querySelector(`meta[name="frc-api-endpoint"]`);
-  if (m) return m.content;
+  const m = getMetaContent("api-endpoint");
+  if (m) return m;
 
   // 2. We check the current script element for `data-frc-api-endpoint`.
   const cs = document.currentScript;
