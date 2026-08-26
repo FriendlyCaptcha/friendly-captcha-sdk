@@ -24,7 +24,12 @@ const WIDGET_PLACEHOLDER_CLASSNAME = "frc-widget-placeholder";
 /**
  * @internal
  */
-export function createAgentIFrame(frcSDK: FriendlyCaptchaSDK, agentId: string, src: string, guardContext: string | undefined) {
+export function createAgentIFrame(
+  frcSDK: FriendlyCaptchaSDK,
+  agentId: string,
+  src: string,
+  guardContext: string | undefined,
+) {
   const frameParams: FrameParams = {
     origin: document.location.origin,
     sess_id: sessionId(),

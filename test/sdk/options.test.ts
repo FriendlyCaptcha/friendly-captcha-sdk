@@ -20,30 +20,26 @@ test("resolveAPIOrigin defaults to global shorthand", (t) => {
 });
 
 test("resolveAPIOrigin expands eu shorthand", (t) => {
-  t.deepEqual(
-    resolveAPIOrigins("eu"),
-    ["https://eu.frcapi.com", "https://eu0.frcapi.com", "https://eu1.frcapi.com"],
-  );
+  t.deepEqual(resolveAPIOrigins("eu"), ["https://eu.frcapi.com", "https://eu0.frcapi.com", "https://eu1.frcapi.com"]);
 });
 
 test("resolveAPIOrigin expands shorthand entries in comma-separated values", (t) => {
-  t.deepEqual(
-    resolveAPIOrigins("https://a.example.com,eu,https://b.example.com/path"),
-    [
-      "https://a.example.com",
-      "https://eu.frcapi.com",
-      "https://eu0.frcapi.com",
-      "https://eu1.frcapi.com",
-      "https://b.example.com",
-    ],
-  );
+  t.deepEqual(resolveAPIOrigins("https://a.example.com,eu,https://b.example.com/path"), [
+    "https://a.example.com",
+    "https://eu.frcapi.com",
+    "https://eu0.frcapi.com",
+    "https://eu1.frcapi.com",
+    "https://b.example.com",
+  ]);
 });
 
 test("resolveAPIOrigin trims and ignores empty comma-separated values", (t) => {
-  t.deepEqual(
-    resolveAPIOrigins(" , eu , , https://example.com/foo ,,"),
-    ["https://eu.frcapi.com", "https://eu0.frcapi.com", "https://eu1.frcapi.com", "https://example.com"],
-  );
+  t.deepEqual(resolveAPIOrigins(" , eu , , https://example.com/foo ,,"), [
+    "https://eu.frcapi.com",
+    "https://eu0.frcapi.com",
+    "https://eu1.frcapi.com",
+    "https://example.com",
+  ]);
 });
 
 test("resolveAPIOrigin resolves relative URLs to the current origin", (t) => {

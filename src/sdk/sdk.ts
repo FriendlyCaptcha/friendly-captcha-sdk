@@ -94,7 +94,7 @@ export interface FriendlyCaptchaSDKOptions {
   /**
    * Opaque context that associates this SDK with a Friendly Guard screening flow.
    * You should never need to set this option, this is for (internal) Friendly Guard interstitial integrations only.
-   * 
+   *
    * @internal
    */
   guardContext?: string;
