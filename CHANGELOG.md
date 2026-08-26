@@ -1,6 +1,9 @@
 # changelog
 
-## 1.0.4
+## 1.1.1
+- Add support for setting the `guardContext` value introduced in `1.1.0` through a HTML meta tag.
+
+## 1.1.0
 
 - Add the `guardContext` SDK option to associate with a Friendly Guard screening flow if used in that context (no effect for normal implementations).
 

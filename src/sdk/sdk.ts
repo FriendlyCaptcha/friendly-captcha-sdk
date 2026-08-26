@@ -34,7 +34,7 @@ import { Signals, getSignals } from "../signals/collect.js";
 import { stringHasPrefix } from "../util/string.js";
 import { mergeObject } from "../util/object.js";
 import { _RootTrigger } from "../types/trigger.js";
-import { resolveAPIOrigins, getSDKAPIEndpoint, getSDKDisableEvalPatching } from "./options.js";
+import { resolveAPIOrigins, getSDKAPIEndpoint, getSDKDisableEvalPatching, getSDKGuardContext } from "./options.js";
 import { SentinelResponseDebugData } from "../types/sentinel.js";
 import { tz } from "../util/tz.js";
 import { encodeStringToBase64Url } from "../util/encode.js";
@@ -191,7 +191,7 @@ export class FriendlyCaptchaSDK {
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
     this.apiEndpoint = opts.apiEndpoint;
-    this.guardContext = opts.guardContext;
+    this.guardContext = opts.guardContext || getSDKGuardContext();
 
     cbus = cbus || new CommunicationBus();
     cbus.listen((msg: EnvelopedMessage<Message>) => this.onReceiveMessage(msg as EnvelopedMessage<ToRootMessage>));
