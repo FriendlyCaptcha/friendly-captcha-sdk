@@ -153,12 +153,6 @@ export interface CreateWidgetOptions {
   sitekey?: string;
 
   /**
-   * Opaque context used to associate a widget flow with a Friendly Guard screening flow.
-   * Only used by Friendly Guard integrations and is set by the interstitial renderer. End users should never need to set this parameter.
-   */
-  guardContext?: string;
-
-  /**
    * The name of the field in the form that is set, defaults to `frc-captcha-response`.
    */
   formFieldName?: string | null;

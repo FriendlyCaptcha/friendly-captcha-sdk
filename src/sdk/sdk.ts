@@ -90,6 +90,14 @@ export interface FriendlyCaptchaSDKOptions {
    * may affect some hot reloading functionality for Webpack (in `dev` mode).
    */
   disableEvalPatching?: boolean;
+
+  /**
+   * Opaque context that associates this SDK creates with a Friendly Guard screening flow.
+   * You should never need to set this option, this is for (internal) Friendly Guard interstitial integrations only.
+   * 
+   * @internal
+   */
+  guardContext?: string;
 }
 
 /**
@@ -115,6 +123,12 @@ let sdkC = 0;
  */
 export class FriendlyCaptchaSDK {
   private apiEndpoint?: APIEndpoint;
+
+  /**
+   * The Friendly Guard context for this page (not relevant for ordinary Friendly Captcha integrations).
+   * @internal
+   */
+  private guardContext?: string;
 
   /**
    * Multiple agents may be running at the same time, this is the case if someone uses widgets with different endpoints on a single page.
@@ -177,6 +191,7 @@ export class FriendlyCaptchaSDK {
 
   constructor(opts: FriendlyCaptchaSDKOptions = {}) {
     this.apiEndpoint = opts.apiEndpoint;
+    this.guardContext = opts.guardContext;
 
     cbus = cbus || new CommunicationBus();
     cbus.listen((msg: EnvelopedMessage<Message>) => this.onReceiveMessage(msg as EnvelopedMessage<ToRootMessage>));
@@ -372,7 +387,7 @@ export class FriendlyCaptchaSDK {
     }
 
     const agentId = "a_" + randomId(12);
-    const el = createAgentIFrame(this, agentId, src);
+    const el = createAgentIFrame(this, agentId, src, this.guardContext);
     el.dataset[AGENT_ORIGIN_KEY_DATASET_FIELD] = origin;
     const initialSrc = el.src;
     let currentOrigin = origin;
@@ -553,7 +568,7 @@ export class FriendlyCaptchaSDK {
     this.widgets.set(widgetId, widgetHandle);
 
     const widgetUrl = origin + widgetEndpoint;
-    const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts);
+    const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts, this.guardContext);
     const maxAttempts = MAX_IFRAME_LOAD_ATTEMPTS;
     const initialSrc = wel.src;
     let currentOrigin = origin;
@@ -653,7 +668,6 @@ export class FriendlyCaptchaSDK {
       from_id: "",
       _frc: 1,
       sitekey: opts.sitekey,
-      guard_context: opts.guardContext,
       bypassCache: opts.bypassCache || false,
       uid,
     });

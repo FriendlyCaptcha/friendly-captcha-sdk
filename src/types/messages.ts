@@ -183,7 +183,6 @@ export interface RootRiskIntelligenceGenerateMessage {
   type: "root_risk_intelligence_generate";
   uid: string;
   sitekey: string;
-  guard_context?: string;
   bypassCache: boolean;
 }
 
