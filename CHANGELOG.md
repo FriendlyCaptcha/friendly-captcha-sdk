@@ -2,7 +2,7 @@
 
 ## 1.0.4
 
-- Add the `guardContext` option when creating a widget or generating a Risk Intelligence token to associate the event with a Friendly Guard screening flow if used in that context.
+- Add the `guardContext` SDK option to associate with a Friendly Guard screening flow if used in that context (no effect for normal implementations).
 
 ## 1.0.3
 

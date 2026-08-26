@@ -24,7 +24,7 @@ const WIDGET_PLACEHOLDER_CLASSNAME = "frc-widget-placeholder";
 /**
  * @internal
  */
-export function createAgentIFrame(frcSDK: FriendlyCaptchaSDK, agentId: string, src: string) {
+export function createAgentIFrame(frcSDK: FriendlyCaptchaSDK, agentId: string, src: string, guardContext: string | undefined) {
   const frameParams: FrameParams = {
     origin: document.location.origin,
     sess_id: sessionId(),
@@ -35,6 +35,10 @@ export function createAgentIFrame(frcSDK: FriendlyCaptchaSDK, agentId: string, s
     agent_id: agentId,
     ts: Date.now().toString(),
   };
+
+  if (guardContext) {
+    frameParams.guard_c = guardContext;
+  }
   const el = document.createElement("iframe");
   el.className = AGENT_FRAME_CLASSNAME;
   el.dataset[FRAME_ID_DATASET_FIELD] = agentId;
@@ -55,6 +59,7 @@ export function createWidgetIFrame(
   widgetId: string,
   widgetUrl: string,
   opts: CreateWidgetOptions,
+  guardContext: string | undefined,
 ): HTMLIFrameElement {
   const el = document.createElement("iframe");
 
@@ -75,6 +80,10 @@ export function createWidgetIFrame(
 
   if (opts.theme) {
     frameData.theme = opts.theme;
+  }
+
+  if (guardContext) {
+    frameData.guard_c = guardContext;
   }
 
   if (supportAllowClipboardWrite) {
