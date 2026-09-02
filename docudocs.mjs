@@ -64,15 +64,15 @@ async function main() {
         // column delimiters, but docusaurus uses a markdown processor
         // that doesn't support this. Replace with an escape sequence
         // that renders |.
-        // Also escape { and } in table cells, as MDX treats them as JSX
-        // expressions and fails to parse type signatures like `{ handleEvent: ... }`.
         // Strip <!-- --> comments that api-documenter injects as separators.
-        if (line.startsWith("|")) {
-          line = line.replace(/\\\|/g, "&#124;");
-          line = line.replace(/<!-- -->/g, "");
-          line = line.replace(/\{/g, "&#123;");
-          line = line.replace(/\}/g, "&#125;");
-        }
+        // Note: these files are rendered with `format: md` (see header below),
+        // so raw { and } no longer need escaping -- they'd otherwise be
+        // misparsed as MDX/JSX expressions (see issue #89 and its regression:
+        // api-documenter's table output isn't guaranteed to stay pipe-delimited
+        // vs. raw HTML across versions, so scoping an escape to one table
+        // syntax isn't durable -- opting out of MDX for these files is).
+        line = line.replace(/\\\|/g, "&#124;");
+        line = line.replace(/<!-- -->/g, "");
 
         // api-documenter escapes markdown links, so we need to unescape them
         // to display them correctly in docusaurus.
@@ -96,6 +96,11 @@ async function main() {
         `id: ${id}`,
         `title: ${title.split(" ")[0]}`,
         `hide_title: true`,
+        // Render as plain markdown, not MDX. These files are fully
+        // generated API reference, and MDX's acorn-based expression parser
+        // breaks on stray `{`/`}` and other punctuation in generated type signatures.
+        `mdx:`,
+        `  format: md`,
         ...(hide ? [`sidebar_class_name: sidebar-hidden`] : []),
         "---",
       ];
