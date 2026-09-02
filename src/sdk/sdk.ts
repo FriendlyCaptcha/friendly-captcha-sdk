@@ -73,7 +73,7 @@ const MAX_IFRAME_LOAD_ATTEMPTS = IFRAME_LOAD_TIMEOUTS.length;
  */
 export interface FriendlyCaptchaSDKOptions {
   /**
-   * Start the background agent (and solver) immediately, defaults to `true`.
+   * Start the background agent (and solver) immediately.
    */
   startAgent?: boolean;
   /**
