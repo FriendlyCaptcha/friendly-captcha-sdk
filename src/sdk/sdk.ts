@@ -413,6 +413,8 @@ export class FriendlyCaptchaSDK {
             console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
             el.remove();
             this.agents.delete(origin);
+            this.agentState.delete(agentId);
+            this.bus.removeTarget(agentId);
             this.agentFailHandlers.forEach((h) => {
               if (h.agentId === agentId) h.fail("Agent load timeout, stopped retrying", attempt, currentOrigin);
             });
@@ -541,10 +543,11 @@ export class FriendlyCaptchaSDK {
     let attempt = 1;
     this.bus.addOrigins(origins);
     const origin = retryOrigins[getRetryOriginIndex(attempt, retryOrigins)] || origins[0];
-    const agentId = this.ensureAgentIFrame(retryOrigins);
+    let agentId = this.ensureAgentIFrame(retryOrigins);
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
+      if (agentFailed) return;
       const msgToSend = { from_id: widgetId, to_id: agentId, _frc: 1 };
       this.bus.send(mergeObject(msgToSend, msg));
     };
@@ -555,12 +558,17 @@ export class FriendlyCaptchaSDK {
         this.bus.removeTarget(widgetId);
         this.widgets.delete(widgetId);
         this.agentFailHandlers.delete(widgetId);
+        window.removeEventListener("online", onOnline);
 
         opts.element.innerHTML = "";
         removeWidgetRootStyles(opts.element);
       },
       onReset: () => {
-        send({ type: "root_reset_widget" });
+        if (unreachable) {
+          startLoad();
+        } else {
+          send({ type: "root_reset_widget" });
+        }
       },
       onTrigger: (data: { trigger: _RootTrigger }) => {
         send({ type: "root_trigger_widget", trigger: data.trigger });
@@ -577,12 +585,12 @@ export class FriendlyCaptchaSDK {
 
     this.widgets.set(widgetId, widgetHandle);
 
-    const widgetUrl = origin + widgetEndpoint;
-    const wel = createWidgetIFrame(agentId, widgetId, widgetUrl, opts, this.guardContext);
     const maxAttempts = MAX_IFRAME_LOAD_ATTEMPTS;
-    const initialSrc = wel.src;
     let currentOrigin = origin;
-    const widgetPlaceholder = createWidgetPlaceholder(opts);
+    let wel: HTMLIFrameElement;
+    let initialSrc: string;
+    let widgetPlaceholder: HTMLDivElement;
+    let widgetPlaceholderStyle: CSSStyleDeclaration;
     setWidgetRootStyles(opts.element);
     createBanner(opts);
 
@@ -590,9 +598,6 @@ export class FriendlyCaptchaSDK {
     if (isRTLLanguage(language)) {
       opts.element.dir = "rtl";
     }
-
-    const widgetPlaceholderStyle = widgetPlaceholder.style;
-    widgetPlaceholder.textContent = getLocalizedText(language, "connecting");
 
     function setUnreachableState(detail: string) {
       const debugString = encodeStringToBase64Url(
@@ -618,11 +623,17 @@ export class FriendlyCaptchaSDK {
       });
     }
 
+    let unreachable = false;
+
     function showFallback(detail: string) {
+      // Must be set before the error event below, whose listeners may synchronously call reset().
+      unreachable = true;
+      // Keep a reference since reset() replaces widgetPlaceholder.
+      const placeholder = widgetPlaceholder;
+      placeholder.style.borderColor = "#f00";
+      placeholder.style.fontSize = "12px";
+      createFallback(placeholder, currentOrigin, language);
       setUnreachableState(detail);
-      widgetPlaceholderStyle.borderColor = "#f00";
-      widgetPlaceholderStyle.fontSize = "12px";
-      createFallback(widgetPlaceholder, currentOrigin, language);
     }
 
     let agentFailed = false;
@@ -641,10 +652,17 @@ export class FriendlyCaptchaSDK {
       },
     });
 
+    const onOnline = () => {
+      // Reset rather than reload so the start mode runs again.
+      if (unreachable) widgetHandle.reset();
+    };
+    window.addEventListener("online", onOnline);
+
     const registerWithRetry = () => {
-      this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(attempt)).then((status) => {
-        // Retrying a widget that was destroyed while its iframe was still loading is pointless.
-        if (widgetHandle.isDestroyed || agentFailed) return;
+      const el = wel;
+      this.bus.registerTargetIFrame("widget", widgetId, el, this.getRetryTimeout(attempt)).then((status) => {
+        // Retrying a widget that was destroyed or reloaded while its iframe was still loading is pointless.
+        if (widgetHandle.isDestroyed || agentFailed || el !== wel) return;
 
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
@@ -673,7 +691,28 @@ export class FriendlyCaptchaSDK {
         }
       });
     };
-    registerWithRetry();
+
+    // Creates the widget iframe and placeholder and starts retrying from attempt 1.
+    // Also used by reset() after the fallback.
+    const startLoad = () => {
+      attempt = 1;
+      currentOrigin = origin;
+      agentFailed = false;
+      unreachable = false;
+      agentId = this.ensureAgentIFrame(retryOrigins);
+      this.agentFailHandlers.get(widgetId)!.agentId = agentId;
+
+      if (wel) wel.remove();
+      if (widgetPlaceholder) widgetPlaceholder.remove();
+      wel = createWidgetIFrame(agentId, widgetId, origin + widgetEndpoint, opts, this.guardContext);
+      initialSrc = wel.src;
+      widgetPlaceholder = createWidgetPlaceholder(opts);
+      widgetPlaceholderStyle = widgetPlaceholder.style;
+      widgetPlaceholder.textContent = getLocalizedText(language, "connecting");
+
+      registerWithRetry();
+    };
+    startLoad();
     registered.resolve();
 
     return widgetHandle;
