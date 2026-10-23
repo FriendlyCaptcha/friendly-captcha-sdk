@@ -157,6 +157,10 @@ export class CommunicationBus {
         fp.resolve("registered");
       },
     });
+    // Retries re-register the same id, so keep its pending messages.
+    // Otherwise whatever was sent during earlier attempts is lost.
+    const prev = this.targets[id];
+    if (prev instanceof IFrameCommunicationTarget && !prev.ready) t.buffer = prev.buffer;
     this.registerTarget(t);
 
     return Promise.race([fp.promise, timeoutPromise]);
