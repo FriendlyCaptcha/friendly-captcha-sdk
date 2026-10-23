@@ -7,7 +7,6 @@
 import { StartMode, APIEndpoint, CreateWidgetOptions } from "../types/widget.js";
 import { CommunicationBus } from "../communication/bus.js";
 import { randomId } from "../util/random.js";
-import { originOf } from "../util/url.js";
 import {
   createBanner,
   createAgentIFrame,
@@ -145,6 +144,14 @@ export class FriendlyCaptchaSDK {
    * Mapping of widget ID to the widget handle.
    */
   private widgets: Map<string, WidgetHandle> = new Map();
+
+  /**
+   * Mapping of widget ID to its agent and the callback to run if that agent fails to load.
+   */
+  private agentFailHandlers: Map<
+    string,
+    { agentId: string; fail: (detail: string, attempt: number, origin: string) => void }
+  > = new Map();
 
   /**
    * @internal
@@ -406,7 +413,9 @@ export class FriendlyCaptchaSDK {
             console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
             el.remove();
             this.agents.delete(origin);
-            // We can consider reloading all widgets that use this agent ID.
+            this.agentFailHandlers.forEach((h) => {
+              if (h.agentId === agentId) h.fail("Agent load timeout, stopped retrying", attempt, currentOrigin);
+            });
             return;
           }
 
@@ -545,6 +554,7 @@ export class FriendlyCaptchaSDK {
         send({ type: "root_destroy_widget" });
         this.bus.removeTarget(widgetId);
         this.widgets.delete(widgetId);
+        this.agentFailHandlers.delete(widgetId);
 
         opts.element.innerHTML = "";
         removeWidgetRootStyles(opts.element);
@@ -608,18 +618,38 @@ export class FriendlyCaptchaSDK {
       });
     }
 
+    function showFallback(detail: string) {
+      setUnreachableState(detail);
+      widgetPlaceholderStyle.borderColor = "#f00";
+      widgetPlaceholderStyle.fontSize = "12px";
+      createFallback(widgetPlaceholder, currentOrigin, language);
+    }
+
+    let agentFailed = false;
+
+    this.agentFailHandlers.set(widgetId, {
+      agentId,
+      fail: (detail: string, agentAttempt: number, agentOrigin: string) => {
+        agentFailed = true;
+        // Once agentFailed is set the widget retry loop is done with attempt/currentOrigin, so we can repurpose them.
+        attempt = agentAttempt;
+        currentOrigin = agentOrigin;
+        // The widget iframe may have loaded already, so hide it and bring back the placeholder.
+        wel.style.display = "none";
+        if (!opts.element.contains(widgetPlaceholder)) opts.element.appendChild(widgetPlaceholder);
+        showFallback(detail);
+      },
+    });
+
     const registerWithRetry = () => {
       this.bus.registerTargetIFrame("widget", widgetId, wel, this.getRetryTimeout(attempt)).then((status) => {
         // Retrying a widget that was destroyed while its iframe was still loading is pointless.
-        if (widgetHandle.isDestroyed) return;
+        if (widgetHandle.isDestroyed || agentFailed) return;
 
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
             console.error(`[Friendly Captcha] Failed to load widget iframe after ${attempt - 1} retries.`);
-            setUnreachableState("Widget load timeout, stopped retrying");
-            widgetPlaceholderStyle.borderColor = "#f00";
-            widgetPlaceholderStyle.fontSize = "12px";
-            createFallback(widgetPlaceholder, originOf(wel.src), language);
+            showFallback("Widget load timeout, stopped retrying");
             return;
           }
 
