@@ -406,6 +406,7 @@ export class FriendlyCaptchaSDK {
             console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
             el.remove();
             this.agents.delete(origin);
+            this.bus.removeTarget(agentId);
             // We can consider reloading all widgets that use this agent ID.
             return;
           }

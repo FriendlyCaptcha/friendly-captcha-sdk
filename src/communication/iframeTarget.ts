@@ -45,7 +45,7 @@ export class IFrameCommunicationTarget implements CommunicationTarget {
 
   public send(msg: EnvelopedMessage<Message>) {
     if (this.ready) {
-      this.element!.contentWindow!.postMessage(msg, this.origin);
+      this.post(msg);
     } else {
       this.buffer.push(msg);
     }
@@ -61,8 +61,19 @@ export class IFrameCommunicationTarget implements CommunicationTarget {
 
   private flush() {
     for (let i = 0; i < this.buffer.length; i++) {
-      this.element!.contentWindow!.postMessage(this.buffer[i], this.origin);
+      this.post(this.buffer[i]);
     }
     this.buffer = [];
+  }
+
+  private post(msg: EnvelopedMessage<Message>) {
+    // `contentWindow` is null once the iframe is no longer attached to the document,
+    // e.g. after the SDK gave up loading it and removed it.
+    const w = this.element && this.element.contentWindow;
+    if (!w) {
+      console.warn(`[Friendly Captcha] Dropping message to ${this.type} ${this.id}: its iframe is not attached.`);
+      return;
+    }
+    w.postMessage(msg, this.origin);
   }
 }
