@@ -543,7 +543,7 @@ export class FriendlyCaptchaSDK {
     let attempt = 1;
     this.bus.addOrigins(origins);
     const origin = retryOrigins[getRetryOriginIndex(attempt, retryOrigins)] || origins[0];
-    let agentId = this.ensureAgentIFrame(retryOrigins);
+    let agentId: string;
     const widgetId = "w_" + randomId(12);
 
     const send = (msg: ToAgentMessage) => {
@@ -590,7 +590,6 @@ export class FriendlyCaptchaSDK {
     let wel: HTMLIFrameElement;
     let initialSrc: string;
     let widgetPlaceholder: HTMLDivElement;
-    let widgetPlaceholderStyle: CSSStyleDeclaration;
     setWidgetRootStyles(opts.element);
     const banner = createBanner(opts);
 
@@ -638,17 +637,14 @@ export class FriendlyCaptchaSDK {
 
     let agentFailed = false;
 
-    this.agentFailHandlers.set(widgetId, {
-      agentId,
-      fail: (detail: string, agentAttempt: number, agentOrigin: string) => {
-        agentFailed = true;
-        // The widget iframe may have loaded already, so hide it and bring back the placeholder.
-        wel.style.display = "none";
-        // Before the banner to keep the order (and so screen reader order) the same as on first load.
-        opts.element.insertBefore(widgetPlaceholder, banner.parentNode === opts.element ? banner : null);
-        showFallback(detail, agentAttempt, agentOrigin);
-      },
-    });
+    const onAgentFail = (detail: string, agentAttempt: number, agentOrigin: string) => {
+      agentFailed = true;
+      // The widget iframe may have loaded already, so hide it and bring back the placeholder.
+      wel.style.display = "none";
+      // Before the banner to keep the order (and so screen reader order) the same as on first load.
+      opts.element.insertBefore(widgetPlaceholder, banner.parentNode === opts.element ? banner : null);
+      showFallback(detail, agentAttempt, agentOrigin);
+    };
 
     const onOnline = () => {
       // Reset rather than reload so the start mode runs again.
@@ -673,8 +669,8 @@ export class FriendlyCaptchaSDK {
           const nextIndex = getRetryOriginIndex(nextAttempt, retryOrigins);
           currentOrigin = retryOrigins[nextIndex] || currentOrigin;
 
-          widgetPlaceholderStyle.backgroundColor = "#fee";
-          widgetPlaceholderStyle.color = "#222";
+          widgetPlaceholder.style.backgroundColor = "#fee";
+          widgetPlaceholder.style.color = "#222";
           widgetPlaceholder.textContent = getLocalizedText(language, "retrying") + ` (${attempt})`;
 
           console.warn(`[Friendly Captcha] Retrying widget ${widgetId} iframe load.`);
@@ -698,14 +694,13 @@ export class FriendlyCaptchaSDK {
       agentFailed = false;
       unreachable = false;
       agentId = this.ensureAgentIFrame(retryOrigins);
-      this.agentFailHandlers.get(widgetId)!.agentId = agentId;
+      this.agentFailHandlers.set(widgetId, { agentId, fail: onAgentFail });
 
       removeElement(wel);
       removeElement(widgetPlaceholder);
       wel = createWidgetIFrame(agentId, widgetId, origin + widgetEndpoint, opts, this.guardContext);
       initialSrc = wel.src;
       widgetPlaceholder = createWidgetPlaceholder(opts);
-      widgetPlaceholderStyle = widgetPlaceholder.style;
       widgetPlaceholder.textContent = getLocalizedText(language, "connecting");
       // The banner and iframe are both absolutely positioned, so the banner must come last to be painted on top.
       // Moving the banner rather than the iframe, as moving an iframe reloads it.
