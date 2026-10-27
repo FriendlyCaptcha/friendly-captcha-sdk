@@ -58,6 +58,14 @@ export function createManagedInputElement(parentElement: HTMLElement, formFieldN
 }
 
 /**
+ * Removes the element from its parent, if it has one.
+ * Note: we can't use `el.remove()` as IE11 doesn't support it.
+ */
+export function removeElement(el: Element | null | undefined) {
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+/**
  * Sets the style of an element if it is not already set. This is useful for allowing users to override styles.
  * @internal
  */

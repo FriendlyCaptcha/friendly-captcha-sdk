@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { removeElement } from "../sdk/dom";
 import { mergeObject } from "../util/object";
 import { windowPerformanceNow } from "../util/performance";
 
@@ -49,7 +50,7 @@ export const patchNativeFunctions = function (opts: { disableEvalPatching?: bool
       (document.body || document.head).appendChild(iframe);
       // Iframe must be added to DOM before accessing contentWindow
       const $window = iframe ? iframe.contentWindow : 0;
-      iframe.remove();
+      removeElement(iframe);
       return $window || w;
     } catch (e) {
       return w;
