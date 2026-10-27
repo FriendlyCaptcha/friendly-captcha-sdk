@@ -1,5 +1,11 @@
 # changelog
 
+## 1.1.2
+
+- Show the "failed to connect" fallback and emit `frc:widget.error` when the agent iframe fails to load, instead of getting stuck on "Waiting for connection" forever.
+- Allow recovering from the fallback with `reset()`, and also do it automatically on browser `online` event.
+- Fix the widget not appearing if the agent iframe needed a retry.
+
 ## 1.1.1
 - Add support for setting the `guardContext` value introduced in `1.1.0` through a HTML meta tag.
 
