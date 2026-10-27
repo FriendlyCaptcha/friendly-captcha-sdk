@@ -592,7 +592,7 @@ export class FriendlyCaptchaSDK {
     let widgetPlaceholder: HTMLDivElement;
     let widgetPlaceholderStyle: CSSStyleDeclaration;
     setWidgetRootStyles(opts.element);
-    createBanner(opts);
+    const banner = createBanner(opts);
 
     let language = getLanguageFromOptionsOrParent(opts);
     if (isRTLLanguage(language)) {
@@ -644,7 +644,8 @@ export class FriendlyCaptchaSDK {
         agentFailed = true;
         // The widget iframe may have loaded already, so hide it and bring back the placeholder.
         wel.style.display = "none";
-        opts.element.appendChild(widgetPlaceholder);
+        // Before the banner to keep the order (and so screen reader order) the same as on first load.
+        opts.element.insertBefore(widgetPlaceholder, banner.parentNode === opts.element ? banner : null);
         showFallback(detail, agentAttempt, agentOrigin);
       },
     });
@@ -706,6 +707,10 @@ export class FriendlyCaptchaSDK {
       widgetPlaceholder = createWidgetPlaceholder(opts);
       widgetPlaceholderStyle = widgetPlaceholder.style;
       widgetPlaceholder.textContent = getLocalizedText(language, "connecting");
+      // The banner and iframe are both absolutely positioned, so the banner must come last to be painted on top.
+      // Moving the banner rather than the iframe, as moving an iframe reloads it.
+      // A site may have removed the banner itself, in which case we leave it out.
+      if (banner.parentNode === opts.element) opts.element.appendChild(banner);
 
       registerWithRetry();
     };

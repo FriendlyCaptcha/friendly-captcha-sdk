@@ -209,6 +209,7 @@ export function createBanner(opts: CreateWidgetOptions) {
   el.appendChild(a);
 
   opts.element.appendChild(el);
+  return el;
 }
 
 export function getLanguageFromOptionsOrParent(opts: CreateWidgetOptions): string {
