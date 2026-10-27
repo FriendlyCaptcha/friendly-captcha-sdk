@@ -633,7 +633,7 @@ export class FriendlyCaptchaSDK {
         agentFailed = true;
         // The widget iframe may have loaded already, so hide it and bring back the placeholder.
         wel.style.display = "none";
-        if (!opts.element.contains(widgetPlaceholder)) opts.element.appendChild(widgetPlaceholder);
+        opts.element.appendChild(widgetPlaceholder);
         showFallback(detail, agentAttempt, agentOrigin);
       },
     });
