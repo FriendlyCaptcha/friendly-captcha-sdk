@@ -4,9 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { EnvelopedMessage, Message } from "../types/messages";
-import { originOf } from "../util/url";
-import { CommunicationTarget, CommunicationTargetType } from "./target";
+import { EnvelopedMessage, Message } from "../types/messages.js";
+import { originOf } from "../util/url.js";
+import { CommunicationTarget, CommunicationTargetType } from "./target.js";
 
 /**
  * @internal
