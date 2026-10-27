@@ -1,5 +1,9 @@
 # changelog
 
+## 1.1.3
+
+- Fix agent failure handling with multiple SDK instances.
+
 ## 1.1.2
 
 - Show the "failed to connect" fallback and emit `frc:widget.error` when the agent iframe fails to load, instead of getting stuck on "Waiting for connection" forever.
