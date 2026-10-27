@@ -25,7 +25,7 @@ import {
   ToRootMessage,
   WidgetLanguageChangeMessage,
 } from "../types/messages.js";
-import { findFRCElements, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
+import { findFRCElements, removeElement, removeWidgetRootStyles, setWidgetRootStyles } from "./dom.js";
 import { FlatPromise, flatPromise } from "../util/flatPromise.js";
 import { WidgetHandle } from "./widgetHandle.js";
 import { Store } from "./persist.js";
@@ -411,7 +411,7 @@ export class FriendlyCaptchaSDK {
         if (status === "timeout") {
           if (attempt >= maxAttempts) {
             console.error(`[Friendly Captcha] Failed to load agent iframe after ${attempt - 1} retries.`);
-            el.remove();
+            removeElement(el);
             this.agents.delete(origin);
             this.agentFailHandlers.forEach((h) => {
               if (h.agentId === agentId) h.fail("Agent load timeout, stopped retrying", attempt, currentOrigin);
@@ -776,7 +776,7 @@ export class FriendlyCaptchaSDK {
       w.destroy();
     });
     this.agents.forEach((el) => {
-      el.remove();
+      removeElement(el);
     });
     this.agents.clear();
   }

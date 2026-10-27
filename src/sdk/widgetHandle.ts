@@ -17,7 +17,13 @@ import {
   WidgetMode,
 } from "../types/widget.js";
 import { mergeObject } from "../util/object.js";
-import { createManagedInputElement, executeOnceOnFocusInEvent, findParentFormElement, fireFRCEvent } from "./dom.js";
+import {
+  createManagedInputElement,
+  executeOnceOnFocusInEvent,
+  findParentFormElement,
+  fireFRCEvent,
+  removeElement,
+} from "./dom.js";
 import { FRCEventData, FRCEventMap, FRCEventName } from "./events.js";
 
 const DEFAULT_FORM_FIELD_NAME = "frc-captcha-response";
@@ -143,7 +149,7 @@ export class WidgetHandle {
    */
   public destroy() {
     this.isDestroyed = true;
-    this.hiddenFormEl && this.hiddenFormEl.remove();
+    removeElement(this.hiddenFormEl);
     this.hiddenFormEl = undefined;
     this.setState({ response: ".DESTROYED", state: "destroyed" });
     this._destroy();
