@@ -42,9 +42,10 @@ function isDeclaredOn(nameNode, owners, checker) {
 
 // Built-in syntax checks, enabled by id in the config. Each returns a message for a violating node.
 const syntaxChecks = {
+  // esbuild only needs `Object.getOwnPropertyDescriptors` when properties follow a spread, but we flag every spread.
   objectSpread: (node) =>
     ts.isSpreadAssignment(node) &&
-    "Object spread `{...x}` compiles to a helper that uses `Object.getOwnPropertyDescriptors`, assign the fields one by one",
+    "Object spread `{...x, key: v}` compiles to a helper that calls `Object.getOwnPropertyDescriptors`, assign the fields one by one",
   objectRest: (node) =>
     ts.isBindingElement(node) &&
     !!node.dotDotDotToken &&

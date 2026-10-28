@@ -7,6 +7,7 @@
 import { FriendlyCaptchaSDK } from "../sdk/sdk";
 import { WidgetHandle } from "../sdk/widgetHandle";
 import { CreateWidgetOptions } from "../types/widget";
+import { mergeObject } from "../util/object";
 import { parseQuery } from "../util/urlDecode";
 
 /**
@@ -128,12 +129,14 @@ export class CommonCompatSDK {
       throw new Error(`[FRC Compat] Could not find element ${container}`);
     }
 
-    const widget = this.sdk.createWidget({
-      ...el.dataset,
-      ...params,
-      element: el,
-      language: this.params.hl || undefined,
-    });
+    // Note: we use `mergeObject` instead of object spread, as properties after a spread compile to a helper that calls
+    // `Object.getOwnPropertyDescriptors`, which IE11 doesn't have.
+    const widget = this.sdk.createWidget(
+      mergeObject({}, el.dataset, params, {
+        element: el,
+        language: this.params.hl || undefined,
+      }),
+    );
 
     if (params.tabindex) {
       el.tabIndex = params.tabindex;

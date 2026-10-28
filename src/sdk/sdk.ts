@@ -749,7 +749,7 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
-    const origins = resolveAPIOrigins(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    const origins = resolveAPIOrigins((opts && opts.apiEndpoint) || this.apiEndpoint || getSDKAPIEndpoint());
     const retryOrigins = this.getRetryOrigins(origins);
     this.bus.addOrigins(origins);
     const agentId = this.ensureAgentIFrame(retryOrigins);
@@ -760,7 +760,7 @@ export class FriendlyCaptchaSDK {
       to_id: agentId,
       from_id: "",
       _frc: 1,
-      sitekey: opts?.sitekey,
+      sitekey: opts && opts.sitekey,
       uid,
     });
 

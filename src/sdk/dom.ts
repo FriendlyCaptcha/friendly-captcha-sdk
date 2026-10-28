@@ -44,7 +44,12 @@ export function findParentFormElement(element: HTMLElement): HTMLFormElement | n
  * Add listener to specified element that will only fire once on focus.
  */
 export function executeOnceOnFocusInEvent(element: HTMLElement, listener: (this: HTMLElement, fe: FocusEvent) => any) {
-  element.addEventListener("focusin", listener, { once: true, passive: true });
+  // Note: we remove the listener ourselves as IE11 doesn't support the `once` option.
+  const onceListener = function (this: HTMLElement, fe: FocusEvent) {
+    element.removeEventListener("focusin", onceListener);
+    return listener.call(this, fe);
+  };
+  element.addEventListener("focusin", onceListener);
 }
 
 export function createManagedInputElement(parentElement: HTMLElement, formFieldName: string): HTMLInputElement {
@@ -118,6 +123,7 @@ export function runOnDocumentLoaded(func: () => any) {
 export function fireFRCEvent(element: HTMLElement, eventData: FRCEventData) {
   let event;
   if (typeof window.CustomEvent === "function") {
+    // compat-ignore: feature-checked above
     event = new CustomEvent(eventData.name, {
       bubbles: true,
       detail: eventData,

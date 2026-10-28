@@ -17,7 +17,7 @@ export function encodeStringToBase64Url(str: string): string {
   if (!window.TextEncoder) {
     return "";
   }
-  return encodeBase64Url(new TextEncoder().encode(str));
+  return encodeBase64Url(new TextEncoder().encode(str)); // compat-ignore: feature-checked above
 }
 
 /**
