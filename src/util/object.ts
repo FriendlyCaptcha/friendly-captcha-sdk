@@ -11,7 +11,8 @@ export function mergeObject(target: any, ...sources: any[]) {
   for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
     for (var key in source) {
-      if (source.hasOwnProperty(key)) {
+      // `source.hasOwnProperty` may be shadowed, e.g. by a `data-has-own-property` attribute on `el.dataset`.
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
         target[key] = source[key];
       }
     }
