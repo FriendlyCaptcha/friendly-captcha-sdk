@@ -140,7 +140,7 @@ export class FriendlyCaptchaSDK {
 
   /**
    * Multiple agents may be running at the same time, this is the case if someone uses widgets with different endpoints on a single page.
-   * This is a mapping from the origin to the IFrame.
+   * This is a mapping from the origin to the IFrame, for agents created by this instance only.
    */
   private agents: Map<string, HTMLIFrameElement> = new Map();
 
@@ -390,7 +390,6 @@ export class FriendlyCaptchaSDK {
     for (let index = 0; index < agentIFrames.length; index++) {
       const i = agentIFrames[index];
       if (i.dataset[AGENT_ORIGIN_KEY_DATASET_FIELD] === origin && i.dataset[FRAME_ID_DATASET_FIELD]) {
-        this.agents.set(origin, i);
         return i.dataset[FRAME_ID_DATASET_FIELD] as string;
       }
     }
@@ -752,7 +751,7 @@ export class FriendlyCaptchaSDK {
    * @public
    */
   public clearRiskIntelligence(opts?: RiskIntelligenceClearOptions) {
-    const origins = resolveAPIOrigins(opts?.apiEndpoint || this.apiEndpoint || getSDKAPIEndpoint());
+    const origins = resolveAPIOrigins((opts && opts.apiEndpoint) || this.apiEndpoint || getSDKAPIEndpoint());
     const retryOrigins = this.getRetryOrigins(origins);
     this.bus.addOrigins(origins);
     const agentId = this.ensureAgentIFrame(retryOrigins);
@@ -763,7 +762,7 @@ export class FriendlyCaptchaSDK {
       to_id: agentId,
       from_id: "",
       _frc: 1,
-      sitekey: opts?.sitekey,
+      sitekey: opts && opts.sitekey,
       uid,
     });
 
