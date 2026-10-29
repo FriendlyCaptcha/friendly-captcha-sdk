@@ -1,7 +1,8 @@
 # changelog
 
-## Unreleased
+## 1.1.3
 
+- Fix agent failure handling with multiple SDK instances.
 - Minor compatibility improvements for Internet Explorer 11 and similar old browsers.
 
 ## 1.1.2

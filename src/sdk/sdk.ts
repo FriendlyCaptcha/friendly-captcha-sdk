@@ -108,6 +108,15 @@ export interface FriendlyCaptchaSDKOptions {
 let cbus: CommunicationBus | undefined;
 
 /**
+ * Mapping of widget ID to its agent and the callback to run if that agent fails to load.
+ * Module-level because SDK instances can share an agent, but only the instance that created it runs the retry loop.
+ */
+const agentFailHandlers: Map<
+  string,
+  { agentId: string; fail: (detail: string, attempt: number, origin: string) => void }
+> = new Map();
+
+/**
  * Number of SDKs created.
  * Ideally one should only ever create one SDK, but it is an easy mistake to make.
  * This allows us to warn the user if they create multiple SDKs, and surpress some expected (non-fatal) errors.
@@ -144,14 +153,6 @@ export class FriendlyCaptchaSDK {
    * Mapping of widget ID to the widget handle.
    */
   private widgets: Map<string, WidgetHandle> = new Map();
-
-  /**
-   * Mapping of widget ID to its agent and the callback to run if that agent fails to load.
-   */
-  private agentFailHandlers: Map<
-    string,
-    { agentId: string; fail: (detail: string, attempt: number, origin: string) => void }
-  > = new Map();
 
   /**
    * @internal
@@ -378,9 +379,10 @@ export class FriendlyCaptchaSDK {
 
     // Fast-path: if this SDK instance already tracks an agent for this configured origin, reuse it.
     const existing = this.agents.get(origin);
-    if (existing && existing.dataset[FRAME_ID_DATASET_FIELD]) {
+    if (existing && existing.parentNode && existing.dataset[FRAME_ID_DATASET_FIELD]) {
       return existing.dataset[FRAME_ID_DATASET_FIELD] as string;
     }
+    this.agents.delete(origin);
 
     // Cross-instance idempotency: if another SDK instance already created an agent for this origin,
     // find and reuse it using the stable configured-origin key.
@@ -414,7 +416,7 @@ export class FriendlyCaptchaSDK {
             this.agents.delete(origin);
             this.agentState.delete(agentId);
             this.bus.removeTarget(agentId);
-            this.agentFailHandlers.forEach((h) => {
+            agentFailHandlers.forEach((h) => {
               if (h.agentId === agentId) h.fail("Agent load timeout, stopped retrying", attempt, currentOrigin);
             });
             return;
@@ -556,7 +558,7 @@ export class FriendlyCaptchaSDK {
         send({ type: "root_destroy_widget" });
         this.bus.removeTarget(widgetId);
         this.widgets.delete(widgetId);
-        this.agentFailHandlers.delete(widgetId);
+        agentFailHandlers.delete(widgetId);
         window.removeEventListener("online", onOnline);
 
         opts.element.innerHTML = "";
@@ -693,7 +695,7 @@ export class FriendlyCaptchaSDK {
       agentFailed = false;
       unreachable = false;
       agentId = this.ensureAgentIFrame(retryOrigins);
-      this.agentFailHandlers.set(widgetId, { agentId, fail: onAgentFail });
+      agentFailHandlers.set(widgetId, { agentId, fail: onAgentFail });
 
       removeElement(wel);
       removeElement(widgetPlaceholder);
