@@ -24,6 +24,7 @@
     "test": "ava test/**/*.ts --timeout=1m",
     "api-extractor": "api-extractor",
     "license-check-and-add": "license-check-and-add",
+    "lint:compat": "node lint-compat.mjs",
     "fmt": "prettier src/**/*.ts test/**/*.ts package.json babel.config.cjs --write",
     "dist": "npm run clean && npm run build:dist && node prepublish.mjs && cd dist && npm publish --provenance --access public",
     "prepublishOnly": "echo \"Run npm run dist to build the package and publish it\" && exit 1"

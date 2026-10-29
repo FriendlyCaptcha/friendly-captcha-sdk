@@ -191,6 +191,7 @@ export class WidgetHandle {
     const didStateChange = this.state !== s.state;
     this.response = s.response;
     this.state = s.state;
+    // compat-ignore: `isConnected` is undefined in old browsers, which passes this check
     if (this.hiddenFormEl && this.e.isConnected !== false) {
       this.hiddenFormEl.value = s.response;
     }

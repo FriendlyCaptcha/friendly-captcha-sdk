@@ -22,6 +22,8 @@ jobs:
           cache-dependency-path: "package-lock.json"
       - name: "Install deps"
         run: npm ci
+      - name: "Lint browser compatibility"
+        run: npm run lint:compat
       - name: "Build"
         run: |
           npm run build:tsc

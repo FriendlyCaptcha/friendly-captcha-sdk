@@ -71,6 +71,15 @@ npm run build:dist
 npm run test
 ```
 
+### Browser compatibility
+The SDK supports very old browsers (including IE11). The `.compat` bundles are transpiled with Babel and get the polyfills in `src/polyfill/` (`Promise`, `Map`, `Set`, `WeakMap` and `WeakSet`), but Babel does not transpile generators or `async` functions and does not polyfill any other APIs. Run the compatibility linter to find language features and APIs to avoid:
+
+```shell
+npm run lint:compat
+```
+
+The rules live in [`lint-compat.config.mjs`](./lint-compat.config.mjs). Silence a deliberate use, for example one that is feature-checked, with a `// compat-ignore: reason` comment on the same or the previous line.
+
 ### sdktest
 We include more proper end-to-end tests in the [**sdktest**](./sdktest/) tool folder.
 
