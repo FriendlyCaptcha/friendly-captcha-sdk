@@ -32,7 +32,7 @@ jobs:
         run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v7
         with:
-          repository: friendlycaptcha/docs
+          repository: FriendlyCaptcha/friendly-docs
           ref: main
           path: docs
           token: ${{ secrets.DOCS_REPO_TOKEN }}
