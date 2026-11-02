@@ -2,7 +2,7 @@ name: Publish to NPM
 
 permissions:
   contents: read
-  id-token: write # for IODC
+  id-token: write # for OIDC
 
 on:
   release:
@@ -21,3 +21,61 @@ jobs:
       - run: npm run build:dist
       - run: npm test
       - run: node prepublish.mjs && cd dist && npm publish --provenance --access public
+
+  bump-docs:
+    needs: publish
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Read published version
+        id: version
+        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/create-github-app-token@v3
+        id: docs-token
+        with:
+          client-id: ${{ vars.DOCS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.DOCS_APP_PRIVATE_KEY }}
+          owner: FriendlyCaptcha
+          repositories: friendly-docs
+          permission-contents: write
+          permission-pull-requests: write
+      - uses: actions/checkout@v7
+        with:
+          repository: FriendlyCaptcha/friendly-docs
+          ref: main
+          path: docs
+          token: ${{ steps.docs-token.outputs.token }}
+      - name: Update SDK version in docs
+        working-directory: docs
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not bumping docs to irregular version: '$VERSION'"; exit 0; }
+          git ls-files -z -- '*.md' \
+            | xargs -0 sed -i -E "s|@friendlycaptcha/sdk@[0-9]+\.[0-9]+\.[0-9]+|@friendlycaptcha/sdk@${VERSION}|g"
+      - name: Open PR
+        working-directory: docs
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ steps.docs-token.outputs.token }}
+          APP_SLUG: ${{ steps.docs-token.outputs.app-slug }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          BRANCH="bump-sdk-${VERSION}-${GITHUB_RUN_ID}"
+          USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git commit -am "Bump SDK version to ${VERSION}"
+          git push --force origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --base main --head "$BRANCH" \
+              --title "Bump SDK version to ${VERSION}" \
+              --body "Automated update after publishing @friendlycaptcha/sdk@${VERSION}."
+          fi
