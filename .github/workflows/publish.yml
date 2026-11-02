@@ -41,6 +41,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not bumping docs to '$VERSION'"; exit 0; }
           git ls-files -z -- '*.md' \
             | xargs -0 sed -i -E "s|@friendlycaptcha/sdk@[0-9]+\.[0-9]+\.[0-9]+|@friendlycaptcha/sdk@${VERSION}|g"
       - name: Commit and push
