@@ -21,3 +21,38 @@ jobs:
       - run: npm run build:dist
       - run: npm test
       - run: node prepublish.mjs && cd dist && npm publish --provenance --access public
+
+  bump-docs:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Read published version
+        id: version
+        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        with:
+          repository: friendlycaptcha/docs
+          ref: main
+          path: docs
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+      - name: Update SDK version in docs
+        working-directory: docs
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git ls-files -z -- '*.md' \
+            | xargs -0 sed -i -E "s|@friendlycaptcha/sdk@[0-9]+\.[0-9]+\.[0-9]+|@friendlycaptcha/sdk@${VERSION}|g"
+      - name: Commit and push
+        working-directory: docs
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump SDK version to ${VERSION}"
+          git push origin HEAD:main
