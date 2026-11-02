@@ -24,7 +24,10 @@ jobs:
 
   bump-docs:
     needs: publish
+    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - name: Read published version
