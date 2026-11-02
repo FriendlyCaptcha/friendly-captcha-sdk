@@ -2,7 +2,7 @@ name: Publish to NPM
 
 permissions:
   contents: read
-  id-token: write # for IODC
+  id-token: write # for OIDC
 
 on:
   release:
@@ -53,7 +53,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not bumping docs to '$VERSION'"; exit 0; }
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not bumping docs to irregular version: '$VERSION'"; exit 0; }
           git ls-files -z -- '*.md' \
             | xargs -0 sed -i -E "s|@friendlycaptcha/sdk@[0-9]+\.[0-9]+\.[0-9]+|@friendlycaptcha/sdk@${VERSION}|g"
       - name: Open PR
@@ -61,14 +61,16 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           GH_TOKEN: ${{ steps.docs-token.outputs.token }}
+          APP_SLUG: ${{ steps.docs-token.outputs.app-slug }}
         run: |
           if git diff --quiet; then
             echo "No changes to commit"
             exit 0
           fi
           BRANCH="bump-sdk-${VERSION}-${GITHUB_RUN_ID}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
           git commit -am "Bump SDK version to ${VERSION}"
           git push --force origin "$BRANCH"
