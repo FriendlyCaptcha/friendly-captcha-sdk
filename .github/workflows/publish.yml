@@ -33,6 +33,15 @@ jobs:
       - name: Read published version
         id: version
         run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/create-github-app-token@v3
+        id: docs-token
+        with:
+          client-id: ${{ vars.DOCS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.DOCS_APP_PRIVATE_KEY }}
+          owner: FriendlyCaptcha
+          repositories: friendly-docs
+          permission-contents: write
+          permission-pull-requests: write
       - uses: actions/checkout@v7
         with:
           repository: FriendlyCaptcha/friendly-docs
