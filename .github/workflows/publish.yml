@@ -47,7 +47,7 @@ jobs:
           repository: FriendlyCaptcha/friendly-docs
           ref: main
           path: docs
-          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          token: ${{ steps.docs-token.outputs.token }}
       - name: Update SDK version in docs
         working-directory: docs
         env:
