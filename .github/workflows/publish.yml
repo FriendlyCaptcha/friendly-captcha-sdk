@@ -56,16 +56,24 @@ jobs:
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Not bumping docs to '$VERSION'"; exit 0; }
           git ls-files -z -- '*.md' \
             | xargs -0 sed -i -E "s|@friendlycaptcha/sdk@[0-9]+\.[0-9]+\.[0-9]+|@friendlycaptcha/sdk@${VERSION}|g"
-      - name: Commit and push
+      - name: Open PR
         working-directory: docs
         env:
           VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ steps.docs-token.outputs.token }}
         run: |
           if git diff --quiet; then
             echo "No changes to commit"
             exit 0
           fi
+          BRANCH="bump-sdk-${VERSION}-${GITHUB_RUN_ID}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
           git commit -am "Bump SDK version to ${VERSION}"
-          git push origin HEAD:main
+          git push --force origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --base main --head "$BRANCH" \
+              --title "Bump SDK version to ${VERSION}" \
+              --body "Automated update after publishing @friendlycaptcha/sdk@${VERSION}."
+          fi
