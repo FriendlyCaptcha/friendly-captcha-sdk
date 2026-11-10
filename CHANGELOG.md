@@ -1,5 +1,9 @@
 # changelog
 
+## 1.1.4
+
+- Set the widget iframe's `color-scheme` that matches the widget page's CSS, so the iframe is always see-through and it's background can be set to transparent.
+
 ## 1.1.3
 
 - Fix agent failure handling with multiple SDK instances.
@@ -12,6 +16,7 @@
 - Fix the widget not appearing if the agent iframe needed a retry.
 
 ## 1.1.1
+
 - Add support for setting the `guardContext` value introduced in `1.1.0` through a HTML meta tag.
 
 ## 1.1.0
