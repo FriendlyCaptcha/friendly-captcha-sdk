@@ -1,5 +1,9 @@
 # changelog
 
+## 1.1.5
+
+- Revert the `color-scheme` setting from `1.1.4` because it caused dark themes to render as light when the widget theme was set to "auto" and the host site explicity set a `color-scheme` CSS property.
+
 ## 1.1.4
 
 - Set the widget iframe's `color-scheme` that matches the widget page's CSS, so the iframe is always see-through and it's background can be set to transparent.
