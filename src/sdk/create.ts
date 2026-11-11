@@ -106,11 +106,6 @@ export function createWidgetIFrame(
   s.height = s.width = "100%";
   s.userSelect = "none";
   (s as any)["-webkit-tap-highlight-color"] = "transparent";
-  // The widget document declares `color-scheme: light` (dark mode comes from its theme colors instead). If the
-  // iframe element's color scheme differs (e.g. the page sets `color-scheme: dark`), browsers paint an opaque
-  // backdrop behind the iframe, which hides the page behind a widget theme with a transparent background.
-  // Matching it keeps the iframe see-through.
-  s.colorScheme = "light";
 
   s.display = "none";
 
